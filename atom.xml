@@ -1,35 +1,24 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Awkward and Proud</title>
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
+  <title><![CDATA[Awkward and Proud]]></title>
+  <link href="http://joshuadavey.com/atom.xml" rel="self"/>
+  <link href="http://joshuadavey.com/"/>
+  <updated>2012-08-05T16:58:17-05:00</updated>
+  <id>http://joshuadavey.com/</id>
+  <author>
+    <name><![CDATA[Joshua Davey]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://joshuadavey.tumblr.com/rss"/>
-    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
-    <meta name="description" content="Please, never say &quot;widgets&quot; in my presence again."/>
-
-  </head>
-  <body>
-    <div id="wrapper">
-      <h1><a href="/">Awkward and Proud</a></h1>
-
-      <div id="description">
-        <ul class="meta">
-          <li><a href="/archive">Archive</a> / <a href="/atom.xml">RSS</a></li>
-        </ul>
-      </div>
-
-      <section id="posts">
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="Top 10 things GitHub will do with VC Funding" href="/2012/05/22/top-ten-things-github-will-do-with-vc-funding/">2012-05-22</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">Top 10 things GitHub will do with VC Funding</h3>
-      <p>GitHub is getting <a href="http://pandodaily.com/2012/05/21/bootstrapped-github-now-raising-a-round-from-andreessen-horowitz/">a round of VC funding</a>. Here are the top 10 things they plan on using the money for. </p>
+  
+  <entry>
+    <title type="html"><![CDATA[Top 10 things GitHub will do with VC Funding]]></title>
+    <link href="http://joshuadavey.com/2012/05/22/top-ten-things-github-will-do-with-vc-funding/"/>
+    <updated>2012-05-22T00:00:00-05:00</updated>
+    <id>http://joshuadavey.com/2012/05/22/top-ten-things-github-will-do-with-vc-funding</id>
+    <content type="html"><![CDATA[<p>GitHub is getting <a href="http://pandodaily.com/2012/05/21/bootstrapped-github-now-raising-a-round-from-andreessen-horowitz/">a round of VC funding</a>. Here are the top 10 things they plan on using the money for. </p>
 
 <ol>
 <li>Genetically engineer an actual octocat. </li>
@@ -43,18 +32,15 @@
 <li>Fund the covert operation to eliminate the out-of-control self-aware Hubot. </li>
 <li>Have a drinkup.</li>
 </ol>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="Simulate network latency for application testing" href="/2012/05/14/simulate-network-latency-for-application-testing/">2012-05-14</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">Simulate network latency for application testing</h3>
-      <p>Sometimes it&#8217;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Simulate network latency for application testing]]></title>
+    <link href="http://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"/>
+    <updated>2012-05-14T00:00:00-05:00</updated>
+    <id>http://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing</id>
+    <content type="html"><![CDATA[<p>Sometimes it&#8217;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
 
 <p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller&#8217;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
 
@@ -73,34 +59,28 @@
 <p>Google is now fast again.</p>
 
 <p>The script works by adding 250ms delay to both directions of network traffic. It also adds a packet-loss percentage of 10%. You can play with these numbers to get even more latency simulation. Enjoy!</p>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="Add untracked files in git" href="/2012/03/30/add-untracked-files-in-git/">2012-03-30</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">Add untracked files in git</h3>
-      <p>I&#8217;ve often been annoyed that there&#8217;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Add untracked files in git]]></title>
+    <link href="http://joshuadavey.com/2012/03/30/add-untracked-files-in-git/"/>
+    <updated>2012-03-30T00:00:00-05:00</updated>
+    <id>http://joshuadavey.com/2012/03/30/add-untracked-files-in-git</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve often been annoyed that there&#8217;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
 
 <script src="https://gist.github.com/2256047.js?file=.gitconfig"></script>
 
 <p>Just add it to your global git config file at <code>~/.gitconfig</code> and enjoy.</p>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="Faster TDD feedback with tmux, tslime.vim, and turbux.vim" href="/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/">2012-01-10</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">Faster TDD feedback with tmux, tslime.vim, and turbux.vim</h3>
-      <p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Faster TDD feedback with tmux, tslime.vim, and turbux.vim]]></title>
+    <link href="http://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/"/>
+    <updated>2012-01-10T00:00:00-06:00</updated>
+    <id>http://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux</id>
+    <content type="html"><![CDATA[<p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
 context of what I&#8217;m working on to see the test result.</p>
@@ -205,18 +185,15 @@ merged in.</p>
 <p>See the plugin in action. If the video is hard to see, visit vimeo. There is a link to download at full size.</p>
 
 <iframe src="http://player.vimeo.com/video/34879707?title=0&amp;byline=0&amp;portrait=0" width="500" height="306" frameborder="0" ></iframe>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="zsh completion for hitch" href="/2011/10/11/zsh-completion-for-hitch/">2011-10-11</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">zsh completion for hitch</h3>
-      <p>At <a href="http://www.hashrocket.com">hashrocket</a>, we use <a href="http://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour. </p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[zsh completion for hitch]]></title>
+    <link href="http://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/"/>
+    <updated>2011-10-11T00:00:00-05:00</updated>
+    <id>http://joshuadavey.com/2011/10/11/zsh-completion-for-hitch</id>
+    <content type="html"><![CDATA[<p>At <a href="http://www.hashrocket.com">hashrocket</a>, we use <a href="http://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour. </p>
 
 <p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&#8217;s github usernames and a prefix with a &quot;+&quot;, creating email addresses of the form &quot;dev+jgdavey+therubymug@hashrocket.com&quot;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 
@@ -229,18 +206,15 @@ merged in.</p>
 <script src="https://gist.github.com/1257698.js?file=_hitch.sh"></script>
 
 <p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698">gist</a> on github.</p>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="QR Codes in Ruby" href="/2011/06/13/qr-codes-in-ruby/">2011-06-13</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">QR Codes in Ruby</h3>
-      <p>QR codes seem to be everywhere these days. I&#8217;ve seen them in
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[QR Codes in Ruby]]></title>
+    <link href="http://joshuadavey.com/2011/06/13/qr-codes-in-ruby/"/>
+    <updated>2011-06-13T00:00:00-05:00</updated>
+    <id>http://joshuadavey.com/2011/06/13/qr-codes-in-ruby</id>
+    <content type="html"><![CDATA[<p>QR codes seem to be everywhere these days. I&#8217;ve seen them in
 advertisements on the train, on the back of magazines, and, most
 recently, on someone&#8217;s wedding invitation. A lot of folks are using
 QR codes as a quick way to share URLs. But that&#8217;s not all that they
@@ -331,32 +305,26 @@ Nevertheless, the pure ruby options are solid and well worth a look.</p>
 
 <p>Regardless of what your needs are, there are lots of options. Which one
 fits your needs best will largely depend on your stack.</p>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="VIM script to toggle do/end and brackets" href="/2010/11/16/vim-script-to-toggle-do-end-and-brackets/">2010-11-16</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">VIM script to toggle do/end and brackets</h3>
-      <p><strike>This is still rough, but I&#8217;m finding it quite useful:</strike></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VIM script to toggle do/end and brackets]]></title>
+    <link href="http://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"/>
+    <updated>2010-11-16T00:00:00-06:00</updated>
+    <id>http://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets</id>
+    <content type="html"><![CDATA[<p><strike>This is still rough, but I&#8217;m finding it quite useful:</strike></p>
 
 <p>I&#8217;ve converted this to a full-blown VIM plugin: http://github.com/jgdavey/vim-blockle</p>
-
-    </div>
-  </article>
-
-  <article class="post">
-    <h2 class="permalink">
-      <a title="Rails migrations - Checking the existence of a table" href="/2010/09/17/rails-migrations-checking-the-existing-of-a-table/">2010-09-17</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">Rails migrations - Checking the existence of a table</h3>
-      <p>Recently, I had to drop a table because I no longer needed the model at all. However, working on a distributed team, there were other folks with varying levels of &quot;migration&quot; status for their databases. A first migration to drop the table would be simply the following: </p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rails migrations - Checking the existence of a table]]></title>
+    <link href="http://joshuadavey.com/2010/09/17/rails-migrations-checking-the-existing-of-a-table/"/>
+    <updated>2010-09-17T00:00:00-05:00</updated>
+    <id>http://joshuadavey.com/2010/09/17/rails-migrations-checking-the-existing-of-a-table</id>
+    <content type="html"><![CDATA[<p>Recently, I had to drop a table because I no longer needed the model at all. However, working on a distributed team, there were other folks with varying levels of &quot;migration&quot; status for their databases. A first migration to drop the table would be simply the following: </p>
 
 <script src="http://gist.github.com/530421.js?file=original_migration.rb"></script> 
 
@@ -367,26 +335,7 @@ fits your needs best will largely depend on your stack.</p>
 <p>Now, folks who never had that table to begin with won&#8217;t get an error when running <code>rake db:migrate</code>, and those who did will simply drop it. This works because <code>connection</code> is actually delegated to <code>ActiveRecord::Base.connection</code>.</p>
 
 <p>As a disclaimer, I&#8217;ve only used this technique in Rails 2.3, so I can&#8217;t vouch for it working in other versions.</p>
-
-    </div>
-  </article>
-
-
-</section>
-
-
-    </div>
-
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-330362-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-  </body>
-</html>
+]]></content>
+  </entry>
+  
+</feed>

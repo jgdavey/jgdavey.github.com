@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Awkward and Proud</title>
+
+
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://joshuadavey.tumblr.com/rss"/>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
+    <meta name="description" content="Please, never say &quot;widgets&quot; in my presence again."/>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1><a href="/">Awkward and Proud</a></h1>
+
+      <div id="description">
+        <ul class="meta">
+          <li><a href="/archive">Archive</a> / <a href="/atom.xml">RSS</a></li>
+        </ul>
+      </div>
+
+      <section id="posts">
+  <article class="post">
+    <h2 class="permalink">
+      <a title="" href="">2012-05-14</a>
+    </h2>
+
+    <div class="post-body">
+      <h3 class="title">Simulate network latency for application testing</h3>
+      <p>Sometimes it's useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
+
+<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller's post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
+
+<script src="https://gist.github.com/2696974.js?file=hinder.sh"></script>
+
+<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &quot;hinder&quot;. After that, it's simply a matter of using it:</p>
+
+<pre><code>$ hinder www.google.com
+</code></pre>
+
+<p>Now when you visit google.com, you should see some marked slowness. To reset, just run:</p>
+
+<pre><code>$ hinder reset
+</code></pre>
+
+<p>Google is now fast again.</p>
+
+<p>The script works by adding 250ms delay to both directions of network traffic. It also adds a packet-loss percentage of 10%. You can play with these numbers to get even more latency simulation. Enjoy!</p>
+
+    </div>
+  </article>
+</section>
+
+
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-330362-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </body>
+</html>

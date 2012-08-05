@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Awkward and Proud</title>
+
+
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="http://joshuadavey.tumblr.com/rss"/>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
+    <meta name="description" content="Please, never say &quot;widgets&quot; in my presence again."/>
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <h1><a href="/">Awkward and Proud</a></h1>
+
+      <div id="description">
+        <ul class="meta">
+          <li><a href="/archive">Archive</a> / <a href="/atom.xml">RSS</a></li>
+        </ul>
+      </div>
+
+      <section id="posts">
+  <article class="post">
+    <h2 class="permalink">
+      <a title="" href="">2011-06-13</a>
+    </h2>
+
+    <div class="post-body">
+      <h3 class="title">QR Codes in Ruby</h3>
+      <p>QR codes seem to be everywhere these days. I've seen them in
+advertisements on the train, on the back of magazines, and, most
+recently, on someone's wedding invitation. A lot of folks are using
+QR codes as a quick way to share URLs. But that's not all that they
+are good for. We recently had a client that needed to authorize paper
+tickets, and a QR-encoded token turned out to be a great solution.</p>
+
+<h2>QR Code Generation in Ruby</h2>
+
+<p>From my experience, there are two solid options for QR code generation in Ruby:</p>
+
+<ul>
+<li><a href="http://whomwah.github.com/rqrcode/">rQRCode</a> Pure ruby QR code generator</li>
+<li><a href="https://github.com/harrisj/qrencoder">qrencoder</a> A Ruby wrapper around libqrencode</li>
+</ul>
+
+<h3>rQRCode</h3>
+
+<ul>
+<li>Pure ruby</li>
+<li>Portable: will run on many Ruby platforms</li>
+<li>Few dependencies</li>
+<li>Relatively slow</li>
+</ul>
+
+<h3>QREncoder</h3>
+
+<ul>
+<li>Very, very fast</li>
+<li>Uses a C library (libqrencode) that works wherever <code>make</code> does</li>
+<li>Likely not to run on JRuby</li>
+</ul>
+
+<h2>QR Code Decoding in Ruby</h2>
+
+<p>The QR Decoding landscape varies even more than its QR encoding
+counterpart. There are several ooptions to choose from, and the best one
+for you will likely depend your environment and stack. The top three
+libraries that I've found are:</p>
+
+<ul>
+<li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
+<li><a href="https://github.com/ecin/zxing.rb">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
+<li><a href="https://github.com/jgdavey/qrdecoder">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
+</ul>
+
+<h3>Qrio</h3>
+
+<ul>
+<li>Pure ruby</li>
+<li>Source is readable for ruby developers</li>
+<li>Has intermediate hooks for displaying pattern detection</li>
+<li>Only reads in PNG formatted images</li>
+<li>Slower than the other options</li>
+</ul>
+
+<h3>Zxing.rb</h3>
+
+<ul>
+<li>Uses the well-maintained <a href="http://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
+<li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
+<li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
+</ul>
+
+<h3>QRDecoder</h3>
+
+<ul>
+<li>Wrapper for libzxing, a C++ port of the ZXing Java library</li>
+<li>By far the fastest option for MRI</li>
+<li>The C++ port of ZXing is less maintained than its big brother</li>
+<li>You must build <a href="https://github.com/jgdavey/zxing-cpp">libzxing</a> from source (a homebrew package is pending)</li>
+</ul>
+
+<h2>The Bottom Line</h2>
+
+<p>Wherein I offer &quot;My Two Cents&quot;. If you're on a stack that can install
+libraries and you're using an MRI ruby (1.8 or 1.9), use qrencoder and
+qrdecoder. They are both very fast and awesome. Additionally, their
+APIs complement each other. If you're on Heroku, use rQRCode and qrio.
+They're both pure ruby and play nice with an environment where you can't
+install you're own libraries. If you're on JRuby, use Zxing.rb for
+decoding, and try both rQRCode and qrencoder. I haven't tried qrencoder
+with JRuby--or any compiled gems for that matter--so your mileage may
+vary.</p>
+
+<p><strong>N.B.</strong> In the interest of full disclosure, I have contributed to both
+qrencoder and zxing.rb, and maintain qrdecoder, and tend to favor them.
+Nevertheless, the pure ruby options are solid and well worth a look.</p>
+
+<p>Regardless of what your needs are, there are lots of options. Which one
+fits your needs best will largely depend on your stack.</p>
+
+    </div>
+  </article>
+</section>
+
+
+    </div>
+
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-330362-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </body>
+</html>
