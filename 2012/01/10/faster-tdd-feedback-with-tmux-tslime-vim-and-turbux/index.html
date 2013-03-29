@@ -13,6 +13,7 @@
     <link href="/atom.xml" rel="alternate" title="Awkward and Proud" type="application/atom+xml">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/javascripts/main.js"></script>
   </head>
 
@@ -24,6 +25,7 @@
         <ul class="meta">
           <li><a href="/about">About</a> / <a href="/atom.xml">RSS</a></li>
         </ul>
+        
       </div>
 
       <section id="posts">
@@ -37,31 +39,31 @@
       <p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
-context of what I'm working on to see the test result.</p>
+context of what I&#39;m working on to see the test result.</p>
 
-<p>Taking a cue from <a href="http://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay's excellent intro to tmux</a>, I've
+<p>Taking a cue from <a href="http://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&#39;s excellent intro to tmux</a>, I&#39;ve
 been using tmux lately as my primary workspace. There are excellent
-<a href="http://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="http://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I've really
+<a href="http://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper&#39;s introduction to tmux">introductions to</a> <a href="http://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost&#39;s introduction to tmux">tmux elsewhere</a>, but I&#39;ve really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
-development. But rather than sing tmux's praises, I'd like to talk about
+development. But rather than sing tmux&#39;s praises, I&#39;d like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
 better.</p>
 
 <h2>Other test-running solutions</h2>
 
 <p>Autotesting gives you immediate feedback, but runs everytime you save a
-file. Even though this often is desired behavior, I can't tell you how
-many times I've saved a feature file, only to immediately notice a typo.
+file. Even though this often is desired behavior, I can&#39;t tell you how
+many times I&#39;ve saved a feature file, only to immediately notice a typo.
 Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
 
-<p>I've also tried more editor-embedding techniques of running tests. Both
+<p>I&#39;ve also tried more editor-embedding techniques of running tests. Both
 <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
 for the command to finish before I can type, or even navigate again. And
-I can't look at a failure message and my code at the same time.</p>
+I can&#39;t look at a failure message and my code at the same time.</p>
 
 <h2>A faster feedback loop</h2>
 
@@ -74,10 +76,10 @@ the longevity of your code, but one of the side benefits is the speed
 increase for running individual specs or tests. This technique is being
 championed by Gary Bernhardt and Corey Haines, among others.</p>
 
-<p>Because tmux is so scriptable, it isn't hard to send commands to other
+<p>Because tmux is so scriptable, it isn&#39;t hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I've created a vim plugin that shortens
-the feedback loop when practicing TDD in a tmux session. It's called
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork">tslime.vim</a>, I&#39;ve created a vim plugin that shortens
+the feedback loop when practicing TDD in a tmux session. It&#39;s called
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 
 <h2>Using tslime.vim</h2>
@@ -93,44 +95,42 @@ each of these prompts, so you can happily mash <code>&lt;Tab&gt;</code>.</p>
 
 <p>The plugin exposes a general-purpose function to send arbitrary text to
 the configured tmux pane. For example, you can use it in the following way:</p>
-
-<pre><code>:call Send_to_Tmux(&quot;rspec &quot;.expand(&quot;%&quot;).&quot;\n&quot;)
-</code></pre>
-
+<div class="highlight"><pre><code class="text">:call Send_to_Tmux(&quot;rspec &quot;.expand(&quot;%&quot;).&quot;\n&quot;)
+</code></pre></div>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
-open is so common that I've packaged up some useful defaults in
+open is so common that I&#39;ve packaged up some useful defaults in
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 
 <h2>Using turbux.vim</h2>
 
 <p>Turbux.vim tries to intelligently choose the right spec, test or feature
-to run when you invoke it. If you're in a spec, invoking the plugin
+to run when you invoke it. If you&#39;re in a spec, invoking the plugin
 (by default with <code>&lt;leader&gt;t</code>) will run <code>rspec path/to/my_spec.rb</code> in
 the corresponding pane. In a test-unit file, it will run <code>ruby -Itest
 path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber
 path/to/my.feature</code>.</p>
 
-<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>'s awesomeness, I've also provided some mappings for
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&#39;s awesomeness, I&#39;ve also provided some mappings for
 when the current file has a corresponding test or spec. For example,
-When I'm in a file that has a corresponding spec, such as a model or
+When I&#39;m in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
 
 <p>Finally, if the plugin is invoked outside the context of any feature
 or spec-related file, it will simply run the most recent test command
 again.</p>
 
-<p>Also, I've added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
-cucumber scenario. It works by adding the vim cursor's line number to
+<p>Also, I&#39;ve added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
+cucumber scenario. It works by adding the vim cursor&#39;s line number to
 the rspec or cucumber command.</p>
 
 <h2>Conclusion</h2>
 
-<p>This setup has been really rewarding so far. There's far less context
+<p>This setup has been really rewarding so far. There&#39;s far less context
 switching, as I never have to leave my editor. There are also fewer
-surprises. As far as I'm concerned, the faster my feedback, the better.</p>
+surprises. As far as I&#39;m concerned, the faster my feedback, the better.</p>
 
-<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
+<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 

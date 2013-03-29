@@ -13,6 +13,7 @@
     <link href="/atom.xml" rel="alternate" title="Awkward and Proud" type="application/atom+xml">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/javascripts/main.js"></script>
   </head>
 
@@ -24,6 +25,7 @@
         <ul class="meta">
           <li><a href="/about">About</a> / <a href="/atom.xml">RSS</a></li>
         </ul>
+        
       </div>
 
       <section id="posts">
@@ -36,7 +38,7 @@
       <h3 class="title">zsh completion for hitch</h3>
       <p>At <a href="http://www.hashrocket.com">hashrocket</a>, we use <a href="http://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour. </p>
 
-<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author's github usernames and a prefix with a &quot;+&quot;, creating email addresses of the form &quot;dev+jgdavey+therubymug@hashrocket.com&quot;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
+<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&#39;s github usernames and a prefix with a &quot;+&quot;, creating email addresses of the form &quot;dev+jgdavey+therubymug@hashrocket.com&quot;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
 

@@ -13,6 +13,7 @@
     <link href="/atom.xml" rel="alternate" title="Awkward and Proud" type="application/atom+xml">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/javascripts/main.js"></script>
   </head>
 
@@ -24,6 +25,7 @@
         <ul class="meta">
           <li><a href="/about">About</a> / <a href="/atom.xml">RSS</a></li>
         </ul>
+        
       </div>
 
       <section id="posts">
@@ -34,22 +36,18 @@
 
     <div class="post-body">
       <h3 class="title">Simulate network latency for application testing</h3>
-      <p>Sometimes it's useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
+      <p>Sometimes it&#39;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
 
-<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller's post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
+<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller&#39;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
 
 <script src="https://gist.github.com/2696974.js?file=hinder.sh"></script>
 
-<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &quot;hinder&quot;. After that, it's simply a matter of using it:</p>
-
-<pre><code>$ hinder www.google.com
-</code></pre>
-
+<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &quot;hinder&quot;. After that, it&#39;s simply a matter of using it:</p>
+<div class="highlight"><pre><code class="text">$ hinder www.google.com
+</code></pre></div>
 <p>Now when you visit google.com, you should see some marked slowness. To reset, just run:</p>
-
-<pre><code>$ hinder reset
-</code></pre>
-
+<div class="highlight"><pre><code class="text">$ hinder reset
+</code></pre></div>
 <p>Google is now fast again.</p>
 
 <p>The script works by adding 250ms delay to both directions of network traffic. It also adds a packet-loss percentage of 10%. You can play with these numbers to get even more latency simulation. Enjoy!</p>

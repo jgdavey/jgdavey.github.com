@@ -4,7 +4,7 @@
   <title><![CDATA[Awkward and Proud]]></title>
   <link href="http://joshuadavey.com/atom.xml" rel="self"/>
   <link href="http://joshuadavey.com/"/>
-  <updated>2012-08-05T21:18:44-05:00</updated>
+  <updated>2013-03-28T23:32:21-05:00</updated>
   <id>http://joshuadavey.com/</id>
   <author>
     <name><![CDATA[Joshua Davey]]></name>
@@ -22,11 +22,11 @@
 
 <ol>
 <li>Genetically engineer an actual octocat. </li>
-<li>Pay off the anonymous Italian who&#8217;s been squatting on &quot;code.it&quot;</li>
+<li>Pay off the anonymous Italian who&#39;s been squatting on &quot;code.it&quot;</li>
 <li>Upgrade Rick Olsen to &quot;technosausage&quot;</li>
 <li>Mojombo will finally buy back the username &quot;tom&quot; from the MySpace guy. </li>
 <li>Build a room just for holding their giant piles of cash. </li>
-<li>Get the lunar datacenter they&#8217;ve been eying for months.</li>
+<li>Get the lunar datacenter they&#39;ve been eying for months.</li>
 <li>Develop a post-receive hook that actually kills a kitten when someone force pushes. </li>
 <li>Buy Linus.</li>
 <li>Fund the covert operation to eliminate the out-of-control self-aware Hubot. </li>
@@ -40,22 +40,18 @@
     <link href="http://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"/>
     <updated>2012-05-14T00:00:00-05:00</updated>
     <id>http://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing</id>
-    <content type="html"><![CDATA[<p>Sometimes it&#8217;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
+    <content type="html"><![CDATA[<p>Sometimes it&#39;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
 
-<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller&#8217;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
+<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller&#39;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
 
 <script src="https://gist.github.com/2696974.js?file=hinder.sh"></script>
 
-<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &quot;hinder&quot;. After that, it&#8217;s simply a matter of using it:</p>
-
-<pre><code>$ hinder www.google.com
-</code></pre>
-
+<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &quot;hinder&quot;. After that, it&#39;s simply a matter of using it:</p>
+<div class="highlight"><pre><code class="text">$ hinder www.google.com
+</code></pre></div>
 <p>Now when you visit google.com, you should see some marked slowness. To reset, just run:</p>
-
-<pre><code>$ hinder reset
-</code></pre>
-
+<div class="highlight"><pre><code class="text">$ hinder reset
+</code></pre></div>
 <p>Google is now fast again.</p>
 
 <p>The script works by adding 250ms delay to both directions of network traffic. It also adds a packet-loss percentage of 10%. You can play with these numbers to get even more latency simulation. Enjoy!</p>
@@ -67,7 +63,7 @@
     <link href="http://joshuadavey.com/2012/03/30/add-untracked-files-in-git/"/>
     <updated>2012-03-30T00:00:00-05:00</updated>
     <id>http://joshuadavey.com/2012/03/30/add-untracked-files-in-git</id>
-    <content type="html"><![CDATA[<p>I&#8217;ve often been annoyed that there&#8217;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
+    <content type="html"><![CDATA[<p>I&#39;ve often been annoyed that there&#39;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
 
 <script src="https://gist.github.com/2256047.js?file=.gitconfig"></script>
 
@@ -83,31 +79,31 @@
     <content type="html"><![CDATA[<p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
-context of what I&#8217;m working on to see the test result.</p>
+context of what I&#39;m working on to see the test result.</p>
 
-<p>Taking a cue from <a href="http://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&#8217;s excellent intro to tmux</a>, I&#8217;ve
+<p>Taking a cue from <a href="http://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&#39;s excellent intro to tmux</a>, I&#39;ve
 been using tmux lately as my primary workspace. There are excellent
-<a href="http://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="http://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I&#8217;ve really
+<a href="http://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper&#39;s introduction to tmux">introductions to</a> <a href="http://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost&#39;s introduction to tmux">tmux elsewhere</a>, but I&#39;ve really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
-development. But rather than sing tmux&#8217;s praises, I&#8217;d like to talk about
+development. But rather than sing tmux&#39;s praises, I&#39;d like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
 better.</p>
 
 <h2>Other test-running solutions</h2>
 
 <p>Autotesting gives you immediate feedback, but runs everytime you save a
-file. Even though this often is desired behavior, I can&#8217;t tell you how
-many times I&#8217;ve saved a feature file, only to immediately notice a typo.
+file. Even though this often is desired behavior, I can&#39;t tell you how
+many times I&#39;ve saved a feature file, only to immediately notice a typo.
 Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
 
-<p>I&#8217;ve also tried more editor-embedding techniques of running tests. Both
+<p>I&#39;ve also tried more editor-embedding techniques of running tests. Both
 <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
 for the command to finish before I can type, or even navigate again. And
-I can&#8217;t look at a failure message and my code at the same time.</p>
+I can&#39;t look at a failure message and my code at the same time.</p>
 
 <h2>A faster feedback loop</h2>
 
@@ -120,10 +116,10 @@ the longevity of your code, but one of the side benefits is the speed
 increase for running individual specs or tests. This technique is being
 championed by Gary Bernhardt and Corey Haines, among others.</p>
 
-<p>Because tmux is so scriptable, it isn&#8217;t hard to send commands to other
+<p>Because tmux is so scriptable, it isn&#39;t hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I&#8217;ve created a vim plugin that shortens
-the feedback loop when practicing TDD in a tmux session. It&#8217;s called
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork">tslime.vim</a>, I&#39;ve created a vim plugin that shortens
+the feedback loop when practicing TDD in a tmux session. It&#39;s called
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 
 <h2>Using tslime.vim</h2>
@@ -139,44 +135,42 @@ each of these prompts, so you can happily mash <code>&lt;Tab&gt;</code>.</p>
 
 <p>The plugin exposes a general-purpose function to send arbitrary text to
 the configured tmux pane. For example, you can use it in the following way:</p>
-
-<pre><code>:call Send_to_Tmux(&quot;rspec &quot;.expand(&quot;%&quot;).&quot;\n&quot;)
-</code></pre>
-
+<div class="highlight"><pre><code class="text">:call Send_to_Tmux(&quot;rspec &quot;.expand(&quot;%&quot;).&quot;\n&quot;)
+</code></pre></div>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
-open is so common that I&#8217;ve packaged up some useful defaults in
+open is so common that I&#39;ve packaged up some useful defaults in
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 
 <h2>Using turbux.vim</h2>
 
 <p>Turbux.vim tries to intelligently choose the right spec, test or feature
-to run when you invoke it. If you&#8217;re in a spec, invoking the plugin
+to run when you invoke it. If you&#39;re in a spec, invoking the plugin
 (by default with <code>&lt;leader&gt;t</code>) will run <code>rspec path/to/my_spec.rb</code> in
 the corresponding pane. In a test-unit file, it will run <code>ruby -Itest
 path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber
 path/to/my.feature</code>.</p>
 
-<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&#8217;s awesomeness, I&#8217;ve also provided some mappings for
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&#39;s awesomeness, I&#39;ve also provided some mappings for
 when the current file has a corresponding test or spec. For example,
-When I&#8217;m in a file that has a corresponding spec, such as a model or
+When I&#39;m in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
 
 <p>Finally, if the plugin is invoked outside the context of any feature
 or spec-related file, it will simply run the most recent test command
 again.</p>
 
-<p>Also, I&#8217;ve added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
-cucumber scenario. It works by adding the vim cursor&#8217;s line number to
+<p>Also, I&#39;ve added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
+cucumber scenario. It works by adding the vim cursor&#39;s line number to
 the rspec or cucumber command.</p>
 
 <h2>Conclusion</h2>
 
-<p>This setup has been really rewarding so far. There&#8217;s far less context
+<p>This setup has been really rewarding so far. There&#39;s far less context
 switching, as I never have to leave my editor. There are also fewer
-surprises. As far as I&#8217;m concerned, the faster my feedback, the better.</p>
+surprises. As far as I&#39;m concerned, the faster my feedback, the better.</p>
 
-<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
+<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 
@@ -195,7 +189,7 @@ merged in.</p>
     <id>http://joshuadavey.com/2011/10/11/zsh-completion-for-hitch</id>
     <content type="html"><![CDATA[<p>At <a href="http://www.hashrocket.com">hashrocket</a>, we use <a href="http://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour. </p>
 
-<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&#8217;s github usernames and a prefix with a &quot;+&quot;, creating email addresses of the form &quot;dev+jgdavey+therubymug@hashrocket.com&quot;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
+<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&#39;s github usernames and a prefix with a &quot;+&quot;, creating email addresses of the form &quot;dev+jgdavey+therubymug@hashrocket.com&quot;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
 
@@ -214,10 +208,10 @@ merged in.</p>
     <link href="http://joshuadavey.com/2011/06/13/qr-codes-in-ruby/"/>
     <updated>2011-06-13T00:00:00-05:00</updated>
     <id>http://joshuadavey.com/2011/06/13/qr-codes-in-ruby</id>
-    <content type="html"><![CDATA[<p>QR codes seem to be everywhere these days. I&#8217;ve seen them in
+    <content type="html"><![CDATA[<p>QR codes seem to be everywhere these days. I&#39;ve seen them in
 advertisements on the train, on the back of magazines, and, most
-recently, on someone&#8217;s wedding invitation. A lot of folks are using
-QR codes as a quick way to share URLs. But that&#8217;s not all that they
+recently, on someone&#39;s wedding invitation. A lot of folks are using
+QR codes as a quick way to share URLs. But that&#39;s not all that they
 are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
 
@@ -252,7 +246,7 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 <p>The QR Decoding landscape varies even more than its QR encoding
 counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
-libraries that I&#8217;ve found are:</p>
+libraries that I&#39;ve found are:</p>
 
 <ul>
 <li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
@@ -289,13 +283,13 @@ libraries that I&#8217;ve found are:</p>
 
 <h2>The Bottom Line</h2>
 
-<p>Wherein I offer &quot;My Two Cents&quot;. If you&#8217;re on a stack that can install
-libraries and you&#8217;re using an MRI ruby (1.8 or 1.9), use qrencoder and
+<p>Wherein I offer &quot;My Two Cents&quot;. If you&#39;re on a stack that can install
+libraries and you&#39;re using an MRI ruby (1.8 or 1.9), use qrencoder and
 qrdecoder. They are both very fast and awesome. Additionally, their
-APIs complement each other. If you&#8217;re on Heroku, use rQRCode and qrio.
-They&#8217;re both pure ruby and play nice with an environment where you can&#8217;t
-install you&#8217;re own libraries. If you&#8217;re on JRuby, use Zxing.rb for
-decoding, and try both rQRCode and qrencoder. I haven&#8217;t tried qrencoder
+APIs complement each other. If you&#39;re on Heroku, use rQRCode and qrio.
+They&#39;re both pure ruby and play nice with an environment where you can&#39;t
+install you&#39;re own libraries. If you&#39;re on JRuby, use Zxing.rb for
+decoding, and try both rQRCode and qrencoder. I haven&#39;t tried qrencoder
 with JRuby&#8211;or any compiled gems for that matter&#8211;so your mileage may
 vary.</p>
 
@@ -313,9 +307,9 @@ fits your needs best will largely depend on your stack.</p>
     <link href="http://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"/>
     <updated>2010-11-16T00:00:00-06:00</updated>
     <id>http://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets</id>
-    <content type="html"><![CDATA[<p><strike>This is still rough, but I&#8217;m finding it quite useful:</strike></p>
+    <content type="html"><![CDATA[<p><strike>This is still rough, but I&#39;m finding it quite useful:</strike></p>
 
-<p>I&#8217;ve converted this to a full-blown VIM plugin: http://github.com/jgdavey/vim-blockle</p>
+<p>I&#39;ve converted this to a full-blown VIM plugin: http://github.com/jgdavey/vim-blockle</p>
 ]]></content>
   </entry>
   
@@ -328,13 +322,13 @@ fits your needs best will largely depend on your stack.</p>
 
 <script src="http://gist.github.com/530421.js?file=original_migration.rb"></script> 
 
-<p>However, I also wanted to get rid of the original migration file that created the file to begin with, since it was no longer meaningful. As it turns out, checking the existence of a table isn&#8217;t complicated at all: </p>
+<p>However, I also wanted to get rid of the original migration file that created the file to begin with, since it was no longer meaningful. As it turns out, checking the existence of a table isn&#39;t complicated at all: </p>
 
 <script src="http://gist.github.com/530421.js?file=better_migration.rb"></script> 
 
-<p>Now, folks who never had that table to begin with won&#8217;t get an error when running <code>rake db:migrate</code>, and those who did will simply drop it. This works because <code>connection</code> is actually delegated to <code>ActiveRecord::Base.connection</code>.</p>
+<p>Now, folks who never had that table to begin with won&#39;t get an error when running <code>rake db:migrate</code>, and those who did will simply drop it. This works because <code>connection</code> is actually delegated to <code>ActiveRecord::Base.connection</code>.</p>
 
-<p>As a disclaimer, I&#8217;ve only used this technique in Rails 2.3, so I can&#8217;t vouch for it working in other versions.</p>
+<p>As a disclaimer, I&#39;ve only used this technique in Rails 2.3, so I can&#39;t vouch for it working in other versions.</p>
 ]]></content>
   </entry>
   

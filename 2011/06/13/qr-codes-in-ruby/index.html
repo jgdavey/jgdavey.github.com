@@ -13,6 +13,7 @@
     <link href="/atom.xml" rel="alternate" title="Awkward and Proud" type="application/atom+xml">
     <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/javascripts/main.js"></script>
   </head>
 
@@ -24,6 +25,7 @@
         <ul class="meta">
           <li><a href="/about">About</a> / <a href="/atom.xml">RSS</a></li>
         </ul>
+        
       </div>
 
       <section id="posts">
@@ -34,10 +36,10 @@
 
     <div class="post-body">
       <h3 class="title">QR Codes in Ruby</h3>
-      <p>QR codes seem to be everywhere these days. I've seen them in
+      <p>QR codes seem to be everywhere these days. I&#39;ve seen them in
 advertisements on the train, on the back of magazines, and, most
-recently, on someone's wedding invitation. A lot of folks are using
-QR codes as a quick way to share URLs. But that's not all that they
+recently, on someone&#39;s wedding invitation. A lot of folks are using
+QR codes as a quick way to share URLs. But that&#39;s not all that they
 are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
 
@@ -72,7 +74,7 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 <p>The QR Decoding landscape varies even more than its QR encoding
 counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
-libraries that I've found are:</p>
+libraries that I&#39;ve found are:</p>
 
 <ul>
 <li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
@@ -109,14 +111,14 @@ libraries that I've found are:</p>
 
 <h2>The Bottom Line</h2>
 
-<p>Wherein I offer &quot;My Two Cents&quot;. If you're on a stack that can install
-libraries and you're using an MRI ruby (1.8 or 1.9), use qrencoder and
+<p>Wherein I offer &quot;My Two Cents&quot;. If you&#39;re on a stack that can install
+libraries and you&#39;re using an MRI ruby (1.8 or 1.9), use qrencoder and
 qrdecoder. They are both very fast and awesome. Additionally, their
-APIs complement each other. If you're on Heroku, use rQRCode and qrio.
-They're both pure ruby and play nice with an environment where you can't
-install you're own libraries. If you're on JRuby, use Zxing.rb for
-decoding, and try both rQRCode and qrencoder. I haven't tried qrencoder
-with JRuby--or any compiled gems for that matter--so your mileage may
+APIs complement each other. If you&#39;re on Heroku, use rQRCode and qrio.
+They&#39;re both pure ruby and play nice with an environment where you can&#39;t
+install you&#39;re own libraries. If you&#39;re on JRuby, use Zxing.rb for
+decoding, and try both rQRCode and qrencoder. I haven&#39;t tried qrencoder
+with JRuby&#8211;or any compiled gems for that matter&#8211;so your mileage may
 vary.</p>
 
 <p><strong>N.B.</strong> In the interest of full disclosure, I have contributed to both
