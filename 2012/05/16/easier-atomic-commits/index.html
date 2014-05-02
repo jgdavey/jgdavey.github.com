@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta content='Please, never say &amp;quot;widgets&amp;quot; in my presence again.' name='description'>
+<meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<meta content='True' name='HandheldFriendly'>
+<meta content='320' name='MobileOptimized'>
+<link href='/favicon.png' rel='icon'>
+<title>Awkward and Proud - Joshua Davey</title>
+<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+<script src='/javascripts/main.js'></script>
+</head>
+<body>
+<div id='content'>
+<header>
+<h1><a href="/">Awkward and Proud</a></h1>
+</header>
+<div id='description'>
+<ul class='meta'>
+<li>
+<a href="/about">About</a>
+/
+<a href="/atom.xml">RSS</a>
+</li>
+</ul>
+</div>
+<div id='main'><div class='post'>
+<div class='post-body'>
+<h2>Easier Atomic Commits</h2>
+<p><em>This is a repost. You can find the original <a title="Easier Atomic Commits" href="http://hashrocket.com/blog/posts/easier-atomic-commits">here</a></em></p>
+
+<p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
+
+<h2>Problem</h2>
+
+<p>As a practitioner of good source control, you and your team have decided
+to make all of your git commits <a href="http://goo.gl/P95KkZ">atomic</a> within your projects. That is,
+every commit has a green test suite, and you prefer small, incremental
+commits to large, monolithic ones. Keeping commits small and atomic has
+tons of benefits, from more consistent continuous integration results,
+to better team cohesion (have you ever gotten upset with another team
+member for committing red?). But in practice, keeping all of your commits
+atomic can present some challenges.</p>
+
+<p>After doing a bunch of work, making incremental, atomic commits along
+the way, it&rsquo;s time to push your work up. However, when you run <code>git pull
+--rebase</code>, you find that another team member has made changes since you
+last pushed. Your commits are now sitting on top of a different git
+history. Are all of your commits still atomic? Short of checking out
+every single commit and running the suite, how can you be certain that
+every commit is atomic? What a pain! I don&rsquo;t want to check out every
+commit by hand.</p>
+
+<h2>Solution</h2>
+
+<p>Enter <code>atomically</code>, a simple shell script designed to take the pain out
+of checking every commit between your upstream and you. Before pushing,
+you can ensure every commit is atomic by running the script.</p>
+
+<p>To use, just pass atomically the command as arguments:</p>
+<pre class="highlight plaintext">$ atomically rake
+</pre>
+
+<p>The above command will start at the current branch&rsquo;s HEAD and run rake.
+After that, it will check out the previous commit and run the command
+again. It will do so for all commits between you and origin.</p>
+
+<p>If you are confident that nothing in your spec suite changed, you can
+run only your cucumber features the same way:</p>
+<pre class="highlight plaintext">$ atomically cucumber
+</pre>
+
+<p>Or just your spec suite:</p>
+<pre class="highlight plaintext">$ atomically rspec
+</pre>
+
+<p>Regardless, keeping atomic commits is a vital part of good source
+control, and this tool makes it slightly easier to do so.</p>
+
+<p>Here&rsquo;s the source of <code>atomically</code>:</p>
+<pre class="highlight shell"><span class="c">#!/bin/bash</span>
+
+<span class="k">if</span> <span class="o">[</span> -n <span class="s2">"</span><span class="k">$(</span>git status --porcelain<span class="k">)</span><span class="s2">"</span> <span class="o">]</span>; <span class="k">then
+  </span><span class="nb">echo</span> <span class="s2">"ERROR: You have a dirty working copy. This command would remove any files not already checked in"</span>
+  <span class="nb">exit </span>1
+<span class="k">fi
+
+</span><span class="nv">b</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>git symbolic-ref HEAD 2&gt;/dev/null<span class="k">)</span><span class="s2">"</span>
+<span class="nv">branch</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span>basename <span class="nv">$b</span><span class="sb">`</span><span class="s2">"</span>
+<span class="nv">program</span><span class="o">=</span><span class="nv">$*</span>
+
+reset_branch<span class="o">()</span> <span class="o">{</span>
+  git co <span class="nv">$branch</span> --quiet
+<span class="o">}</span>
+
+git rev-list origin/<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span>..<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span> | <span class="k">while </span><span class="nb">read </span>rev; <span class="k">do
+  </span><span class="nb">trap</span> <span class="s2">"exit 1"</span> SIGINT SIGTERM
+  <span class="nb">echo
+  echo</span> <span class="s2">"Running at revision </span><span class="nv">$rev</span><span class="s2">"</span>
+  <span class="nb">echo
+  </span>git co <span class="nv">$rev</span> --quiet <span class="o">&amp;&amp;</span> git clean -fd <span class="o">&amp;&amp;</span> <span class="nv">$program</span>
+  <span class="nb">echo
+  trap</span> - SIGINT SIGTERM
+<span class="k">done
+
+</span>reset_branch
+</pre>
+
+<p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
+
+<p>Thanks to Gary Bernhardt for the scripts&#39; inspiration,
+<code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions">his
+dotfiles</a>.</p>
+
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(["_setAccount", "UA-330362-1"]);
+  _gaq.push(["_trackPageview"]);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>

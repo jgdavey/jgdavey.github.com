@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta content='Please, never say &amp;quot;widgets&amp;quot; in my presence again.' name='description'>
+<meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<meta content='True' name='HandheldFriendly'>
+<meta content='320' name='MobileOptimized'>
+<link href='/favicon.png' rel='icon'>
+<title>Awkward and Proud - Joshua Davey</title>
+<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+<script src='/javascripts/main.js'></script>
+</head>
+<body>
+<div id='content'>
+<header>
+<h1><a href="/">Awkward and Proud</a></h1>
+</header>
+<div id='description'>
+<ul class='meta'>
+<li>
+<a href="/about">About</a>
+/
+<a href="/atom.xml">RSS</a>
+</li>
+</ul>
+</div>
+<div id='main'><div class='post'>
+<div class='post-body'>
+<h2>has_one view</h2>
+<p><em>This is a repost. You can find the original <a title="has_one view" href="http://hashrocket.com/blog/posts/sql-views-and-activerecord">here</a></em></p>
+
+<p>Sometimes, aggregating data can become overly complex in a normal
+ActiveRecord model. Because Rails works well with SQL views, we can
+create associations to SQL views that aggregate data for us, simplifying
+our models and potentially speeding up queries.</p>
+
+<h2>Modeling an inbox</h2>
+
+<p>I&rsquo;ve got an inbox. A cat inbox. For real.</p>
+
+<p><img src="https://s3.amazonaws.com/hashrocket-blog-production/inbox.png" /></p>
+
+<p>There are many possible implementations for modeling an inbox. I&rsquo;ve
+gone with a relatively simple approach. Two users participate in a
+conversation, sending messages back and forth to each other. The
+Conversation model has a subject, but the body of the initial message is
+part of the Message object.</p>
+<pre class="highlight ruby"><span class="c1"># app/models/conversation.rb</span>
+<span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="c1"># fields: to_id, from_id, subject</span>
+  <span class="n">belongs_to</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
+  <span class="n">belongs_to</span> <span class="ss">:from</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
+  <span class="n">has_many</span> <span class="ss">:messages</span><span class="p">,</span> <span class="ss">dependent: :destroy</span><span class="p">,</span> <span class="ss">inverse_of: :conversation</span>
+<span class="k">end</span>
+
+<span class="c1"># app/models/message.rb</span>
+<span class="k">class</span> <span class="nc">Message</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="c1"># fields: user_id, conversation_id, body</span>
+  <span class="n">belongs_to</span> <span class="ss">:conversation</span><span class="p">,</span> <span class="ss">inverse_of: :messages</span>
+  <span class="n">belongs_to</span> <span class="ss">:user</span>
+<span class="k">end</span>
+</pre>
+
+<p>After the initial message, the two participants on the conversation send
+messages back and forth. A user may have any number of conversations
+with other users. As such, the main inbox view must list the
+conversations a user is a participant on, as well as some summary
+information about that conversation.</p>
+
+<p>For our purposes, we&rsquo;ve decided on an HTML table view with the following
+columns:</p>
+
+<ul>
+<li>From - Who the original message was sent from</li>
+<li>To - The original recipient of the message</li>
+<li>Message - the Subject of the conversation, as well as the first line
+of the most recent message</li>
+<li>Last post - The date/time of the most recent message</li>
+<li>Replies - The number of replies on the conversation (excluding the
+first message)</li>
+</ul>
+
+<p>Although the subject is part of the conversation itself, everything else
+comes from its various associations. This is the view, which reveals the
+expected interface each conversation object should have:</p>
+<pre class="highlight haml"><span class="nt">%table</span><span class="nf">#inbox</span>
+  <span class="nt">%thead</span>
+    <span class="nt">%tr</span>
+      <span class="nt">%th</span> From
+      <span class="nt">%th</span> To
+      <span class="nt">%th</span> Message
+      <span class="nt">%th</span> Last post
+      <span class="nt">%th</span> Replies
+  <span class="nt">%tbody</span>
+    <span class="p">-</span> <span class="n">conversations</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">conversation</span><span class="o">|</span>
+      <span class="nt">%tr</span>
+        <span class="nt">%td</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">from_name</span>
+        <span class="nt">%td</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">to_name</span>
+        <span class="nt">%td</span>
+          <span class="nt">%p</span>
+            <span class="nt">%strong</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">subject</span>
+            <span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">most_recent_message_body</span>
+        <span class="nt">%td</span>
+          <span class="p">=</span> <span class="n">time_ago_in_words</span><span class="p">(</span><span class="n">conversation</span><span class="p">.</span><span class="nf">most_recent_message_sent_at</span><span class="p">)</span>
+          ago
+        <span class="nt">%td</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">reply_count</span>
+</pre>
+
+<p>Let&rsquo;s explore a typical way to model this in our model directly.</p>
+
+<h2>A typical Ruby implementation</h2>
+<pre class="highlight ruby"><span class="c1"># app/models/conversation.rb</span>
+<span class="k">class</span> <span class="nc">Converation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="c1"># associations, etc...</span>
+
+  <span class="k">def</span> <span class="nf">most_recent_message_body</span>
+    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">body</span> <span class="k">if</span> <span class="n">most_recent_message</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">most_recent_message_sent_at</span>
+    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">created_at</span> <span class="k">if</span> <span class="n">most_recent_message</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">reply_count</span>
+    <span class="n">messages</span><span class="p">.</span><span class="nf">size</span> <span class="o">-</span> <span class="mi">1</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">to_name</span>
+    <span class="n">to</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">from_name</span>
+    <span class="n">from</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">most_recent_message</span>
+    <span class="vi">@most_recent_message</span> <span class="o">||=</span> <span class="n">messages</span><span class="p">.</span><span class="nf">by_date</span><span class="p">.</span><span class="nf">first</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># app/models/message.rb</span>
+<span class="k">class</span> <span class="nc">Message</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="c1"># associations, etc...</span>
+
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">by_date</span>
+    <span class="n">order</span><span class="p">(</span><span class="s2">"created_at DESC"</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+
+<p>This approach is fairly straightforward. We obtain the
+<code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code> from the
+most recent message, which is trivial after we&rsquo;ve ordered the <code>messages</code>
+association by date. The <code>to_name</code> and <code>from_name</code> methods are delegated
+to their respective associations. And <code>reply_count</code> is simple the total
+number of messages, minus one (the initial message doesn&rsquo;t count as a
+&ldquo;reply&rdquo;).</p>
+
+<p>This approach offers a number of advantages. For one, it is familiar.
+I believe most Rails developers would be able to understand exactly
+what&rsquo;s going on above. It also locates all of the domain logic within
+the <code>Conversation</code> model, making it easy to find.</p>
+
+<p>Having everything in the <code>Conversation</code> model is actually a blessing
+and a curse. Although everything is easy to find, the model is also
+quickly becoming bloated. It may not seem like much right now, but as
+more information is added to the inbox, it will become unruly.</p>
+
+<p>The other problem with the above is the multitude of N+1 queries that
+it has introduced. With only 3 conversations in play, loading the inbox
+outputs a log like this:</p>
+<pre class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 09:49:02 -0600
+Connecting to database specified by database.yml
+Processing by InboxesController#show as HTML
+  User Load (12.8ms)  SELECT "users".* FROM "users" LIMIT 1
+  Conversation Load (0.6ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
+  User Load (18.3ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1
+  User Load (0.5ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1
+  Message Load (12.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 7 ORDER BY created_at DESC LIMIT 1
+   (0.6ms)  SELECT COUNT(*) FROM "messages" WHERE "messages"."conversation_id" = 7
+  User Load (0.4ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 3 LIMIT 1
+  CACHE (0.0ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1
+  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 8 ORDER BY created_at DESC LIMIT 1
+   (0.4ms)  SELECT COUNT(*) FROM "messages" WHERE "messages"."conversation_id" = 8
+  CACHE (0.0ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1
+  CACHE (0.0ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1
+  Message Load (0.5ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 9 ORDER BY created_at DESC LIMIT 1
+   (0.4ms)  SELECT COUNT(*) FROM "messages" WHERE "messages"."conversation_id" = 9
+  Rendered inboxes/show.html.haml within layouts/application (683.9ms)
+Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)
+</pre>
+
+<h2>Eager-loading</h2>
+
+<p>We can definitely cut down on the N+1 query problem by introducing eager
+loading. In our controller, the <code>conversations</code> exposure is currently
+defined thusly:</p>
+<pre class="highlight ruby"><span class="c1"># app/controllers/inboxes_controller.rb</span>
+<span class="k">class</span> <span class="nc">InboxesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">expose</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="p">{</span> <span class="no">User</span><span class="p">.</span><span class="nf">first</span> <span class="p">}</span>
+  <span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span> <span class="p">}</span>
+<span class="k">end</span>
+</pre>
+
+<p>Let&rsquo;s change that to eagerly load its associations:</p>
+<pre class="highlight ruby">  <span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:messages</span><span class="p">,</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">:from</span><span class="p">)</span> <span class="p">}</span>
+</pre>
+
+<p>With eager-loading in place, the log now looks slightly more reasonable:</p>
+<pre class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 09:55:24 -0600
+Processing by InboxesController#show as HTML
+  User Load (0.3ms)  SELECT "users".* FROM "users" LIMIT 1
+  Conversation Load (0.3ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
+  Message Load (0.3ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" IN (7, 8, 9)
+  User Load (0.2ms)  SELECT "users".* FROM "users" WHERE "users"."id" IN (1, 2)
+  User Load (0.2ms)  SELECT "users".* FROM "users" WHERE "users"."id" IN (2, 3, 1)
+  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 7 ORDER BY created_at DESC LIMIT 1
+  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 8 ORDER BY created_at DESC LIMIT 1
+  Message Load (0.3ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 9 ORDER BY created_at DESC LIMIT 1
+  Rendered inboxes/show.html.haml within layouts/application (9.5ms)
+Completed 200 OK in 13ms (Views: 10.0ms | ActiveRecord: 2.4ms)
+</pre>
+
+<p>There are more optimizations we could make here in Ruby land. But data
+transformation and aggregation is something that databases are good at.
+We can use a native feature of SQL to aggregate information for us:
+views.</p>
+
+<h2>SQL views</h2>
+
+<p>A SQL view is essentially a virtual table. It can be queried just like a
+normal table, but does not physically store anything itself. Instead, a
+view has a query definition that it uses to represent its data.</p>
+
+<p>In our case, SQL views can allow us to treat a complex SQL query as a
+table, abstracting away the complexity into view itself. SQL views are
+also read-only, and therefore are usually only used for querying, but
+not updating data directly.</p>
+
+<p>ActiveRecord plays nicely with SQL views out of the box. It considers a
+SQL view a normal table, and all associations and querying methods work
+like they would with a normal table, with one exception: the records are
+read-only.</p>
+
+<h2>Add a migration for the view</h2>
+
+<p>Let&rsquo;s create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
+conversation. We can do this in a normal migration, but it needs to be
+created with raw SQL:</p>
+<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CreateConversationSummaries</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
+      CREATE VIEW conversation_summaries AS
+        SELECT ...
+</span><span class="no">    SQL</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="n">execute</span> <span class="s1">'DROP VIEW conversation_summaries'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+
+<p>This is the basic syntax for adding a view with ActiveRecord migrations.
+Our view needs to incorporate <code>to_name</code> and <code>from_name</code>, so let&rsquo;s add
+those fields:</p>
+<pre class="highlight sql"><span class="k">CREATE</span> <span class="k">VIEW</span> <span class="n">conversation_summaries</span> <span class="k">AS</span>
+  <span class="k">SELECT</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
+  <span class="n">f</span><span class="p">.</span><span class="n">name</span> <span class="k">as</span> <span class="n">from_name</span><span class="p">,</span>
+  <span class="n">t</span><span class="p">.</span><span class="n">name</span> <span class="k">as</span> <span class="n">to_name</span>
+  <span class="k">FROM</span> <span class="n">conversations</span> <span class="k">c</span>
+  <span class="k">inner</span> <span class="k">join</span> <span class="n">users</span> <span class="n">t</span> <span class="k">on</span> <span class="n">t</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">to_id</span>
+  <span class="k">inner</span> <span class="k">join</span> <span class="n">users</span> <span class="n">f</span> <span class="k">on</span> <span class="n">f</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">from_id</span>
+</pre>
+
+<p>After we migrate our database, we can use our database console to verify
+that we see what we expect:</p>
+<pre class="highlight plaintext">mailbox_development=# select * from conversation_summaries;
+ id |    from_name    |     to_name
+----+-----------------+-----------------
+  7 | Felionel Richie | Cat Stevens
+  8 | Nelly Purrtado  | Cat Stevens
+  9 | Cat Stevens     | Felionel Richie
+(3 rows)
+</pre>
+
+<p>Cool. The <code>id</code> corresponds to the conversation, and <code>to_name</code> and
+<code>from_name</code> columns come from the users table, but it&rsquo;s all displayed to
+us as one table.</p>
+
+<h2>ActiveRecord associations for views</h2>
+
+<p>Now that our view exists, we can integrate it into our application:</p>
+<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">class</span> <span class="nc">Summary</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">table_name</span> <span class="o">=</span> <span class="s2">"conversation_summaries"</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">primary_key</span> <span class="o">=</span> <span class="s2">"id"</span>
+    <span class="n">belongs_to</span> <span class="ss">:conversation</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
+  <span class="k">end</span>
+
+  <span class="n">has_one</span> <span class="ss">:summary</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
+<span class="k">end</span>
+</pre>
+
+<p>Let&rsquo;s break down what&rsquo;s going on here.</p>
+
+<p>I&rsquo;ve chosen to nest the Summary model within the Conversation
+namespace, mostly to call out the fact that we&rsquo;re doing something
+non-standard. Also, the Summary class only makes sense in the context of
+a Conversation. For that reason, we need to manually set the name of the
+table.</p>
+
+<p>We must also choose a primary key, because Rails cannot infer it for SQL
+views. The association itself should be familiar. It works like a normal
+<code>has_one</code>/<code>belongs_to</code> relationship, except that we override the foreign
+key.</p>
+
+<p>Now that the relationships are set up, let&rsquo;s actually take advantage
+of our new view by changing the implementation of the <code>to_name</code> and
+<code>from_name</code> methods.</p>
+<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="c1"># ...</span>
+
+  <span class="k">def</span> <span class="nf">to_name</span>
+    <span class="c1"># Used to be to.name</span>
+    <span class="n">summary</span><span class="p">.</span><span class="nf">to_name</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">from_name</span>
+    <span class="c1"># Used to be from.name</span>
+    <span class="n">summary</span><span class="p">.</span><span class="nf">from_name</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+
+<p>One the biggest benefits about this approach is that we can <em>eager-load
+a view assocation</em>. We no longer need the <code>to</code> or <code>from</code> associations
+eager-loaded, since we are no longer using any attributes from them in
+the view. Let&rsquo;s update our controller&rsquo;s exposure to only eager-load the
+necessary parts:</p>
+<pre class="highlight ruby"><span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:summary</span><span class="p">,</span> <span class="ss">:messages</span><span class="p">)</span> <span class="p">}</span>
+</pre>
+
+<p>And when we visit the inbox again, the log looks like this:</p>
+<pre class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 14:26:12 -0600
+Processing by InboxesController#show as HTML
+  User Load (0.5ms)  SELECT "users".* FROM "users" LIMIT 1
+  Conversation Load (0.4ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
+  Conversation::Summary Load (0.6ms)  SELECT "conversation_summaries".* FROM "conversation_summaries" WHERE "conversation_summaries"."id" IN (7, 8, 9)
+  Message Load (0.3ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" IN (7, 8, 9)
+  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 7 ORDER BY created_at DESC LIMIT 1
+  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 8 ORDER BY created_at DESC LIMIT 1
+  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 9 ORDER BY created_at DESC LIMIT 1
+  Rendered inboxes/show.html.haml within layouts/application (10.4ms)
+Completed 200 OK in 13ms (Views: 9.5ms | ActiveRecord: 2.9ms)
+</pre>
+
+<p>That&rsquo;s definitely an improvement, albeit a small one. We&rsquo;ve pushed data
+from the user model into our SQL view, but we don&rsquo;t need to stop there.</p>
+
+<h2>Push it down!</h2>
+
+<p>Let&rsquo;s update our view migration to include more aggregated information
+about each conversation.</p>
+<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CreateConversationSummaries</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+  <span class="k">def</span> <span class="nf">up</span>
+    <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
+      CREATE VIEW conversation_summaries AS
+        SELECT c.id,
+        f.name as from_name,
+        t.name as to_name,
+        m.body as most_recent_message_body,
+        m.created_at as most_recent_message_sent_at,
+        (select count(*) from messages m2 where m2.conversation_id = c.id) - 1 as reply_count
+        FROM conversations c
+        inner join users t on t.id = c.to_id
+        inner join users f on f.id = c.from_id
+        left outer join (
+          select distinct on(conversation_id) conversation_id, body, created_at
+          from messages m1
+          order by conversation_id, created_at desc
+        ) m ON m.conversation_id = c.id
+</span><span class="no">    SQL</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">down</span>
+    <span class="n">execute</span> <span class="s1">'DROP VIEW conversation_summaries'</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+
+<p>After running <code>rake db:migrate:redo</code>, we can verify that everything is
+still working as expect in the database console:</p>
+<pre class="highlight plaintext">mailbox_development=# select * from conversation_summaries;
+ id |    from_name    |     to_name     |        most_recent_message_body        | most_recent_message_sent_at | reply_count 
+----+-----------------+-----------------+----------------------------------------+-----------------------------+-------------
+  7 | Felionel Richie | Cat Stevens     | Say you. Say meow.                     | 2013-02-08 02:45:27.07712   |           2
+  8 | Nelly Purrtado  | Cat Stevens     | Except that I'm a cat                  | 2013-02-05 16:45:27.088292  |           0
+  9 | Cat Stevens     | Felionel Richie | I'm sorry that you're feeling that way | 2013-01-30 16:45:27.092443  |           1
+(3 rows)
+</pre>
+
+<p>That&rsquo;s a lot of SQL! But actually, all I&rsquo;ve added are one join to a
+subquery, and a subselect. Let&rsquo;s review both of these changes.</p>
+
+<p>There are many ways to grab the most recent message for a conversation
+in SQL, including using <a href="http://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I&rsquo;ve opted for
+here is a <a title="Postgresql documentation" href="http://www.postgresql.org/docs/9.2/static/queries-table-expressions.html#QUERIES-SUBQUERIES">subquery in the table expression</a>. The subquery
+alone would return rows for only the most recent messages for each
+conversation:</p>
+<pre class="highlight plaintext">conversation_id |                  body                  |         created_at
+----------------+----------------------------------------+----------------------------
+              7 | Say you. Say meow.                     | 2013-02-08 02:45:27.07712
+              8 | Except that I'm a cat                  | 2013-02-05 16:45:27.088292
+              9 | I'm sorry that you're feeling that way | 2013-01-30 16:45:27.092443
+</pre>
+
+<p>By joining with only the most recent message per conversation, we avoid
+duplicate rows and only get the <code>body</code> and <code>created_at</code> columns from
+the most recent message. Then, joining against this subquery, we can
+add the <code>body</code> and <code>created_at</code> to the list of projections, naming
+them <code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code>,
+respectively.</p>
+
+<p>The other thing we&rsquo;ve added to the view this iteration is the
+<code>reply_count</code> column, which is a subselect to get the count. We also
+subtract 1, just as before.</p>
+
+<p>Let&rsquo;s take a look at our Conversation model now:</p>
+<pre class="highlight ruby"><span class="c1"># before</span>
+<span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
+  <span class="n">belongs_to</span> <span class="ss">:from</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
+  <span class="n">has_many</span> <span class="ss">:messages</span><span class="p">,</span> <span class="ss">dependent: :destroy</span><span class="p">,</span> <span class="ss">inverse_of: :conversation</span>
+
+  <span class="k">def</span> <span class="nf">most_recent_message_body</span>
+    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">body</span> <span class="k">if</span> <span class="n">most_recent_message</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">most_recent_message_sent_at</span>
+    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">created_at</span> <span class="k">if</span> <span class="n">most_recent_message</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">reply_count</span>
+    <span class="o">[</span><span class="n">messages</span><span class="p">.</span><span class="nf">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="nf">max</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">to_name</span>
+    <span class="n">to</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">from_name</span>
+    <span class="n">from</span><span class="p">.</span><span class="nf">name</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">most_recent_message</span>
+    <span class="vi">@most_recent_message</span> <span class="o">||=</span> <span class="n">messages</span><span class="p">.</span><span class="nf">by_date</span><span class="p">.</span><span class="nf">first</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+
+<span class="c1"># after</span>
+<span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="k">class</span> <span class="nc">Summary</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">table_name</span> <span class="o">=</span> <span class="s2">"conversation_summaries"</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">primary_key</span> <span class="o">=</span> <span class="s2">"id"</span>
+    <span class="n">belongs_to</span> <span class="ss">:conversation</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
+  <span class="k">end</span>
+
+  <span class="n">belongs_to</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
+  <span class="n">belongs_to</span> <span class="ss">:from</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
+  <span class="n">has_many</span> <span class="ss">:messages</span><span class="p">,</span> <span class="ss">dependent: :destroy</span><span class="p">,</span> <span class="ss">inverse_of: :conversation</span>
+  <span class="n">has_one</span> <span class="ss">:summary</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
+
+  <span class="n">delegate</span> <span class="ss">:most_recent_message_sent_at</span><span class="p">,</span> <span class="ss">:most_recent_message_body</span><span class="p">,</span>
+    <span class="ss">:reply_count</span><span class="p">,</span> <span class="ss">:to_name</span><span class="p">,</span> <span class="ss">:from_name</span><span class="p">,</span> <span class="ss">to: :summary</span>
+
+<span class="k">end</span>
+</pre>
+
+<p>With much of our data transformation and aggregation in our SQL view,
+our model has become trivially simple. It literally only contains
+assocations and delegation now. We update our exposure to only
+eager-load the conversation summary:</p>
+<pre class="highlight ruby"><span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:summary</span><span class="p">)</span> <span class="p">}</span>
+</pre>
+
+<p>Now, reloading the page yields the following log output:</p>
+<pre class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 15:37:49 -0600
+Processing by InboxesController#show as HTML
+  User Load (1.0ms)  SELECT "users".* FROM "users" LIMIT 1
+  Conversation Load (0.2ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
+  Conversation::Summary Load (0.8ms)  SELECT "conversation_summaries".* FROM "conversation_summaries" WHERE "conversation_summaries"."id" IN (7, 8, 9)
+  Rendered inboxes/show.html.haml within layouts/application (5.5ms)
+Completed 200 OK in 8ms (Views: 6.0ms | ActiveRecord: 2.0ms)
+</pre>
+
+<p>Now we see some real improvement. All N+1 queries are gone, replaced
+instead with the eager-loading of the the Conversation::Summary model.</p>
+
+<h2>Real World Benefits</h2>
+
+<p>I used this technique in a real-world application. It helped abstract
+some of the mundane details of the inbox and allowed us to think about
+each conversation at a higher level with a summary.</p>
+
+<p>In fact the app included even more business rules than I&rsquo;ve included
+here. Each conversation had to include a read/unread status that updated
+with each sent message. Although it was easily implemented in pure Ruby,
+it cluttered the model and created yet more N+1 queries in the app view.</p>
+
+<p>The inbox also had to be sorted by the most recent message date,
+so that the conversation with the most recent activity would
+appear first in the list. This kind of sorting without SQL is both
+cumbersome and inefficient in Ruby; you have to load all messages
+for each conversation. With the SQL view, it was as simple as
+changing the scope from <code>user.conversations.include(:summary)</code> to
+<code>user.conversations.include(:summary).order(&quot;conversation_summaries.most
+_recent_message_sent_at DESC&quot;)</code>.</p>
+
+<h2>Conclusion</h2>
+
+<p>Any time that we push stuff into the database, we make a tradeoff.
+In this case, when we move data transformation into the SQL view, we
+sacrifice the co-location of the conversation model and the definition
+of its summary. With the summary definition located in the database,
+there&rsquo;s one extra layer of indirection.</p>
+
+<p>The other tradeoff is that any time we&rsquo;d like to make a non-trivial
+change the view, we actually have to create an entirely new view,
+replacing the old one. If for example, we knew that our inbox was likely
+to change or add fields, the SQL view approach might be too brittle.</p>
+
+<p>On the other hand, we effectively removed N+1 queries from our
+application and simplified our model considerably. By abstracting the
+conversation&rsquo;s summary into a model backed by a SQL view, we&rsquo;re able
+to think of the Summary as an object in its own right. This provides
+a cognitive simplification, but also yields performance gains as the
+dataset grows.</p>
+
+<p>It may not be right for every situation, but knowing and understanding
+how we can use SQL views in our Rails applications adds another tool to
+our toolbelt.</p>
+
+<h2>Example app</h2>
+
+<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views">sample Rails app</a> to
+iterate quickly. I used TDD to write the pure-ruby approach, and reused
+the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
+approaches. Of particular note is the <a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo
+dels/category.rb">history of the Conversation
+model</a>, which mirrors the code above.</p>
+
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(["_setAccount", "UA-330362-1"]);
+  _gaq.push(["_trackPageview"]);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>

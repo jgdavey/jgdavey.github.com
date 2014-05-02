@@ -1,45 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Awkward and Proud</title>
-    <meta name="description" content="Please, never say &quot;widgets&quot; in my presence again."/>
-
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="/favicon.png" rel="icon">
-    <link href="/atom.xml" rel="alternate" title="Awkward and Proud" type="application/atom+xml">
-    <link rel="stylesheet" type="text/css" href="/stylesheets/main.css"/>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="/javascripts/main.js"></script>
-  </head>
-
-  <body>
-    <div id="wrapper">
-      <h1><a href="/">Awkward and Proud</a></h1>
-
-      <div id="description">
-        <ul class="meta">
-          <li><a href="/about">About</a> / <a href="/atom.xml">RSS</a></li>
-        </ul>
-        
-      </div>
-
-      <section id="posts">
-  <article class="post">
-    <h2 class="permalink">
-      <a title="" href="">2011-06-13</a>
-    </h2>
-
-    <div class="post-body">
-      <h3 class="title">QR Codes in Ruby</h3>
-      <p>QR codes seem to be everywhere these days. I&#39;ve seen them in
+<head>
+<meta charset='utf-8'>
+<meta content='Please, never say &amp;quot;widgets&amp;quot; in my presence again.' name='description'>
+<meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<meta content='True' name='HandheldFriendly'>
+<meta content='320' name='MobileOptimized'>
+<link href='/favicon.png' rel='icon'>
+<title>Awkward and Proud - Joshua Davey</title>
+<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+<script src='/javascripts/main.js'></script>
+</head>
+<body>
+<div id='content'>
+<header>
+<h1><a href="/">Awkward and Proud</a></h1>
+</header>
+<div id='description'>
+<ul class='meta'>
+<li>
+<a href="/about">About</a>
+/
+<a href="/atom.xml">RSS</a>
+</li>
+</ul>
+</div>
+<div id='main'><div class='post'>
+<div class='post-body'>
+<h2>QR Codes in Ruby</h2>
+<p>QR codes seem to be everywhere these days. I&rsquo;ve seen them in
 advertisements on the train, on the back of magazines, and, most
-recently, on someone&#39;s wedding invitation. A lot of folks are using
-QR codes as a quick way to share URLs. But that&#39;s not all that they
+recently, on someone&rsquo;s wedding invitation. A lot of folks are using
+QR codes as a quick way to share URLs. But that&rsquo;s not all that they
 are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
 
@@ -74,7 +69,7 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 <p>The QR Decoding landscape varies even more than its QR encoding
 counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
-libraries that I&#39;ve found are:</p>
+libraries that I&rsquo;ve found are:</p>
 
 <ul>
 <li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
@@ -95,7 +90,7 @@ libraries that I&#39;ve found are:</p>
 <h3>Zxing.rb</h3>
 
 <ul>
-<li>Uses the well-maintained <a href="http://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
+<li>Uses the well-maintained <a title="Zebra Crossing" href="http://code.google.com/p/zxing/">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
 <li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
 <li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
 </ul>
@@ -111,14 +106,14 @@ libraries that I&#39;ve found are:</p>
 
 <h2>The Bottom Line</h2>
 
-<p>Wherein I offer &quot;My Two Cents&quot;. If you&#39;re on a stack that can install
-libraries and you&#39;re using an MRI ruby (1.8 or 1.9), use qrencoder and
+<p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you&rsquo;re on a stack that can install
+libraries and you&rsquo;re using an MRI ruby (1.8 or 1.9), use qrencoder and
 qrdecoder. They are both very fast and awesome. Additionally, their
-APIs complement each other. If you&#39;re on Heroku, use rQRCode and qrio.
-They&#39;re both pure ruby and play nice with an environment where you can&#39;t
-install you&#39;re own libraries. If you&#39;re on JRuby, use Zxing.rb for
-decoding, and try both rQRCode and qrencoder. I haven&#39;t tried qrencoder
-with JRuby&#8211;or any compiled gems for that matter&#8211;so your mileage may
+APIs complement each other. If you&rsquo;re on Heroku, use rQRCode and qrio.
+They&rsquo;re both pure ruby and play nice with an environment where you can&rsquo;t
+install you&rsquo;re own libraries. If you&rsquo;re on JRuby, use Zxing.rb for
+decoding, and try both rQRCode and qrencoder. I haven&rsquo;t tried qrencoder
+with JRuby&ndash;or any compiled gems for that matter&ndash;so your mileage may
 vary.</p>
 
 <p><strong>N.B.</strong> In the interest of full disclosure, I have contributed to both
@@ -128,23 +123,19 @@ Nevertheless, the pure ruby options are solid and well worth a look.</p>
 <p>Regardless of what your needs are, there are lots of options. Which one
 fits your needs best will largely depend on your stack.</p>
 
-    </div>
-  </article>
-</section>
-
-
-    </div>
-
-    <script type="text/javascript">
-      var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-330362-1']);
-      _gaq.push(['_trackPageview']);
-
-      (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-      })();
-    </script>
-  </body>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(["_setAccount", "UA-330362-1"]);
+  _gaq.push(["_trackPageview"]);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
 </html>
