@@ -61,7 +61,7 @@ respective category.</p>
 <p>Implementing the solution in Ruby is fairly straightforward.
 <del>ActiveSupport</del> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
 collections, and we can use those to help us cut down on some typing.</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">attr_accessible</span> <span class="ss">:category_id</span><span class="p">,</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:price</span>
   <span class="n">belongs_to</span> <span class="ss">:category</span>
 
@@ -71,7 +71,7 @@ collections, and we can use those to help us cut down on some typing.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>First, we group all of the cat pictures by their category. Then, for
 each set of pictures, we sort them by their price and name, and take
@@ -111,7 +111,7 @@ filtering has to be done in Ruby.</p>
 
 <p>We can improve performance by doing the filtering at the database level,
 rather than loading all cat pictures into memory each time.</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">attr_accessible</span> <span class="ss">:category_id</span><span class="p">,</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:price</span>
   <span class="n">belongs_to</span> <span class="ss">:category</span>
 
@@ -128,7 +128,7 @@ rather than loading all cat pictures into memory each time.</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Here, we use a subselect to filter the initial set down to only those
 that have the cheapest price per category. In this inner query, each row
@@ -152,7 +152,7 @@ cat picture alphabetically will show up.</p>
 <p>We can improve the implementation above by making it a true chainable
 scope. Whereas <code>find_by_sql</code> returns an array of objects, we can
 refactor this to return an ActiveRelation instead.</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">attr_accessible</span> <span class="ss">:category_id</span><span class="p">,</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:price</span>
   <span class="n">belongs_to</span> <span class="ss">:category</span>
 
@@ -165,7 +165,7 @@ refactor this to return an ActiveRelation instead.</p>
     <span class="n">scoped</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s2">"category_id, min(price)"</span><span class="p">).</span><span class="nf">group</span><span class="p">(</span><span class="ss">:category_id</span><span class="p">).</span><span class="nf">to_sql</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Functionally, this generates the exact same query as before, but allows
 further chaining. Using ActiveRelation&rsquo;s <code>to_sql</code> method, we&rsquo;re able
@@ -205,7 +205,7 @@ separate identities.</p>
 </blockquote>
 
 <p>Let&rsquo;s see how this would work with our dataset. First of all, let&rsquo;s assume the following cat pictures:</p>
-<pre class="highlight plaintext"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
+<pre><code class="highlight plaintext"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
 
  id |         name         | category_id | price 
 ----+----------------------+-------------+-------
@@ -217,7 +217,7 @@ separate identities.</p>
   4 | Turkleton's Folly    |           2 | 11.99
   1 | Meowna Lisa          |           2 | 19.99
   8 | Lady Caterly's Lover |           2 | 22.99
-</pre>
+</code></pre>
 
 <p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s
 Folly&rdquo;, which are the cheapest pictures from their categories.</p>
@@ -225,15 +225,15 @@ Folly&rdquo;, which are the cheapest pictures from their categories.</p>
 <p>Whereas a normal aggregate function with <code>GROUP BY</code> would collapse the
 results, a window function retains the original row. Let&rsquo;s consider how
 this would affect the inner query from the subselect approach above:</p>
-<pre class="highlight plaintext"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
+<pre><code class="highlight plaintext"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
 
  category_id |  min  
 -------------+-------
            1 |  9.99
            2 | 11.99
 
-</pre>
-<pre class="highlight plaintext"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
+</code></pre>
+<pre><code class="highlight plaintext"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
 
  category_id |  min  
 -------------+-------
@@ -245,7 +245,7 @@ this would affect the inner query from the subselect approach above:</p>
            2 | 11.99
            2 | 11.99
            2 | 11.99
-</pre>
+</code></pre>
 
 <p>Above, we&rsquo;ve replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
 have the original rows with an additional column for this aggregate
@@ -259,7 +259,7 @@ defined partition.</p>
 
 <p>When a window frame is ordered, using an <code>ORDER BY</code> clause, even more
 options are possible. For example, consider the following:</p>
-<pre class="highlight plaintext"># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
+<pre><code class="highlight plaintext"># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
 
  id |         name         | category_id | price | rank 
 ----+----------------------+-------------+-------+------
@@ -271,7 +271,7 @@ options are possible. For example, consider the following:</p>
   4 | Turkleton's Folly    |           2 | 11.99 |    1
   1 | Meowna Lisa          |           2 | 19.99 |    2
   8 | Lady Caterly's Lover |           2 | 22.99 |    3
-</pre>
+</code></pre>
 
 <p>Look familiar? This is essentially the original , except we&rsquo;ve added a
 new column: its price rank within a window partitioned by <code>category_id</code>.
@@ -284,7 +284,7 @@ function assigns the same rank to ties, but we need the first one
 alphabetically in the case of &ldquo;ties&rdquo;. We can remedy that by using a
 different window function, <code>row_number()</code>, which guarantees different
 numbers.</p>
-<pre class="highlight plaintext"># SELECT id, name, category_id, price, row_number() OVER (PARTITION BY category_id ORDER BY price, name) FROM cat_pictures;
+<pre><code class="highlight plaintext"># SELECT id, name, category_id, price, row_number() OVER (PARTITION BY category_id ORDER BY price, name) FROM cat_pictures;
 
  id |         name         | category_id | price | row_number 
 ----+----------------------+-------------+-------+------------
@@ -296,31 +296,31 @@ numbers.</p>
   4 | Turkleton's Folly    |           2 | 11.99 |          1
   1 | Meowna Lisa          |           2 | 19.99 |          2
   8 | Lady Caterly's Lover |           2 | 22.99 |          3
-</pre>
+</code></pre>
 
 <p>Perfect! Looking at the rows with &ldquo;1&rdquo; as their &ldquo;row_number&rdquo;, we see
 what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s Folly&rdquo;, which are the
 cheapest pictures from their categories. We can use an <code>IN</code> clause for
 filtering, similar to the previous approach:</p>
-<pre class="highlight sql"><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">category_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">price</span>
+<pre><code class="highlight sql"><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">category_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">price</span>
 <span class="k">FROM</span> <span class="n">cat_pictures</span>
 <span class="k">WHERE</span> <span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">IN</span> <span class="p">(</span>
   <span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">row_number</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="n">PARTITION</span> <span class="k">BY</span> <span class="n">category_id</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">price</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
   <span class="k">FROM</span> <span class="n">cat_pictures</span>
 <span class="p">);</span>
-</pre>
-<pre class="highlight plaintext"> id | category_id |         name         | price 
+</code></pre>
+<pre><code class="highlight plaintext"> id | category_id |         name         | price 
 ----+-------------+----------------------+-------
   5 |           1 | Hugs not Drugs       |  9.99
   4 |           2 | Turkleton's Folly    | 11.99
 
-</pre>
+</code></pre>
 
 <p>The where clause above filters records that both have an id that appears
 in the subquery next to a rank of 1. Now that we have the SQL down,
 let&rsquo;s convert our Ruby model to take advantage of this window function
 technique:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CatPicture</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">attr_accessible</span> <span class="ss">:category_id</span><span class="p">,</span> <span class="ss">:description</span><span class="p">,</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:price</span>
     <span class="n">belongs_to</span> <span class="ss">:category</span>
 
@@ -333,7 +333,7 @@ technique:</p>
     <span class="n">scoped</span><span class="p">.</span><span class="nf">select</span><span class="p">(</span><span class="s2">"id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)"</span><span class="p">).</span><span class="nf">to_sql</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Groovy. Just like before, we can use to the power of ActiveRelation
 to build up our subselect, which then gets interpolated into the

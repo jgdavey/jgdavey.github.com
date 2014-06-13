@@ -62,8 +62,8 @@ of checking every commit between your upstream and you. Before pushing,
 you can ensure every commit is atomic by running the script.</p>
 
 <p>To use, just pass atomically the command as arguments:</p>
-<pre class="highlight plaintext">$ atomically rake
-</pre>
+<pre><code class="highlight plaintext">$ atomically rake
+</code></pre>
 
 <p>The above command will start at the current branch&rsquo;s HEAD and run rake.
 After that, it will check out the previous commit and run the command
@@ -71,18 +71,18 @@ again. It will do so for all commits between you and origin.</p>
 
 <p>If you are confident that nothing in your spec suite changed, you can
 run only your cucumber features the same way:</p>
-<pre class="highlight plaintext">$ atomically cucumber
-</pre>
+<pre><code class="highlight plaintext">$ atomically cucumber
+</code></pre>
 
 <p>Or just your spec suite:</p>
-<pre class="highlight plaintext">$ atomically rspec
-</pre>
+<pre><code class="highlight plaintext">$ atomically rspec
+</code></pre>
 
 <p>Regardless, keeping atomic commits is a vital part of good source
 control, and this tool makes it slightly easier to do so.</p>
 
 <p>Here&rsquo;s the source of <code>atomically</code>:</p>
-<pre class="highlight shell"><span class="c">#!/bin/bash</span>
+<pre><code class="highlight shell"><span class="c">#!/bin/bash</span>
 
 <span class="k">if</span> <span class="o">[</span> -n <span class="s2">"</span><span class="k">$(</span>git status --porcelain<span class="k">)</span><span class="s2">"</span> <span class="o">]</span>; <span class="k">then
   </span><span class="nb">echo</span> <span class="s2">"ERROR: You have a dirty working copy. This command would remove any files not already checked in"</span>
@@ -108,7 +108,7 @@ git rev-list origin/<span class="k">${</span><span class="nv">branch</span><span
 <span class="k">done
 
 </span>reset_branch
-</pre>
+</code></pre>
 
 <p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
 

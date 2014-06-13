@@ -49,13 +49,13 @@ be modelled in a fairly straightforward manner.</p>
 <p>Each list <code>has_many</code> list items, which are ordered by the <code>position</code>
 column. Each list&rsquo;s items have a position beginning with 1 and
 incrementing with each subsequent item.</p>
-<pre class="highlight ruby"><span class="c1"># app/models/list.rb</span>
+<pre><code class="highlight ruby"><span class="c1"># app/models/list.rb</span>
 <span class="k">class</span> <span class="nc">List</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">has_many</span> <span class="ss">:items</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">order</span> <span class="ss">:position</span> <span class="p">},</span> <span class="ss">class_name: </span><span class="s2">"ListItem"</span>
   <span class="n">validates_presence_of</span> <span class="ss">:name</span>
 <span class="k">end</span>
-</pre>
-<pre class="highlight ruby"><span class="c1"># app/models/list_item.rb</span>
+</code></pre>
+<pre><code class="highlight ruby"><span class="c1"># app/models/list_item.rb</span>
 <span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">belongs_to</span> <span class="ss">:list</span>
   <span class="n">validates_presence_of</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:list</span><span class="p">,</span> <span class="ss">:position</span>
@@ -73,13 +73,13 @@ incrementing with each subsequent item.</p>
     <span class="nb">self</span><span class="p">.</span><span class="nf">position</span> <span class="o">||=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">list_id: </span><span class="n">list_id</span><span class="p">).</span><span class="nf">maximum</span><span class="p">(</span><span class="ss">:position</span><span class="p">).</span><span class="nf">to_i</span> <span class="o">+</span> <span class="mi">1</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>A couple things are worth noting about the <code>ListItem</code> class. Firstly, we
 have <code>update_positions</code>, a class method that accepts an array of ids and
 updates each. This method will be called in a <code>sort</code> controller action
 as such:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">ItemsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ItemsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="n">expose</span><span class="p">(</span><span class="ss">:list</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">sort</span>
@@ -88,7 +88,7 @@ as such:</p>
     <span class="n">head</span> <span class="ss">:ok</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Secondly, new items don&rsquo;t necessarily know what position they should
 have, so we put list items that don&rsquo;t have <code>position</code> at the end of
@@ -97,7 +97,7 @@ present.</p>
 
 <p>Here are the migrations that we used to create the models&#39; database
 tables:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CreateLists</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateLists</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="n">create_table</span> <span class="ss">:lists</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
       <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="ss">:name</span>
@@ -105,8 +105,8 @@ tables:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">CreateListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+</code></pre>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="n">create_table</span> <span class="ss">:list_items</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
       <span class="n">t</span><span class="p">.</span><span class="nf">belongs_to</span> <span class="ss">:list</span>
@@ -117,7 +117,7 @@ tables:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Notice anything missing? If you said database constraints, you&rsquo;re
 correct! Our application is enforcing presence for most attributes, but
@@ -141,7 +141,7 @@ fail completely in concurrent environments.</p>
 
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
 in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
       alter table list_items
@@ -156,12 +156,12 @@ in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Let&rsquo;s wrap our <code>UPDATE</code> statements in a transaction so that any failed
 <code>UPDATE</code> of the position column will result in none of them being
 updated:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction</span> <span class="k">do</span>
@@ -171,7 +171,7 @@ updated:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>This ensures at the database level that positions of items are unique
 per list; no two items in the same list can occupy the &ldquo;1&rdquo; position.
@@ -179,28 +179,28 @@ With regard to data integrity, this is a huge improvement over our
 initial implementation. But it has one drawback: <strong>it doesn&rsquo;t work</strong>.</p>
 
 <p>To illustrate why, imagine a list with the following items:</p>
-<pre class="highlight plaintext">id | position | name
+<pre><code class="highlight plaintext">id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
 35 | 3        | Bread
-</pre>
+</code></pre>
 
 <p>To move Bread to the top of the list, we would pass an array of ids,
 <code>[35,13,18]</code> to the <code>update_positions</code> method. This method does a series
 of <code>UPDATE</code> statements to the database. For the first id, the one for
 Bread, we end up sending an update statement that would look like the
 following:</p>
-<pre class="highlight sql"><span class="k">UPDATE</span> <span class="n">list_items</span> <span class="k">SET</span> <span class="k">position</span><span class="o">=</span><span class="mi">1</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">35</span><span class="p">;</span>
-</pre>
+<pre><code class="highlight sql"><span class="k">UPDATE</span> <span class="n">list_items</span> <span class="k">SET</span> <span class="k">position</span><span class="o">=</span><span class="mi">1</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">35</span><span class="p">;</span>
+</code></pre>
 
 <p>After this statement is executed in the database, but before we move on
 to the next id in the list, Postgres will fail its constraint checks. At
 the moment that the <code>UPDATE</code> happens, the data would be:</p>
-<pre class="highlight plaintext">id | position | name
+<pre><code class="highlight plaintext">id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
 35 | 1        | Bread
-</pre>
+</code></pre>
 
 <p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
 Of course, we know that we want to change the position of Eggs as well,
@@ -235,7 +235,7 @@ call to <code>SET CONSTRAINTS</code> (<a href="http://www.postgresql.org/docs/9.
 
 <p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
       alter table list_items
@@ -251,7 +251,7 @@ defined before:</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>The only thing we&rsquo;ve changed from before is the <code>DEFERRABLE INITIALLY
 IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY
@@ -263,7 +263,7 @@ constraint, until we explicitly opt in to the deferral.</p>
 <p>We now need to change our transaction block. In our case, the first
 database statement within the transaction must be the <code>SET CONSTRAINTS</code>
 statement:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction</span> <span class="k">do</span>
@@ -274,7 +274,7 @@ statement:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Having now opted in to deferring our uniqueness constraint, reordering
 the items now works as expected. The constraint still ensures that we
@@ -290,7 +290,7 @@ changed. Knowing that, we leverage PostgreSQL&rsquo;s introspective abilities
 to query the constraint names instead.</p>
 
 <p>For example, we can add the following module to our codebase:</p>
-<pre class="highlight ruby"><span class="c1"># lib/deferrable.rb</span>
+<pre><code class="highlight ruby"><span class="c1"># lib/deferrable.rb</span>
 <span class="k">module</span> <span class="nn">Deferrable</span>
   <span class="k">def</span> <span class="nf">deferrable_uniqueness_constraints_on</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
     <span class="n">usage</span> <span class="o">=</span> <span class="no">Arel</span><span class="o">::</span><span class="no">Table</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'information_schema.constraint_column_usage'</span>
@@ -314,10 +314,10 @@ to query the constraint names instead.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>And now change our model to use it:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="kp">extend</span> <span class="no">Deferrable</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
@@ -328,7 +328,7 @@ to query the constraint names instead.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>And, boom! Less coupling.</p>
 

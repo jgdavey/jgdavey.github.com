@@ -39,13 +39,13 @@
 How can we create a homepage that includes all cat pictures for a given category <em>and</em> all of its subcategories?</p>
 
 <p>Pictorally, the category tree might look like this:</p>
-<pre class="highlight plaintext">Cat Pictures
+<pre><code class="highlight plaintext">Cat Pictures
 |-- Funny
 |   |-- LOLCats
 |   `-- Animated
 `-- Classic
     `-- Renaissance
-</pre>
+</code></pre>
 
 <p>On the landing page for the <em>Cat Pictures</em> category, we want to display
 all cat pictures for any category below <em>Cat Pictures</em>. Navigating to
@@ -55,7 +55,7 @@ seen on Amazon, for example. The store&rsquo;s categories become like an
 ad-hoc filtering system.</p>
 
 <p>Here&rsquo;s what the Category class looks like:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">attr_accessible</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:parent</span>
 
   <span class="n">has_many</span> <span class="ss">:cat_pictures</span>
@@ -68,7 +68,7 @@ ad-hoc filtering system.</p>
     <span class="c1"># implement me!</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Each category has a <code>parent_id</code> column that points at its parent
 category. In database speak, modeling a tree like this is known as
@@ -82,7 +82,7 @@ with the <code>acts_as_tree</code> plugin. Let&rsquo;s see how we can implement 
 
 <p>As you&rsquo;ve probably already guessed, we need to recursively collect
 children for each of our category&rsquo;s children.</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
 
   <span class="k">def</span> <span class="nf">descendents</span>
@@ -91,13 +91,13 @@ children for each of our category&rsquo;s children.</p>
     <span class="k">end</span><span class="p">.</span><span class="nf">flatten</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>This does the job quite nicely. However, our requirements above state
 that we want all cat pictures for each descendent category, <em>and our
 categories</em>. Right now, we&rsquo;ve omitted the root category, self. Let&rsquo;s add
 a new method to include it into the equation:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
 
   <span class="k">def</span> <span class="nf">descendents</span>
@@ -110,17 +110,17 @@ a new method to include it into the equation:</p>
     <span class="o">[</span><span class="nb">self</span><span class="o">]</span> <span class="o">+</span> <span class="n">descendents</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>Good deal. Now gathering all cat pictures is just a matter of collecting
 them for each category:</p>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nf">descendent_pictures</span>
     <span class="n">self_and_descendents</span><span class="p">.</span><span class="nf">map</span><span class="p">(</span><span class="o">&amp;</span><span class="ss">:cat_pictures</span><span class="p">).</span><span class="nf">flatten</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>For a tree like we have above, this is probably good enough. Our tree is
 only 3 levels deep. We&rsquo;ve introduced plenty of N+1 queries, but given
@@ -158,13 +158,13 @@ convenience into a feature that accomplishes things not otherwise
 possible in standard SQL. Using RECURSIVE, a WITH query can refer to
 its own output. A very simple example is this query to sum the integers
 from 1 through 100:</p>
-<pre class="highlight plaintext"> WITH RECURSIVE t(n) AS (
+<pre><code class="highlight plaintext"> WITH RECURSIVE t(n) AS (
      VALUES (1)
    UNION ALL
      SELECT n+1 FROM t WHERE n &lt; 100
  )
  SELECT sum(n) FROM t;
-</pre>
+</code></pre>
 
 <p>The general form of a recursive WITH query is always a non-recursive
 term, then UNION (or UNION ALL), then a recursive term, where only the
@@ -180,7 +180,7 @@ technique from <em>n</em> queries to just 1! Let&rsquo;s how we can use this to 
 our category tree.</p>
 
 <p>As a reminder, here&rsquo;s what our categories table looks like:</p>
-<pre class="highlight plaintext"># SELECT id, name, parent_id FROM categories;
+<pre><code class="highlight plaintext"># SELECT id, name, parent_id FROM categories;
 
  id |     name     | parent_id 
 ----+--------------+-----------
@@ -190,10 +190,10 @@ our category tree.</p>
   4 | Animated     |         2
   5 | Classic      |         1
   6 | Renaissance  |         5
-</pre>
+</code></pre>
 
 <p>And this is the query:</p>
-<pre class="highlight sql"><span class="k">WITH</span> <span class="k">RECURSIVE</span> <span class="n">category_tree</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="k">AS</span> <span class="p">(</span>
+<pre><code class="highlight sql"><span class="k">WITH</span> <span class="k">RECURSIVE</span> <span class="n">category_tree</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="k">AS</span> <span class="p">(</span>
   <span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ARRAY</span><span class="p">[</span><span class="n">id</span><span class="p">]</span>
   <span class="k">FROM</span> <span class="n">categories</span>
   <span class="k">WHERE</span> <span class="n">parent_id</span> <span class="k">IS</span> <span class="k">NULL</span>
@@ -204,10 +204,10 @@ our category tree.</p>
   <span class="k">WHERE</span> <span class="k">NOT</span> <span class="n">categories</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="k">ANY</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 <span class="p">)</span>
 <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">category_tree</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">path</span><span class="p">;</span>
-</pre>
+</code></pre>
 
 <p>Running the query above returns the following:</p>
-<pre class="highlight plaintext"> id |     name     |  path   
+<pre><code class="highlight plaintext"> id |     name     |  path   
 ----+--------------+---------
   1 | Cat Pictures | {1}
   2 | Funny        | {1,2}
@@ -215,7 +215,7 @@ our category tree.</p>
   4 | Animated     | {1,2,4}
   5 | Classic      | {1,5}
   6 | Renaissance  | {1,5,6}
-</pre>
+</code></pre>
 
 <p>Whoa! That&rsquo;s a lot of SQL. Let&rsquo;s break it down a bit. </p>
 
@@ -230,10 +230,10 @@ array of ids that each row will have. More on this in a bit.</p>
 <h3>Define the Non-recursive Term</h3>
 
 <p>The non-recursive term is next:</p>
-<pre class="highlight sql"><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ARRAY</span><span class="p">[</span><span class="n">id</span><span class="p">]</span>
+<pre><code class="highlight sql"><span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ARRAY</span><span class="p">[</span><span class="n">id</span><span class="p">]</span>
 <span class="k">FROM</span> <span class="n">categories</span>
 <span class="k">WHERE</span> <span class="n">parent_id</span> <span class="k">IS</span> <span class="k">NULL</span>
-</pre>
+</code></pre>
 
 <p>It grabs the <code>id</code> and <code>name</code> for each top-level category, that is, each
 category that has no parent. It also initializes an array containing just
@@ -243,11 +243,11 @@ become helpful during the recursive step of the query.</p>
 <h3>Define the Recursive Term</h3>
 
 <p>The recursive term is the juiciest bit of the query:</p>
-<pre class="highlight sql"><span class="k">SELECT</span> <span class="n">categories</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">categories</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="o">||</span> <span class="n">categories</span><span class="p">.</span><span class="n">id</span>
+<pre><code class="highlight sql"><span class="k">SELECT</span> <span class="n">categories</span><span class="p">.</span><span class="n">id</span><span class="p">,</span> <span class="n">categories</span><span class="p">.</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="o">||</span> <span class="n">categories</span><span class="p">.</span><span class="n">id</span>
 <span class="k">FROM</span> <span class="n">category_tree</span>
 <span class="k">JOIN</span> <span class="n">categories</span> <span class="k">ON</span> <span class="n">categories</span><span class="p">.</span><span class="n">parent_id</span><span class="o">=</span><span class="n">category_tree</span><span class="p">.</span><span class="n">id</span>
 <span class="k">WHERE</span> <span class="k">NOT</span> <span class="n">categories</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="k">ANY</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-</pre>
+</code></pre>
 
 <p>Notice that we&rsquo;re selecting from <code>category_tree</code>. By doing this, we&rsquo;re
 able to use each result set in the subsequent iteration. The first time
@@ -269,8 +269,8 @@ prevents such a mistake from killing our server.</p>
 
 <p>Finally, a WITH query is only useful if you select from it outside of
 its declaration, so we&rsquo;ll do just that:</p>
-<pre class="highlight sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">category_tree</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">path</span><span class="p">;</span>
-</pre>
+<pre><code class="highlight sql"><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">category_tree</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="n">path</span><span class="p">;</span>
+</code></pre>
 
 <p>In addition to the infinite loop guard, the path column answers the
 question &ldquo;How did I get here?&rdquo; Like a directory structure on a file
@@ -284,7 +284,7 @@ groups the categories just like we&rsquo;d expect, with parents listed before
 their children.</p>
 
 <h2>Using WITH queries in ActiveRecord</h2>
-<pre class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Category</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
 
   <span class="k">def</span> <span class="nf">descendents</span>
@@ -320,7 +320,7 @@ their children.</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
+</code></pre>
 
 <p>You should notice right away where our recursive query is. The
 <code>tree_sql_for</code> class method returns a SQL string that can be used with

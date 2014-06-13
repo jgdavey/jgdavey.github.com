@@ -90,8 +90,8 @@ each of these prompts, so you can happily mash <code>&lt;Tab&gt;</code>.</p>
 
 <p>The plugin exposes a general-purpose function to send arbitrary text to
 the configured tmux pane. For example, you can use it in the following way:</p>
-<pre class="highlight plaintext">:call Send_to_Tmux("rspec ".expand("%")."\n")
-</pre>
+<pre><code class="highlight plaintext">:call Send_to_Tmux("rspec ".expand("%")."\n")
+</code></pre>
 
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
