@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta content='Please, never say &amp;quot;widgets&amp;quot; in my presence again.' name='description'>
+<meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<meta content='True' name='HandheldFriendly'>
+<meta content='320' name='MobileOptimized'>
+<link href='/favicon.png' rel='icon'>
+<title>Awkward and Proud - Joshua Davey</title>
+<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+<script src='/javascripts/main.js'></script>
+</head>
+<body>
+<div id='content'>
+<header>
+<h1><a href="/">Awkward and Proud</a></h1>
+</header>
+<div id='description'>
+<ul class='meta'>
+<li>
+<a href="/about">About</a>
+/
+<a href="/atom.xml">RSS</a>
+</li>
+</ul>
+</div>
+<div id='main'><div class='post'>
+<div class='post-body'>
+<h2>Boot + Middleman: The ClojureScript development environment of my dreams</h2>
+<p><em>This is a repost. You can find the original <a title="Boot + Middleman: The ClojureScript development environment of my dreams" href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams">here</a></em></p>
+
+<p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
+combination of editor integration, live browser reload, and not having to
+manually run commands over and over is time-saving and a pleasure to
+work with.</p>
+
+<p>At Hashrocket, designers and developers work very closely
+together. Visual design and markup is handled by our
+designers, who create &ldquo;stubbed out&rdquo; templates in <a href="http://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
+directory</a>.
+It&rsquo;s a process that works very well for us, and
+allows us to iteratively add features to an application.</p>
+
+<p>This process has served us very well in Rails using a <a href="http://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
+controller</a>,
+available only in development mode.</p>
+
+<p>I&rsquo;ve been using ClojureScript a lot lately, particularly with Om, and
+have missed that directory of collaboration. After all, the designers
+at Hashrocket have a proclivity for HAML and SASS.</p>
+
+<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
+handle markup and styles, using <code>middleman build</code>, copying the generated
+CSS files, and eyeballing the generated markup to ensure it matched the
+Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
+get out of sync with a manual process like this. The static resource
+generation should be a part of our build process.</p>
+
+<p>Enter <a href="http://boot-clj.com">boot</a>.</p>
+
+<h3>Using Boot for ClojureScript development</h3>
+
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="http://leiningen.org">Leiningen</a>,
+which is the de facto dependency management and build tool for
+Clojure/Script. Boot is similar to Leiningen, but adds the ability to
+compose tasks to create build pipelines. This composability, along with
+some really smart architectural decisions, is what makes boot a great
+choice for the problem at hand.</p>
+
+<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
+is a great way to get started with ClojureScript and boot. Of particular
+note is the <code>build.boot</code> file. It demonstrates how one can build
+up a <code>dev</code> task that watches a directory for changes, rebuilding
+ClojureScript sources, and notifying the browser to reload the code. It
+includes the setup necessary for source maps, a development server,
+and the browser-connected REPL. But what I want to add to that pot
+of awesome is the ability to compile HAML and SASS as a part of the
+pipeline.</p>
+
+<h3>boot-middleman: Gluing Everything Together</h3>
+
+<p>I had an epiphany one night after working on this problem for a while: I
+can just use Middleman. After all, boot and the ClojureScript compiler
+run on the JVM, and JRuby is easily embeddable. After a short bit, I
+came up with <a href="https://github.com/jgdavey/boot-middleman">boot-middleman</a>, the glue I needed to build HAML/SASS as
+a part of my build process.</p>
+
+<p>It assumes a subdirectory is a Middleman app (<code>assets</code> by default). This
+works nicely because my designer pals can collaborate with me without
+having to use the JVM at all. They just run <code>middleman</code> in the <code>assets</code>
+subdirectory and work as normal.</p>
+
+<p>See the boot-middleman README for instructions on setting up.</p>
+
+<p>I used this workflow to create a minesweeper clone, <a href="https://github.com/jgdavey/minesweeper">the
+source</a> of which is on GitHub.
+Just clone and run <code>boot dev</code>.</p>
+
+<h3>The Workflow in Action</h3>
+
+<p>To see the workflow in action, check out the following video. It
+demonstrates how editing front-end files do not require a manual browser
+refresh to see the effects.</p>
+
+<iframe src="https://player.vimeo.com/video/128494099" width="500" height="280" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(["_setAccount", "UA-330362-1"]);
+  _gaq.push(["_trackPageview"]);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>
