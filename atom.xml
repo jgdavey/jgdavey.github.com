@@ -16,7 +16,7 @@
     <link rel="alternate" href="http://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"/>
     <id>http://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/</id>
     <published>2015-09-16T20:00:00-04:00</published>
-    <updated>2016-06-24T14:08:56-04:00</updated>
+    <updated>2016-07-06T13:35:44-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -100,7 +100,7 @@ is half the battle.</p>
     <link rel="alternate" href="http://joshuadavey.com/2015/06/04/boot-middleman/"/>
     <id>http://joshuadavey.com/2015/06/04/boot-middleman/</id>
     <published>2015-06-03T20:00:00-04:00</published>
-    <updated>2016-06-24T14:12:29-04:00</updated>
+    <updated>2016-07-06T13:35:06-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -191,7 +191,7 @@ refresh to see the effects.</p>
     <link rel="alternate" href="http://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/"/>
     <id>http://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/</id>
     <published>2014-06-12T20:00:00-04:00</published>
-    <updated>2016-06-24T14:08:54-04:00</updated>
+    <updated>2016-07-06T13:36:19-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -351,7 +351,7 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
     <link rel="alternate" href="http://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"/>
     <id>http://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/</id>
     <published>2014-04-09T20:00:00-04:00</published>
-    <updated>2014-04-30T13:18:24-04:00</updated>
+    <updated>2016-07-06T13:36:52-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -671,7 +671,7 @@ good with Neo4j&rsquo;s cypher query language.</p>
     <link rel="alternate" href="http://joshuadavey.com/2013/08/22/deferring-database-constraints/"/>
     <id>http://joshuadavey.com/2013/08/22/deferring-database-constraints/</id>
     <published>2013-08-21T20:00:00-04:00</published>
-    <updated>2014-04-30T13:18:24-04:00</updated>
+    <updated>2016-07-06T13:37:11-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -996,7 +996,7 @@ sections above.</p>
     <link rel="alternate" href="http://joshuadavey.com/2013/02/12/sql-views-and-activerecord/"/>
     <id>http://joshuadavey.com/2013/02/12/sql-views-and-activerecord/</id>
     <published>2013-02-11T19:00:00-05:00</published>
-    <updated>2014-04-30T13:18:24-04:00</updated>
+    <updated>2016-07-06T13:37:29-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
