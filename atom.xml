@@ -5,10 +5,246 @@
   <id>http://joshuadavey.com/</id>
   <link href="http://joshuadavey.com/"/>
   <link href="http://joshuadavey.com/atom.xml" rel="self"/>
-  <updated>2015-09-16T20:00:00-04:00</updated>
+  <updated>2016-09-29T20:00:00-04:00</updated>
   <author>
     <name>Joshua Davey</name>
   </author>
+  <entry>
+    <title>
+      <![CDATA[Single-Use Tokens in Datomic]]>
+    </title>
+    <link rel="alternate" href="http://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"/>
+    <id>http://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/</id>
+    <published>2016-09-29T20:00:00-04:00</published>
+    <updated>2016-09-30T16:40:51-04:00</updated>
+    <author>
+      <name>Joshua Davey</name>
+    </author>
+    <content type="html">
+      <![CDATA[<p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
+a password-reset token, or capturing a financial transaction, there are
+times when something should happen exactly once, atomically. Once a
+token is used, it is invalidated.</p>
+
+<p>Doing things exactly once, atomically, is relatively straightforward in
+traditional ACID transactional databases: within a transaction, you find
+an entity (row) by the token, perform any updates to that entity, and
+finally invalidate the token (often by deleting or nullifying it). <sup id="a1"><a href="#f1">1</a></sup></p>
+
+<p>But how can we accomplish some like this in Datomic?</p>
+
+<h2>The World&rsquo;s Worst Singles Network</h2>
+
+<blockquote>
+<p>Welcome to WWSN! We&rsquo;re so excited you&rsquo;re here! On WWSN, you can sign up,
+sign in, and reset your password. It&rsquo;s so simple!</p>
+</blockquote>
+
+<p>Let&rsquo;s say we have a really simple schema. A user has an email address
+and a bcrypted password:</p>
+<pre><code class="highlight clojure"><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/email</span><span class="w">
+  </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
+  </span><span class="no">:db/unique</span><span class="w"> </span><span class="no">:db.unique/identity</span><span class="w">
+  </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
+  </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w">
+  </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
+  </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
+  </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w">
+  </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
+  </span><span class="no">:db/unique</span><span class="w"> </span><span class="no">:db.unique/value</span><span class="w">
+  </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
+  </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}]</span><span class="w">
+</span></code></pre>
+
+<p>Some initial data might be added like this:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+                   </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"jim@example.com"</span><span class="w">
+                   </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="p">(</span><span class="nf">crypt</span><span class="w"> </span><span class="s">"jello4stapler"</span><span class="p">)}</span><span class="w">
+                  </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+                   </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"pam@example.com"</span><span class="w">
+                   </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="p">(</span><span class="nf">crypt</span><span class="w"> </span><span class="s">"art4evah"</span><span class="p">)}])</span><span class="w">
+</span></code></pre>
+
+<p>Later, one of the users wants to reset their password, so we generate a
+password reset token and persist it:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+                   </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"jim@example.com"</span><span class="w">
+                   </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="p">(</span><span class="nf">generate-secure-random</span><span class="p">)}])</span><span class="w">
+</span></code></pre>
+
+<h2>An initial approach</h2>
+
+<p>After receiving an email, they follow the link that includes the
+single-use token in the URL. When they submit their new password, we
+look up the user by that token and update them accordingly:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
+      </span><span class="n">token</span><span class="w"> </span><span class="p">(</span><span class="no">:token</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w">
+      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+               </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
+               </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
+              </span><span class="n">db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+    </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]</span><span class="w">
+                      </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
+</span></code></pre>
+
+<p>But there&rsquo;s a problem with this solution. Even though the new password
+is asserted in the same transaction that the token is invalidated, the
+opportunity for concurrency problems between threads and/or peers still
+exists.</p>
+
+<p>Here&rsquo;s why. In between the time that <code>e</code> is first found by its token
+and its new facts are transacted, somebody else could have already used
+(and deleted) the token. In other words, even though all writes are
+transactional, the reads are not. In practice this is rarely, if ever,
+a problem. <code>(d/db conn)</code> will return the most recent version of the
+database that the peer can get.</p>
+
+<h2>Croutons are just stale bread</h2>
+
+<p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">stale-db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="w">
+      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+               </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
+               </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
+              </span><span class="n">stale-db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+    </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]</span><span class="w">
+                      </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="p">(</span><span class="no">:token</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w">
+      </span><span class="c1">;; this token still exists because we're using and "old" db value
+</span><span class="w">      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+               </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
+               </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
+              </span><span class="n">stale-db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+    </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="s">"somethingelse"</span><span class="p">]</span><span class="w">
+                      </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
+
+</span></code></pre>
+
+<p>The user entity <code>e</code> is found both times because the database value is
+immutable. So, the transactions will both succeed.</p>
+
+<p>The astute reader may have noticed something. I said all writes are
+transactional, but in the second block of code, we&rsquo;re retracting a value
+that&rsquo;s already been retracted. Something must be broken!</p>
+
+<p>Nothing&rsquo;s broken. This tripped me up at first, but it turns out that
+retractions work just like assertions with regard to <em>redundancy
+elimination</em>.</p>
+
+<h2>The Department of Redundancy Department</h2>
+
+<p>From the Datomic <a href="http://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
+
+<blockquote>
+<p>Redundancy Elimination</p>
+
+<p>A datom is redundant with the current value of the database if
+there is a matching datom that differs only by transaction id. If a
+transaction would produce redundant datoms, those datoms are filtered
+out, and do not appear a second time in either the indexes or the
+transaction log.</p>
+</blockquote>
+
+<p>In other words, Datomic is eliminating the redundant retraction: we&rsquo;ve
+already retracted the token, so the effective datoms of the transaction
+only include the <code>[:db/add ...]</code> of the new password. In this particular
+use case, retractions cannot be used to safeguard us from using a token
+more than once.</p>
+
+<h2>Transaction functions to the rescue</h2>
+
+<p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
+transactional, and reads are not. That&rsquo;s actually only true on the
+peers. The transactor itself is guaranteed to always have access to the
+most recent database value at any time. Among other things, this is what
+enables <a href="http://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
+
+<p>Within a transaction, a database function is used in place of a
+<code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
+function, it invokes it and splices the result into the rest of the
+transaction. Also, a database function always receives the most recent
+<code>db</code> value as it&rsquo;s first argument. Because you have access to the whole
+of the Datomic API, you can leverage this <code>db</code> value to do all sorts of
+things.</p>
+
+<p>Let&rsquo;s transact the following new schema info into our database:</p>
+<pre><code class="highlight clojure"><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:db.fn/set-with-token</span><span class="w">
+  </span><span class="no">:db/doc</span><span class="w"> </span><span class="s">"Look up entity by token, set attr and value, and retract token"</span><span class="w">
+  </span><span class="no">:db/fn</span><span class="w"> </span><span class="o">#</span><span class="n">db/fn</span><span class="w"> </span><span class="p">{</span><span class="no">:lang</span><span class="w"> </span><span class="s">"clojure"</span><span class="w">
+                 </span><span class="no">:params</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="n">value</span><span class="p">]</span><span class="w">
+                 </span><span class="no">:code</span><span class="w"> </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">datomic.api/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+                                                </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?ta</span><span class="w"> </span><span class="n">?tv</span><span class="w">
+                                                </span><span class="no">:where</span><span class="w">
+                                                </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="n">?ta</span><span class="w"> </span><span class="n">?tv</span><span class="p">]]</span><span class="w">
+                                              </span><span class="n">db</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">)]</span><span class="w">
+                         </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+                           </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="n">value</span><span class="p">]</span><span class="w">
+                            </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">]]</span><span class="w">
+                           </span><span class="p">(</span><span class="nf">throw</span><span class="w"> </span><span class="p">(</span><span class="nf">ex-info</span><span class="w"> </span><span class="s">"No entity with that token exists"</span><span class="w">
+                                           </span><span class="p">{</span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">}))))}}]</span><span class="w">
+</span></code></pre>
+
+<p>This function is more generic than our immediate use-case, but I prefer
+to parameterize attributes as well as values in database functions. It
+allows us to re-use the database function for other token fields, and
+won&rsquo;t have to be updated in the schema if we ever change the name our
+token attribute.</p>
+
+<p>Here&rsquo;s how we use this shiny new function:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db.fn/set-with-token</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="w">
+                                           </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]]))</span><span class="w">
+</span></code></pre>
+
+<p>When we transact this data, the transactor invokes our function using
+the most recent database value. In other words, we are making the lookup
+portion serializable with the rest of the operations.</p>
+
+<p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
+
+<h2>In Summary</h2>
+
+<p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
+single-writer design. Other database systems (e.g. SQL) have to employ
+very complicated isolation patterns like MVVC to allow multiple writers
+while keeping data integrity guarantees. Datomic side-steps those problems by
+using a single writer, paired with immutable history.</p>
+
+<p>The catch, as we have seen, is that read-dependent writes will require
+the use of database functions to maintain atomicity. Of course, database
+functions have uses outside of concurrency contexts. And, as a bonus,
+they can be loaded and invoked on the client as well.</p>
+
+<p>For more information on database functions, see <a href="http://docs.datomic.com/database-functions.html">the
+docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA">watch
+the video</a>,
+or see <a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial
+/data_functions.clj">the Day of Datomic
+examples</a>. You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932">scratch.clj</a> file that I
+used to build up the code examples here.</p>
+
+<p><sup id="f1">1</sup> However, even in SQL setups there are potential
+pitfalls. Because of the potential for multiple writers, care must be
+taken to satisfy the &ldquo;exactly once&rdquo; requirement. Where possible, a SQL
+client should use a single statement to find, update, and nullify a
+token. When a single statement isn&rsquo;t possible, the use of row-level
+locks can be used. Or, better yet, wrap everything in a transaction with
+serializable isolation level.</p>
+]]>
+    </content>
+  </entry>
   <entry>
     <title>
       <![CDATA[Bulk imports with Datomic]]>
@@ -986,546 +1222,6 @@ quickly. I used TDD to write the initial approach, and reused the specs
 while I &ldquo;refactored&rdquo; the implementation to the subsequent approaches.
 Each <a href="https://github.com/jgdavey/uniqueness_constraints_example/commits/master">commit on the master branch</a> more or less follows the
 sections above.</p>
-]]>
-    </content>
-  </entry>
-  <entry>
-    <title>
-      <![CDATA[has_one view]]>
-    </title>
-    <link rel="alternate" href="http://joshuadavey.com/2013/02/12/sql-views-and-activerecord/"/>
-    <id>http://joshuadavey.com/2013/02/12/sql-views-and-activerecord/</id>
-    <published>2013-02-11T19:00:00-05:00</published>
-    <updated>2016-07-06T13:37:29-04:00</updated>
-    <author>
-      <name>Joshua Davey</name>
-    </author>
-    <content type="html">
-      <![CDATA[<p><em>This is a repost. You can find the original <a title="has_one view" href="http://hashrocket.com/blog/posts/sql-views-and-activerecord">here</a></em></p>
-
-<p>Sometimes, aggregating data can become overly complex in a normal
-ActiveRecord model. Because Rails works well with SQL views, we can
-create associations to SQL views that aggregate data for us, simplifying
-our models and potentially speeding up queries.</p>
-
-<h2>Modeling an inbox</h2>
-
-<p>I&rsquo;ve got an inbox. A cat inbox. For real.</p>
-
-<p><img src="https://s3.amazonaws.com/hashrocket-blog-production/inbox.png" /></p>
-
-<p>There are many possible implementations for modeling an inbox. I&rsquo;ve
-gone with a relatively simple approach. Two users participate in a
-conversation, sending messages back and forth to each other. The
-Conversation model has a subject, but the body of the initial message is
-part of the Message object.</p>
-<pre><code class="highlight ruby"><span class="c1"># app/models/conversation.rb</span>
-<span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="c1"># fields: to_id, from_id, subject</span>
-  <span class="n">belongs_to</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
-  <span class="n">belongs_to</span> <span class="ss">:from</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
-  <span class="n">has_many</span> <span class="ss">:messages</span><span class="p">,</span> <span class="ss">dependent: :destroy</span><span class="p">,</span> <span class="ss">inverse_of: :conversation</span>
-<span class="k">end</span>
-
-<span class="c1"># app/models/message.rb</span>
-<span class="k">class</span> <span class="nc">Message</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="c1"># fields: user_id, conversation_id, body</span>
-  <span class="n">belongs_to</span> <span class="ss">:conversation</span><span class="p">,</span> <span class="ss">inverse_of: :messages</span>
-  <span class="n">belongs_to</span> <span class="ss">:user</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>After the initial message, the two participants on the conversation send
-messages back and forth. A user may have any number of conversations
-with other users. As such, the main inbox view must list the
-conversations a user is a participant on, as well as some summary
-information about that conversation.</p>
-
-<p>For our purposes, we&rsquo;ve decided on an HTML table view with the following
-columns:</p>
-
-<ul>
-<li>From - Who the original message was sent from</li>
-<li>To - The original recipient of the message</li>
-<li>Message - the Subject of the conversation, as well as the first line
-of the most recent message</li>
-<li>Last post - The date/time of the most recent message</li>
-<li>Replies - The number of replies on the conversation (excluding the
-first message)</li>
-</ul>
-
-<p>Although the subject is part of the conversation itself, everything else
-comes from its various associations. This is the view, which reveals the
-expected interface each conversation object should have:</p>
-<pre><code class="highlight haml"><span class="nt">%table</span><span class="nf">#inbox</span>
-  <span class="nt">%thead</span>
-    <span class="nt">%tr</span>
-      <span class="nt">%th</span> From
-      <span class="nt">%th</span> To
-      <span class="nt">%th</span> Message
-      <span class="nt">%th</span> Last post
-      <span class="nt">%th</span> Replies
-  <span class="nt">%tbody</span>
-    <span class="p">-</span> <span class="n">conversations</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">conversation</span><span class="o">|</span>
-      <span class="nt">%tr</span>
-        <span class="nt">%td</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">from_name</span>
-        <span class="nt">%td</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">to_name</span>
-        <span class="nt">%td</span>
-          <span class="nt">%p</span>
-            <span class="nt">%strong</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">subject</span>
-            <span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">most_recent_message_body</span>
-        <span class="nt">%td</span>
-          <span class="p">=</span> <span class="n">time_ago_in_words</span><span class="p">(</span><span class="n">conversation</span><span class="p">.</span><span class="nf">most_recent_message_sent_at</span><span class="p">)</span>
-          ago
-        <span class="nt">%td</span><span class="p">=</span> <span class="n">conversation</span><span class="p">.</span><span class="nf">reply_count</span>
-</code></pre>
-
-<p>Let&rsquo;s explore a typical way to model this in our model directly.</p>
-
-<h2>A typical Ruby implementation</h2>
-<pre><code class="highlight ruby"><span class="c1"># app/models/conversation.rb</span>
-<span class="k">class</span> <span class="nc">Converation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="c1"># associations, etc...</span>
-
-  <span class="k">def</span> <span class="nf">most_recent_message_body</span>
-    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">body</span> <span class="k">if</span> <span class="n">most_recent_message</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">most_recent_message_sent_at</span>
-    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">created_at</span> <span class="k">if</span> <span class="n">most_recent_message</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">reply_count</span>
-    <span class="n">messages</span><span class="p">.</span><span class="nf">size</span> <span class="o">-</span> <span class="mi">1</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">to_name</span>
-    <span class="n">to</span><span class="p">.</span><span class="nf">name</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">from_name</span>
-    <span class="n">from</span><span class="p">.</span><span class="nf">name</span>
-  <span class="k">end</span>
-
-  <span class="kp">private</span>
-  <span class="k">def</span> <span class="nf">most_recent_message</span>
-    <span class="vi">@most_recent_message</span> <span class="o">||=</span> <span class="n">messages</span><span class="p">.</span><span class="nf">by_date</span><span class="p">.</span><span class="nf">first</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-<span class="c1"># app/models/message.rb</span>
-<span class="k">class</span> <span class="nc">Message</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="c1"># associations, etc...</span>
-
-  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">by_date</span>
-    <span class="n">order</span><span class="p">(</span><span class="s2">"created_at DESC"</span><span class="p">)</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>This approach is fairly straightforward. We obtain the
-<code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code> from the
-most recent message, which is trivial after we&rsquo;ve ordered the <code>messages</code>
-association by date. The <code>to_name</code> and <code>from_name</code> methods are delegated
-to their respective associations. And <code>reply_count</code> is simple the total
-number of messages, minus one (the initial message doesn&rsquo;t count as a
-&ldquo;reply&rdquo;).</p>
-
-<p>This approach offers a number of advantages. For one, it is familiar.
-I believe most Rails developers would be able to understand exactly
-what&rsquo;s going on above. It also locates all of the domain logic within
-the <code>Conversation</code> model, making it easy to find.</p>
-
-<p>Having everything in the <code>Conversation</code> model is actually a blessing
-and a curse. Although everything is easy to find, the model is also
-quickly becoming bloated. It may not seem like much right now, but as
-more information is added to the inbox, it will become unruly.</p>
-
-<p>The other problem with the above is the multitude of N+1 queries that
-it has introduced. With only 3 conversations in play, loading the inbox
-outputs a log like this:</p>
-<pre><code class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 09:49:02 -0600
-Connecting to database specified by database.yml
-Processing by InboxesController#show as HTML
-  User Load (12.8ms)  SELECT "users".* FROM "users" LIMIT 1
-  Conversation Load (0.6ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
-  User Load (18.3ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1
-  User Load (0.5ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1
-  Message Load (12.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 7 ORDER BY created_at DESC LIMIT 1
-   (0.6ms)  SELECT COUNT(*) FROM "messages" WHERE "messages"."conversation_id" = 7
-  User Load (0.4ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 3 LIMIT 1
-  CACHE (0.0ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1
-  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 8 ORDER BY created_at DESC LIMIT 1
-   (0.4ms)  SELECT COUNT(*) FROM "messages" WHERE "messages"."conversation_id" = 8
-  CACHE (0.0ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 1 LIMIT 1
-  CACHE (0.0ms)  SELECT "users".* FROM "users" WHERE "users"."id" = 2 LIMIT 1
-  Message Load (0.5ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 9 ORDER BY created_at DESC LIMIT 1
-   (0.4ms)  SELECT COUNT(*) FROM "messages" WHERE "messages"."conversation_id" = 9
-  Rendered inboxes/show.html.haml within layouts/application (683.9ms)
-Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)
-</code></pre>
-
-<h2>Eager-loading</h2>
-
-<p>We can definitely cut down on the N+1 query problem by introducing eager
-loading. In our controller, the <code>conversations</code> exposure is currently
-defined thusly:</p>
-<pre><code class="highlight ruby"><span class="c1"># app/controllers/inboxes_controller.rb</span>
-<span class="k">class</span> <span class="nc">InboxesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  <span class="n">expose</span><span class="p">(</span><span class="ss">:user</span><span class="p">)</span> <span class="p">{</span> <span class="no">User</span><span class="p">.</span><span class="nf">first</span> <span class="p">}</span>
-  <span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span> <span class="p">}</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>Let&rsquo;s change that to eagerly load its associations:</p>
-<pre><code class="highlight ruby">  <span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:messages</span><span class="p">,</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">:from</span><span class="p">)</span> <span class="p">}</span>
-</code></pre>
-
-<p>With eager-loading in place, the log now looks slightly more reasonable:</p>
-<pre><code class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 09:55:24 -0600
-Processing by InboxesController#show as HTML
-  User Load (0.3ms)  SELECT "users".* FROM "users" LIMIT 1
-  Conversation Load (0.3ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
-  Message Load (0.3ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" IN (7, 8, 9)
-  User Load (0.2ms)  SELECT "users".* FROM "users" WHERE "users"."id" IN (1, 2)
-  User Load (0.2ms)  SELECT "users".* FROM "users" WHERE "users"."id" IN (2, 3, 1)
-  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 7 ORDER BY created_at DESC LIMIT 1
-  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 8 ORDER BY created_at DESC LIMIT 1
-  Message Load (0.3ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 9 ORDER BY created_at DESC LIMIT 1
-  Rendered inboxes/show.html.haml within layouts/application (9.5ms)
-Completed 200 OK in 13ms (Views: 10.0ms | ActiveRecord: 2.4ms)
-</code></pre>
-
-<p>There are more optimizations we could make here in Ruby land. But data
-transformation and aggregation is something that databases are good at.
-We can use a native feature of SQL to aggregate information for us:
-views.</p>
-
-<h2>SQL views</h2>
-
-<p>A SQL view is essentially a virtual table. It can be queried just like a
-normal table, but does not physically store anything itself. Instead, a
-view has a query definition that it uses to represent its data.</p>
-
-<p>In our case, SQL views can allow us to treat a complex SQL query as a
-table, abstracting away the complexity into view itself. SQL views are
-also read-only, and therefore are usually only used for querying, but
-not updating data directly.</p>
-
-<p>ActiveRecord plays nicely with SQL views out of the box. It considers a
-SQL view a normal table, and all associations and querying methods work
-like they would with a normal table, with one exception: the records are
-read-only.</p>
-
-<h2>Add a migration for the view</h2>
-
-<p>Let&rsquo;s create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
-conversation. We can do this in a normal migration, but it needs to be
-created with raw SQL:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateConversationSummaries</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
-  <span class="k">def</span> <span class="nf">up</span>
-    <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
-      CREATE VIEW conversation_summaries AS
-        SELECT ...
-</span><span class="no">    SQL</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">down</span>
-    <span class="n">execute</span> <span class="s1">'DROP VIEW conversation_summaries'</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>This is the basic syntax for adding a view with ActiveRecord migrations.
-Our view needs to incorporate <code>to_name</code> and <code>from_name</code>, so let&rsquo;s add
-those fields:</p>
-<pre><code class="highlight sql"><span class="k">CREATE</span> <span class="k">VIEW</span> <span class="n">conversation_summaries</span> <span class="k">AS</span>
-  <span class="k">SELECT</span> <span class="k">c</span><span class="p">.</span><span class="n">id</span><span class="p">,</span>
-  <span class="n">f</span><span class="p">.</span><span class="n">name</span> <span class="k">as</span> <span class="n">from_name</span><span class="p">,</span>
-  <span class="n">t</span><span class="p">.</span><span class="n">name</span> <span class="k">as</span> <span class="n">to_name</span>
-  <span class="k">FROM</span> <span class="n">conversations</span> <span class="k">c</span>
-  <span class="k">inner</span> <span class="k">join</span> <span class="n">users</span> <span class="n">t</span> <span class="k">on</span> <span class="n">t</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">to_id</span>
-  <span class="k">inner</span> <span class="k">join</span> <span class="n">users</span> <span class="n">f</span> <span class="k">on</span> <span class="n">f</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="k">c</span><span class="p">.</span><span class="n">from_id</span>
-</code></pre>
-
-<p>After we migrate our database, we can use our database console to verify
-that we see what we expect:</p>
-<pre><code class="highlight plaintext">mailbox_development=# select * from conversation_summaries;
- id |    from_name    |     to_name
-----+-----------------+-----------------
-  7 | Felionel Richie | Cat Stevens
-  8 | Nelly Purrtado  | Cat Stevens
-  9 | Cat Stevens     | Felionel Richie
-(3 rows)
-</code></pre>
-
-<p>Cool. The <code>id</code> corresponds to the conversation, and <code>to_name</code> and
-<code>from_name</code> columns come from the users table, but it&rsquo;s all displayed to
-us as one table.</p>
-
-<h2>ActiveRecord associations for views</h2>
-
-<p>Now that our view exists, we can integrate it into our application:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">class</span> <span class="nc">Summary</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-    <span class="nb">self</span><span class="p">.</span><span class="nf">table_name</span> <span class="o">=</span> <span class="s2">"conversation_summaries"</span>
-    <span class="nb">self</span><span class="p">.</span><span class="nf">primary_key</span> <span class="o">=</span> <span class="s2">"id"</span>
-    <span class="n">belongs_to</span> <span class="ss">:conversation</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
-  <span class="k">end</span>
-
-  <span class="n">has_one</span> <span class="ss">:summary</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>Let&rsquo;s break down what&rsquo;s going on here.</p>
-
-<p>I&rsquo;ve chosen to nest the Summary model within the Conversation
-namespace, mostly to call out the fact that we&rsquo;re doing something
-non-standard. Also, the Summary class only makes sense in the context of
-a Conversation. For that reason, we need to manually set the name of the
-table.</p>
-
-<p>We must also choose a primary key, because Rails cannot infer it for SQL
-views. The association itself should be familiar. It works like a normal
-<code>has_one</code>/<code>belongs_to</code> relationship, except that we override the foreign
-key.</p>
-
-<p>Now that the relationships are set up, let&rsquo;s actually take advantage
-of our new view by changing the implementation of the <code>to_name</code> and
-<code>from_name</code> methods.</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="c1"># ...</span>
-
-  <span class="k">def</span> <span class="nf">to_name</span>
-    <span class="c1"># Used to be to.name</span>
-    <span class="n">summary</span><span class="p">.</span><span class="nf">to_name</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">from_name</span>
-    <span class="c1"># Used to be from.name</span>
-    <span class="n">summary</span><span class="p">.</span><span class="nf">from_name</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>One the biggest benefits about this approach is that we can <em>eager-load
-a view assocation</em>. We no longer need the <code>to</code> or <code>from</code> associations
-eager-loaded, since we are no longer using any attributes from them in
-the view. Let&rsquo;s update our controller&rsquo;s exposure to only eager-load the
-necessary parts:</p>
-<pre><code class="highlight ruby"><span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:summary</span><span class="p">,</span> <span class="ss">:messages</span><span class="p">)</span> <span class="p">}</span>
-</code></pre>
-
-<p>And when we visit the inbox again, the log looks like this:</p>
-<pre><code class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 14:26:12 -0600
-Processing by InboxesController#show as HTML
-  User Load (0.5ms)  SELECT "users".* FROM "users" LIMIT 1
-  Conversation Load (0.4ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
-  Conversation::Summary Load (0.6ms)  SELECT "conversation_summaries".* FROM "conversation_summaries" WHERE "conversation_summaries"."id" IN (7, 8, 9)
-  Message Load (0.3ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" IN (7, 8, 9)
-  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 7 ORDER BY created_at DESC LIMIT 1
-  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 8 ORDER BY created_at DESC LIMIT 1
-  Message Load (0.4ms)  SELECT "messages".* FROM "messages" WHERE "messages"."conversation_id" = 9 ORDER BY created_at DESC LIMIT 1
-  Rendered inboxes/show.html.haml within layouts/application (10.4ms)
-Completed 200 OK in 13ms (Views: 9.5ms | ActiveRecord: 2.9ms)
-</code></pre>
-
-<p>That&rsquo;s definitely an improvement, albeit a small one. We&rsquo;ve pushed data
-from the user model into our SQL view, but we don&rsquo;t need to stop there.</p>
-
-<h2>Push it down!</h2>
-
-<p>Let&rsquo;s update our view migration to include more aggregated information
-about each conversation.</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateConversationSummaries</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
-  <span class="k">def</span> <span class="nf">up</span>
-    <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
-      CREATE VIEW conversation_summaries AS
-        SELECT c.id,
-        f.name as from_name,
-        t.name as to_name,
-        m.body as most_recent_message_body,
-        m.created_at as most_recent_message_sent_at,
-        (select count(*) from messages m2 where m2.conversation_id = c.id) - 1 as reply_count
-        FROM conversations c
-        inner join users t on t.id = c.to_id
-        inner join users f on f.id = c.from_id
-        left outer join (
-          select distinct on(conversation_id) conversation_id, body, created_at
-          from messages m1
-          order by conversation_id, created_at desc
-        ) m ON m.conversation_id = c.id
-</span><span class="no">    SQL</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">down</span>
-    <span class="n">execute</span> <span class="s1">'DROP VIEW conversation_summaries'</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</code></pre>
-
-<p>After running <code>rake db:migrate:redo</code>, we can verify that everything is
-still working as expect in the database console:</p>
-<pre><code class="highlight plaintext">mailbox_development=# select * from conversation_summaries;
- id |    from_name    |     to_name     |        most_recent_message_body        | most_recent_message_sent_at | reply_count 
-----+-----------------+-----------------+----------------------------------------+-----------------------------+-------------
-  7 | Felionel Richie | Cat Stevens     | Say you. Say meow.                     | 2013-02-08 02:45:27.07712   |           2
-  8 | Nelly Purrtado  | Cat Stevens     | Except that I'm a cat                  | 2013-02-05 16:45:27.088292  |           0
-  9 | Cat Stevens     | Felionel Richie | I'm sorry that you're feeling that way | 2013-01-30 16:45:27.092443  |           1
-(3 rows)
-</code></pre>
-
-<p>That&rsquo;s a lot of SQL! But actually, all I&rsquo;ve added are one join to a
-subquery, and a subselect. Let&rsquo;s review both of these changes.</p>
-
-<p>There are many ways to grab the most recent message for a conversation
-in SQL, including using <a href="http://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I&rsquo;ve opted for
-here is a <a title="Postgresql documentation" href="http://www.postgresql.org/docs/9.2/static/queries-table-expressions.html#QUERIES-SUBQUERIES">subquery in the table expression</a>. The subquery
-alone would return rows for only the most recent messages for each
-conversation:</p>
-<pre><code class="highlight plaintext">conversation_id |                  body                  |         created_at
-----------------+----------------------------------------+----------------------------
-              7 | Say you. Say meow.                     | 2013-02-08 02:45:27.07712
-              8 | Except that I'm a cat                  | 2013-02-05 16:45:27.088292
-              9 | I'm sorry that you're feeling that way | 2013-01-30 16:45:27.092443
-</code></pre>
-
-<p>By joining with only the most recent message per conversation, we avoid
-duplicate rows and only get the <code>body</code> and <code>created_at</code> columns from
-the most recent message. Then, joining against this subquery, we can
-add the <code>body</code> and <code>created_at</code> to the list of projections, naming
-them <code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code>,
-respectively.</p>
-
-<p>The other thing we&rsquo;ve added to the view this iteration is the
-<code>reply_count</code> column, which is a subselect to get the count. We also
-subtract 1, just as before.</p>
-
-<p>Let&rsquo;s take a look at our Conversation model now:</p>
-<pre><code class="highlight ruby"><span class="c1"># before</span>
-<span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">belongs_to</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
-  <span class="n">belongs_to</span> <span class="ss">:from</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
-  <span class="n">has_many</span> <span class="ss">:messages</span><span class="p">,</span> <span class="ss">dependent: :destroy</span><span class="p">,</span> <span class="ss">inverse_of: :conversation</span>
-
-  <span class="k">def</span> <span class="nf">most_recent_message_body</span>
-    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">body</span> <span class="k">if</span> <span class="n">most_recent_message</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">most_recent_message_sent_at</span>
-    <span class="n">most_recent_message</span><span class="p">.</span><span class="nf">created_at</span> <span class="k">if</span> <span class="n">most_recent_message</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">reply_count</span>
-    <span class="o">[</span><span class="n">messages</span><span class="p">.</span><span class="nf">size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="nf">max</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">to_name</span>
-    <span class="n">to</span><span class="p">.</span><span class="nf">name</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">from_name</span>
-    <span class="n">from</span><span class="p">.</span><span class="nf">name</span>
-  <span class="k">end</span>
-
-  <span class="kp">private</span>
-  <span class="k">def</span> <span class="nf">most_recent_message</span>
-    <span class="vi">@most_recent_message</span> <span class="o">||=</span> <span class="n">messages</span><span class="p">.</span><span class="nf">by_date</span><span class="p">.</span><span class="nf">first</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-
-
-<span class="c1"># after</span>
-<span class="k">class</span> <span class="nc">Conversation</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="k">class</span> <span class="nc">Summary</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-    <span class="nb">self</span><span class="p">.</span><span class="nf">table_name</span> <span class="o">=</span> <span class="s2">"conversation_summaries"</span>
-    <span class="nb">self</span><span class="p">.</span><span class="nf">primary_key</span> <span class="o">=</span> <span class="s2">"id"</span>
-    <span class="n">belongs_to</span> <span class="ss">:conversation</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
-  <span class="k">end</span>
-
-  <span class="n">belongs_to</span> <span class="ss">:to</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
-  <span class="n">belongs_to</span> <span class="ss">:from</span><span class="p">,</span> <span class="ss">class_name: </span><span class="s2">"User"</span>
-  <span class="n">has_many</span> <span class="ss">:messages</span><span class="p">,</span> <span class="ss">dependent: :destroy</span><span class="p">,</span> <span class="ss">inverse_of: :conversation</span>
-  <span class="n">has_one</span> <span class="ss">:summary</span><span class="p">,</span> <span class="ss">foreign_key: </span><span class="s2">"id"</span>
-
-  <span class="n">delegate</span> <span class="ss">:most_recent_message_sent_at</span><span class="p">,</span> <span class="ss">:most_recent_message_body</span><span class="p">,</span>
-    <span class="ss">:reply_count</span><span class="p">,</span> <span class="ss">:to_name</span><span class="p">,</span> <span class="ss">:from_name</span><span class="p">,</span> <span class="ss">to: :summary</span>
-
-<span class="k">end</span>
-</code></pre>
-
-<p>With much of our data transformation and aggregation in our SQL view,
-our model has become trivially simple. It literally only contains
-assocations and delegation now. We update our exposure to only
-eager-load the conversation summary:</p>
-<pre><code class="highlight ruby"><span class="n">expose</span><span class="p">(</span><span class="ss">:conversations</span><span class="p">)</span> <span class="p">{</span> <span class="n">user</span><span class="p">.</span><span class="nf">conversations</span><span class="p">.</span><span class="nf">includes</span><span class="p">(</span><span class="ss">:summary</span><span class="p">)</span> <span class="p">}</span>
-</code></pre>
-
-<p>Now, reloading the page yields the following log output:</p>
-<pre><code class="highlight plaintext">Started GET "/" for 127.0.0.1 at 2013-02-11 15:37:49 -0600
-Processing by InboxesController#show as HTML
-  User Load (1.0ms)  SELECT "users".* FROM "users" LIMIT 1
-  Conversation Load (0.2ms)  SELECT "conversations".* FROM "conversations" WHERE (1 IN (from_id, to_id))
-  Conversation::Summary Load (0.8ms)  SELECT "conversation_summaries".* FROM "conversation_summaries" WHERE "conversation_summaries"."id" IN (7, 8, 9)
-  Rendered inboxes/show.html.haml within layouts/application (5.5ms)
-Completed 200 OK in 8ms (Views: 6.0ms | ActiveRecord: 2.0ms)
-</code></pre>
-
-<p>Now we see some real improvement. All N+1 queries are gone, replaced
-instead with the eager-loading of the the Conversation::Summary model.</p>
-
-<h2>Real World Benefits</h2>
-
-<p>I used this technique in a real-world application. It helped abstract
-some of the mundane details of the inbox and allowed us to think about
-each conversation at a higher level with a summary.</p>
-
-<p>In fact the app included even more business rules than I&rsquo;ve included
-here. Each conversation had to include a read/unread status that updated
-with each sent message. Although it was easily implemented in pure Ruby,
-it cluttered the model and created yet more N+1 queries in the app view.</p>
-
-<p>The inbox also had to be sorted by the most recent message date,
-so that the conversation with the most recent activity would
-appear first in the list. This kind of sorting without SQL is both
-cumbersome and inefficient in Ruby; you have to load all messages
-for each conversation. With the SQL view, it was as simple as
-changing the scope from <code>user.conversations.include(:summary)</code> to
-<code>user.conversations.include(:summary).order(&quot;conversation_summaries.most
-_recent_message_sent_at DESC&quot;)</code>.</p>
-
-<h2>Conclusion</h2>
-
-<p>Any time that we push stuff into the database, we make a tradeoff.
-In this case, when we move data transformation into the SQL view, we
-sacrifice the co-location of the conversation model and the definition
-of its summary. With the summary definition located in the database,
-there&rsquo;s one extra layer of indirection.</p>
-
-<p>The other tradeoff is that any time we&rsquo;d like to make a non-trivial
-change the view, we actually have to create an entirely new view,
-replacing the old one. If for example, we knew that our inbox was likely
-to change or add fields, the SQL view approach might be too brittle.</p>
-
-<p>On the other hand, we effectively removed N+1 queries from our
-application and simplified our model considerably. By abstracting the
-conversation&rsquo;s summary into a model backed by a SQL view, we&rsquo;re able
-to think of the Summary as an object in its own right. This provides
-a cognitive simplification, but also yields performance gains as the
-dataset grows.</p>
-
-<p>It may not be right for every situation, but knowing and understanding
-how we can use SQL views in our Rails applications adds another tool to
-our toolbelt.</p>
-
-<h2>Example app</h2>
-
-<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views">sample Rails app</a> to
-iterate quickly. I used TDD to write the pure-ruby approach, and reused
-the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
-approaches. Of particular note is the <a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo
-dels/category.rb">history of the Conversation
-model</a>, which mirrors the code above.</p>
 ]]>
     </content>
   </entry>

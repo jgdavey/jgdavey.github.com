@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8'>
+<meta content="Please, never say 'widgets' in my presence again." name='description'>
+<meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
+<meta content='width=device-width, initial-scale=1' name='viewport'>
+<meta content='True' name='HandheldFriendly'>
+<meta content='320' name='MobileOptimized'>
+<link href='/favicon.png' rel='icon'>
+<title>Awkward and Proud - Joshua Davey</title>
+<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+<script src='/javascripts/main.js'></script>
+</head>
+<body>
+<div id='content'>
+<header>
+<h1><a href="/">Awkward and Proud</a></h1>
+</header>
+<div id='description'>
+<ul class='meta'>
+<li>
+<a href="/about">About</a>
+/
+<a href="/atom.xml">RSS</a>
+</li>
+</ul>
+</div>
+<div id='main'><div class='post'>
+<div class='post-body'>
+<h2>Single-Use Tokens in Datomic</h2>
+<p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
+a password-reset token, or capturing a financial transaction, there are
+times when something should happen exactly once, atomically. Once a
+token is used, it is invalidated.</p>
+
+<p>Doing things exactly once, atomically, is relatively straightforward in
+traditional ACID transactional databases: within a transaction, you find
+an entity (row) by the token, perform any updates to that entity, and
+finally invalidate the token (often by deleting or nullifying it). <sup id="a1"><a href="#f1">1</a></sup></p>
+
+<p>But how can we accomplish some like this in Datomic?</p>
+
+<h2>The World&rsquo;s Worst Singles Network</h2>
+
+<blockquote>
+<p>Welcome to WWSN! We&rsquo;re so excited you&rsquo;re here! On WWSN, you can sign up,
+sign in, and reset your password. It&rsquo;s so simple!</p>
+</blockquote>
+
+<p>Let&rsquo;s say we have a really simple schema. A user has an email address
+and a bcrypted password:</p>
+<pre><code class="highlight clojure"><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/email</span><span class="w">
+  </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
+  </span><span class="no">:db/unique</span><span class="w"> </span><span class="no">:db.unique/identity</span><span class="w">
+  </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
+  </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w">
+  </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
+  </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
+  </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}</span><span class="w">
+ </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w">
+  </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
+  </span><span class="no">:db/unique</span><span class="w"> </span><span class="no">:db.unique/value</span><span class="w">
+  </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
+  </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}]</span><span class="w">
+</span></code></pre>
+
+<p>Some initial data might be added like this:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+                   </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"jim@example.com"</span><span class="w">
+                   </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="p">(</span><span class="nf">crypt</span><span class="w"> </span><span class="s">"jello4stapler"</span><span class="p">)}</span><span class="w">
+                  </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+                   </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"pam@example.com"</span><span class="w">
+                   </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="p">(</span><span class="nf">crypt</span><span class="w"> </span><span class="s">"art4evah"</span><span class="p">)}])</span><span class="w">
+</span></code></pre>
+
+<p>Later, one of the users wants to reset their password, so we generate a
+password reset token and persist it:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+                   </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"jim@example.com"</span><span class="w">
+                   </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="p">(</span><span class="nf">generate-secure-random</span><span class="p">)}])</span><span class="w">
+</span></code></pre>
+
+<h2>An initial approach</h2>
+
+<p>After receiving an email, they follow the link that includes the
+single-use token in the URL. When they submit their new password, we
+look up the user by that token and update them accordingly:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
+      </span><span class="n">token</span><span class="w"> </span><span class="p">(</span><span class="no">:token</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w">
+      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+               </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
+               </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
+              </span><span class="n">db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+    </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]</span><span class="w">
+                      </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
+</span></code></pre>
+
+<p>But there&rsquo;s a problem with this solution. Even though the new password
+is asserted in the same transaction that the token is invalidated, the
+opportunity for concurrency problems between threads and/or peers still
+exists.</p>
+
+<p>Here&rsquo;s why. In between the time that <code>e</code> is first found by its token
+and its new facts are transacted, somebody else could have already used
+(and deleted) the token. In other words, even though all writes are
+transactional, the reads are not. In practice this is rarely, if ever,
+a problem. <code>(d/db conn)</code> will return the most recent version of the
+database that the peer can get.</p>
+
+<h2>Croutons are just stale bread</h2>
+
+<p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">stale-db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="w">
+      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+               </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
+               </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
+              </span><span class="n">stale-db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+    </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]</span><span class="w">
+                      </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
+
+</span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="p">(</span><span class="no">:token</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w">
+      </span><span class="c1">;; this token still exists because we're using and "old" db value
+</span><span class="w">      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+               </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
+               </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
+              </span><span class="n">stale-db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
+  </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+    </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="s">"somethingelse"</span><span class="p">]</span><span class="w">
+                      </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
+
+</span></code></pre>
+
+<p>The user entity <code>e</code> is found both times because the database value is
+immutable. So, the transactions will both succeed.</p>
+
+<p>The astute reader may have noticed something. I said all writes are
+transactional, but in the second block of code, we&rsquo;re retracting a value
+that&rsquo;s already been retracted. Something must be broken!</p>
+
+<p>Nothing&rsquo;s broken. This tripped me up at first, but it turns out that
+retractions work just like assertions with regard to <em>redundancy
+elimination</em>.</p>
+
+<h2>The Department of Redundancy Department</h2>
+
+<p>From the Datomic <a href="http://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
+
+<blockquote>
+<p>Redundancy Elimination</p>
+
+<p>A datom is redundant with the current value of the database if
+there is a matching datom that differs only by transaction id. If a
+transaction would produce redundant datoms, those datoms are filtered
+out, and do not appear a second time in either the indexes or the
+transaction log.</p>
+</blockquote>
+
+<p>In other words, Datomic is eliminating the redundant retraction: we&rsquo;ve
+already retracted the token, so the effective datoms of the transaction
+only include the <code>[:db/add ...]</code> of the new password. In this particular
+use case, retractions cannot be used to safeguard us from using a token
+more than once.</p>
+
+<h2>Transaction functions to the rescue</h2>
+
+<p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
+transactional, and reads are not. That&rsquo;s actually only true on the
+peers. The transactor itself is guaranteed to always have access to the
+most recent database value at any time. Among other things, this is what
+enables <a href="http://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
+
+<p>Within a transaction, a database function is used in place of a
+<code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
+function, it invokes it and splices the result into the rest of the
+transaction. Also, a database function always receives the most recent
+<code>db</code> value as it&rsquo;s first argument. Because you have access to the whole
+of the Datomic API, you can leverage this <code>db</code> value to do all sorts of
+things.</p>
+
+<p>Let&rsquo;s transact the following new schema info into our database:</p>
+<pre><code class="highlight clojure"><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+  </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:db.fn/set-with-token</span><span class="w">
+  </span><span class="no">:db/doc</span><span class="w"> </span><span class="s">"Look up entity by token, set attr and value, and retract token"</span><span class="w">
+  </span><span class="no">:db/fn</span><span class="w"> </span><span class="o">#</span><span class="n">db/fn</span><span class="w"> </span><span class="p">{</span><span class="no">:lang</span><span class="w"> </span><span class="s">"clojure"</span><span class="w">
+                 </span><span class="no">:params</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="n">value</span><span class="p">]</span><span class="w">
+                 </span><span class="no">:code</span><span class="w"> </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">datomic.api/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+                                                </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?ta</span><span class="w"> </span><span class="n">?tv</span><span class="w">
+                                                </span><span class="no">:where</span><span class="w">
+                                                </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="n">?ta</span><span class="w"> </span><span class="n">?tv</span><span class="p">]]</span><span class="w">
+                                              </span><span class="n">db</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">)]</span><span class="w">
+                         </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
+                           </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="n">attr</span><span class="w"> </span><span class="n">value</span><span class="p">]</span><span class="w">
+                            </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">]]</span><span class="w">
+                           </span><span class="p">(</span><span class="nf">throw</span><span class="w"> </span><span class="p">(</span><span class="nf">ex-info</span><span class="w"> </span><span class="s">"No entity with that token exists"</span><span class="w">
+                                           </span><span class="p">{</span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">}))))}}]</span><span class="w">
+</span></code></pre>
+
+<p>This function is more generic than our immediate use-case, but I prefer
+to parameterize attributes as well as values in database functions. It
+allows us to re-use the database function for other token fields, and
+won&rsquo;t have to be updated in the schema if we ever change the name our
+token attribute.</p>
+
+<p>Here&rsquo;s how we use this shiny new function:</p>
+<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="p">]</span><span class="w">
+  </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db.fn/set-with-token</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="w">
+                                           </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]]))</span><span class="w">
+</span></code></pre>
+
+<p>When we transact this data, the transactor invokes our function using
+the most recent database value. In other words, we are making the lookup
+portion serializable with the rest of the operations.</p>
+
+<p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
+
+<h2>In Summary</h2>
+
+<p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
+single-writer design. Other database systems (e.g. SQL) have to employ
+very complicated isolation patterns like MVVC to allow multiple writers
+while keeping data integrity guarantees. Datomic side-steps those problems by
+using a single writer, paired with immutable history.</p>
+
+<p>The catch, as we have seen, is that read-dependent writes will require
+the use of database functions to maintain atomicity. Of course, database
+functions have uses outside of concurrency contexts. And, as a bonus,
+they can be loaded and invoked on the client as well.</p>
+
+<p>For more information on database functions, see <a href="http://docs.datomic.com/database-functions.html">the
+docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA">watch
+the video</a>,
+or see <a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial
+/data_functions.clj">the Day of Datomic
+examples</a>. You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932">scratch.clj</a> file that I
+used to build up the code examples here.</p>
+
+<p><sup id="f1">1</sup> However, even in SQL setups there are potential
+pitfalls. Because of the potential for multiple writers, care must be
+taken to satisfy the &ldquo;exactly once&rdquo; requirement. Where possible, a SQL
+client should use a single statement to find, update, and nullify a
+token. When a single statement isn&rsquo;t possible, the use of row-level
+locks can be used. Or, better yet, wrap everything in a transaction with
+serializable isolation level.</p>
+
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(["_setAccount", "UA-330362-1"]);
+  _gaq.push(["_trackPageview"]);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+</body>
+</html>
