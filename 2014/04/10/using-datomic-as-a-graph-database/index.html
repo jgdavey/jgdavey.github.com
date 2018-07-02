@@ -38,11 +38,12 @@
 also happens to be effective at modeling graph data and was a great fit for
 performing graph traversal in a recent project I built.</p>
 
-<p>I started out building <a href="http://kevinbacon.us/">kevinbacon.us</a> using <a href="http://www.neo4j.org/">Neo4j</a>, a popular
-open-source graph database. It worked very well for actors that were a few hops
-away, but finding paths between actors with more than 5 hops proved problematic.
-The cypher query language gave me little visibility into the graph algorithms
-actually being executed. I wanted more.</p>
+<p>I started out building a six degress of Kevin Bacon project using
+<a href="http://www.neo4j.org/">Neo4j</a>, a popular open-source graph database. It worked very well
+for actors that were a few hops away, but finding paths between actors
+with more than 5 hops proved problematic.  The cypher query language
+gave me little visibility into the graph algorithms actually being
+executed. I wanted more.</p>
 
 <p>Despite not being explicitly labeled as such, Datomic proved to be an effective
 graph database. Its ability to arbitrarily traverse datoms, when paired with
@@ -329,14 +330,14 @@ effectively local to the peer machine.</p>
 <h2>Performance</h2>
 
 <p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
-<a href="http://kevinbacon.us/">kevinbacon.us</a>. Once the peer&rsquo;s index caches are warmed, the performance
+the project. Once the peer&rsquo;s index caches are warmed, the performance
 is quite good: most searches I&rsquo;ve performed between well-known actors complete
 in under a second, and in many cases, under 100 ms. I never got results that
 good with Neo4j&rsquo;s cypher query language.</p>
 
 <h2>Source</h2>
 
-<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a> for <a href="http://kevinbacon.us/">kevinbacon.us</a>.</p>
+<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
 
 </div>
 </div>

@@ -16,7 +16,7 @@
     <link rel="alternate" href="http://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"/>
     <id>http://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/</id>
     <published>2016-09-29T20:00:00-04:00</published>
-    <updated>2016-09-30T16:40:51-04:00</updated>
+    <updated>2018-07-02T09:35:59-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -252,7 +252,7 @@ serializable isolation level.</p>
     <link rel="alternate" href="http://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"/>
     <id>http://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/</id>
     <published>2015-09-16T20:00:00-04:00</published>
-    <updated>2016-07-06T13:35:44-04:00</updated>
+    <updated>2018-07-02T09:35:59-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -336,7 +336,7 @@ is half the battle.</p>
     <link rel="alternate" href="http://joshuadavey.com/2015/06/04/boot-middleman/"/>
     <id>http://joshuadavey.com/2015/06/04/boot-middleman/</id>
     <published>2015-06-03T20:00:00-04:00</published>
-    <updated>2016-07-06T13:35:06-04:00</updated>
+    <updated>2018-07-02T09:35:59-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -427,7 +427,7 @@ refresh to see the effects.</p>
     <link rel="alternate" href="http://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/"/>
     <id>http://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/</id>
     <published>2014-06-12T20:00:00-04:00</published>
-    <updated>2016-07-06T13:36:19-04:00</updated>
+    <updated>2018-07-02T09:35:59-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -587,7 +587,7 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
     <link rel="alternate" href="http://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"/>
     <id>http://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/</id>
     <published>2014-04-09T20:00:00-04:00</published>
-    <updated>2016-07-06T13:36:52-04:00</updated>
+    <updated>2018-07-02T09:43:34-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -598,11 +598,12 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
 also happens to be effective at modeling graph data and was a great fit for
 performing graph traversal in a recent project I built.</p>
 
-<p>I started out building <a href="http://kevinbacon.us/">kevinbacon.us</a> using <a href="http://www.neo4j.org/">Neo4j</a>, a popular
-open-source graph database. It worked very well for actors that were a few hops
-away, but finding paths between actors with more than 5 hops proved problematic.
-The cypher query language gave me little visibility into the graph algorithms
-actually being executed. I wanted more.</p>
+<p>I started out building a six degress of Kevin Bacon project using
+<a href="http://www.neo4j.org/">Neo4j</a>, a popular open-source graph database. It worked very well
+for actors that were a few hops away, but finding paths between actors
+with more than 5 hops proved problematic.  The cypher query language
+gave me little visibility into the graph algorithms actually being
+executed. I wanted more.</p>
 
 <p>Despite not being explicitly labeled as such, Datomic proved to be an effective
 graph database. Its ability to arbitrarily traverse datoms, when paired with
@@ -889,14 +890,14 @@ effectively local to the peer machine.</p>
 <h2>Performance</h2>
 
 <p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
-<a href="http://kevinbacon.us/">kevinbacon.us</a>. Once the peer&rsquo;s index caches are warmed, the performance
+the project. Once the peer&rsquo;s index caches are warmed, the performance
 is quite good: most searches I&rsquo;ve performed between well-known actors complete
 in under a second, and in many cases, under 100 ms. I never got results that
 good with Neo4j&rsquo;s cypher query language.</p>
 
 <h2>Source</h2>
 
-<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a> for <a href="http://kevinbacon.us/">kevinbacon.us</a>.</p>
+<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
 ]]>
     </content>
   </entry>
@@ -907,7 +908,7 @@ good with Neo4j&rsquo;s cypher query language.</p>
     <link rel="alternate" href="http://joshuadavey.com/2013/08/22/deferring-database-constraints/"/>
     <id>http://joshuadavey.com/2013/08/22/deferring-database-constraints/</id>
     <published>2013-08-21T20:00:00-04:00</published>
-    <updated>2016-07-06T13:37:11-04:00</updated>
+    <updated>2018-07-02T09:35:59-04:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
