@@ -2,14 +2,14 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<meta content="Please, never say 'widgets' in my presence again." name='description'>
+<meta content='Please, never say &#39;widgets&#39; in my presence again.' name='description'>
 <meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
 <meta content='width=device-width, initial-scale=1' name='viewport'>
 <meta content='True' name='HandheldFriendly'>
 <meta content='320' name='MobileOptimized'>
 <link href='/favicon.png' rel='icon'>
 <title>Awkward and Proud - Joshua Davey</title>
-<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/screen.css" rel="stylesheet" />
 <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 <script src='/javascripts/main.js'></script>
@@ -36,9 +36,9 @@ considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
 context of what I&rsquo;m working on to see the test result.</p>
 
-<p>Taking a cue from <a title="Robot Has No Heart - Vim and tmux on OSX" href="http://rhnh.net/2011/08/20/vim-and-tmux-on-osx">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
+<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
 been using tmux lately as my primary workspace. There are excellent
-<a title="Peter Cooper's introduction to tmux" href="http://peterc.org/blog/2010/216-tmux.html">introductions to</a> <a title="Hawkhost's introduction to tmux" href="http://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/">tmux elsewhere</a>, but I&rsquo;ve really
+<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I&rsquo;ve really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
 development. But rather than sing tmux&rsquo;s praises, I&rsquo;d like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
@@ -53,7 +53,7 @@ Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
 
 <p>I&rsquo;ve also tried more editor-embedding techniques of running tests. Both
-<a title="Rails.vim: Ruby on Rails power tools" href="https://github.com/tpope/vim-rails">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
@@ -73,9 +73,9 @@ championed by Gary Bernhardt and Corey Haines, among others.</p>
 
 <p>Because tmux is so scriptable, it isn&rsquo;t hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a title="Rails.vim: Ruby on Rails power tools" href="https://github.com/tpope/vim-rails">rails.vim</a> and <a title="Joshua Davey's tslime.vim fork" href="https://github.com/jgdavey/tslime.vim">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
 the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
-<a title="Turbux: turbo Ruby testing with tmux" href="https://github.com/jgdavey/vim-turbux">turbux.vim</a>.</p>
+<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 
 <h2>Using tslime.vim</h2>
 
@@ -90,13 +90,12 @@ each of these prompts, so you can happily mash <code>&lt;Tab&gt;</code>.</p>
 
 <p>The plugin exposes a general-purpose function to send arbitrary text to
 the configured tmux pane. For example, you can use it in the following way:</p>
-<pre><code class="highlight plaintext">:call Send_to_Tmux("rspec ".expand("%")."\n")
-</code></pre>
-
+<div class="highlight"><pre class="highlight plaintext"><code>:call Send_to_Tmux("rspec ".expand("%")."\n")
+</code></pre></div>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
 open is so common that I&rsquo;ve packaged up some useful defaults in
-<a title="Turbux: turbo Ruby testing with tmux" href="https://github.com/jgdavey/vim-turbux">turbux.vim</a>.</p>
+<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 
 <h2>Using turbux.vim</h2>
 
@@ -107,7 +106,7 @@ the corresponding pane. In a test-unit file, it will run <code>ruby -Itest
 path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber
 path/to/my.feature</code>.</p>
 
-<p>Thanks to <a title="Rails.vim: Ruby on Rails power tools" href="https://github.com/tpope/vim-rails">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
 when the current file has a corresponding test or spec. For example,
 When I&rsquo;m in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
@@ -126,7 +125,7 @@ the rspec or cucumber command.</p>
 switching, as I never have to leave my editor. There are also fewer
 surprises. As far as I&rsquo;m concerned, the faster my feedback, the better.</p>
 
-<p><em>Note:</em> You will probably want to use my fork of <a title="Joshua Davey's tslime.vim fork" href="https://github.com/jgdavey/tslime.vim">tslime.vim</a>, as the main
+<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 
@@ -134,21 +133,19 @@ merged in.</p>
 
 <p>See the plugin in action. If the video is hard to see, visit vimeo. There is a link to download at full size.</p>
 
-<iframe src="http://player.vimeo.com/video/34879707?title=0&amp;byline=0&amp;portrait=0" width="500" height="306" frameborder="0" ></iframe>
+<iframe src="https://player.vimeo.com/video/34879707?title=0&amp;byline=0&amp;portrait=0" width="600" height="400" frameborder="0"  allow="autoplay; fullscreen" allowfullscreen></iframe>
 
 </div>
 </div>
 </div>
 </div>
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(["_setAccount", "UA-330362-1"]);
-  _gaq.push(["_trackPageview"]);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-330362-1', 'auto');
+  ga('send', 'pageview');
 </script>
 </body>
 </html>

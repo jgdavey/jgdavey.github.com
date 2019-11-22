@@ -16,7 +16,7 @@
     <link rel="alternate" href="http://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"/>
     <id>http://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/</id>
     <published>2016-09-29T20:00:00-04:00</published>
-    <updated>2018-07-02T09:35:59-04:00</updated>
+    <updated>2019-11-22T10:51:15-05:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
@@ -42,7 +42,7 @@ sign in, and reset your password. It&rsquo;s so simple!</p>
 
 <p>Let&rsquo;s say we have a really simple schema. A user has an email address
 and a bcrypted password:</p>
-<pre><code class="highlight clojure"><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
   </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:user/email</span><span class="w">
   </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
   </span><span class="no">:db/unique</span><span class="w"> </span><span class="no">:db.unique/identity</span><span class="w">
@@ -59,30 +59,27 @@ and a bcrypted password:</p>
   </span><span class="no">:db/unique</span><span class="w"> </span><span class="no">:db.unique/value</span><span class="w">
   </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
   </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}]</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>Some initial data might be added like this:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
                    </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"jim@example.com"</span><span class="w">
                    </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="p">(</span><span class="nf">crypt</span><span class="w"> </span><span class="s">"jello4stapler"</span><span class="p">)}</span><span class="w">
                   </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
                    </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"pam@example.com"</span><span class="w">
                    </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="p">(</span><span class="nf">crypt</span><span class="w"> </span><span class="s">"art4evah"</span><span class="p">)}])</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>Later, one of the users wants to reset their password, so we generate a
 password reset token and persist it:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="p">(</span><span class="nf">d/tempid</span><span class="w"> </span><span class="no">:db.part/user</span><span class="p">)</span><span class="w">
                    </span><span class="no">:user/email</span><span class="w"> </span><span class="s">"jim@example.com"</span><span class="w">
                    </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="p">(</span><span class="nf">generate-secure-random</span><span class="p">)}])</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <h2>An initial approach</h2>
 
 <p>After receiving an email, they follow the link that includes the
 single-use token in the URL. When they submit their new password, we
 look up the user by that token and update them accordingly:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
       </span><span class="n">token</span><span class="w"> </span><span class="p">(</span><span class="no">:token</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w">
       </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
                </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
@@ -91,8 +88,7 @@ look up the user by that token and update them accordingly:</p>
   </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">e</span><span class="w">
     </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]</span><span class="w">
                       </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>But there&rsquo;s a problem with this solution. Even though the new password
 is asserted in the same transaction that the token is invalidated, the
 opportunity for concurrency problems between threads and/or peers still
@@ -108,7 +104,7 @@ database that the peer can get.</p>
 <h2>Croutons are just stale bread</h2>
 
 <p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">stale-db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">))</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">stale-db</span><span class="w"> </span><span class="p">(</span><span class="nf">d/db</span><span class="w"> </span><span class="n">conn</span><span class="p">))</span><span class="w">
 
 </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="w">
       </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
@@ -120,8 +116,8 @@ database that the peer can get.</p>
                       </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
 
 </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="p">(</span><span class="no">:token</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w">
-      </span><span class="c1">;; this token still exists because we're using and "old" db value
-</span><span class="w">      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
+      </span><span class="c1">;; this token still exists because we're using and "old" db value</span><span class="w">
+      </span><span class="n">e</span><span class="w"> </span><span class="p">(</span><span class="nf">d/q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?e</span><span class="w"> </span><span class="nb">.</span><span class="w">
                </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">?token</span><span class="w">
                </span><span class="no">:where</span><span class="w"> </span><span class="p">[</span><span class="n">?e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">?token</span><span class="p">]]</span><span class="w">
               </span><span class="n">stale-db</span><span class="w"> </span><span class="n">token</span><span class="p">)]</span><span class="w">
@@ -129,8 +125,7 @@ database that the peer can get.</p>
     </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db/add</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="s">"somethingelse"</span><span class="p">]</span><span class="w">
                       </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="p">]])))</span><span class="w">
 
-</span></code></pre>
-
+</span></code></pre></div>
 <p>The user entity <code>e</code> is found both times because the database value is
 immutable. So, the transactions will both succeed.</p>
 
@@ -144,7 +139,7 @@ elimination</em>.</p>
 
 <h2>The Department of Redundancy Department</h2>
 
-<p>From the Datomic <a href="http://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
+<p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
 
 <blockquote>
 <p>Redundancy Elimination</p>
@@ -168,7 +163,7 @@ more than once.</p>
 transactional, and reads are not. That&rsquo;s actually only true on the
 peers. The transactor itself is guaranteed to always have access to the
 most recent database value at any time. Among other things, this is what
-enables <a href="http://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
+enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
 
 <p>Within a transaction, a database function is used in place of a
 <code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
@@ -179,7 +174,7 @@ of the Datomic API, you can leverage this <code>db</code> value to do all sorts 
 things.</p>
 
 <p>Let&rsquo;s transact the following new schema info into our database:</p>
-<pre><code class="highlight clojure"><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">[{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="w"> </span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
   </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:db.fn/set-with-token</span><span class="w">
   </span><span class="no">:db/doc</span><span class="w"> </span><span class="s">"Look up entity by token, set attr and value, and retract token"</span><span class="w">
   </span><span class="no">:db/fn</span><span class="w"> </span><span class="o">#</span><span class="n">db/fn</span><span class="w"> </span><span class="p">{</span><span class="no">:lang</span><span class="w"> </span><span class="s">"clojure"</span><span class="w">
@@ -194,8 +189,7 @@ things.</p>
                             </span><span class="p">[</span><span class="no">:db/retract</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">]]</span><span class="w">
                            </span><span class="p">(</span><span class="nf">throw</span><span class="w"> </span><span class="p">(</span><span class="nf">ex-info</span><span class="w"> </span><span class="s">"No entity with that token exists"</span><span class="w">
                                            </span><span class="p">{</span><span class="n">token-attr</span><span class="w"> </span><span class="n">token-value</span><span class="p">}))))}}]</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>This function is more generic than our immediate use-case, but I prefer
 to parameterize attributes as well as values in database functions. It
 allows us to re-use the database function for other token fields, and
@@ -203,11 +197,10 @@ won&rsquo;t have to be updated in the schema if we ever change the name our
 token attribute.</p>
 
 <p>Here&rsquo;s how we use this shiny new function:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[{</span><span class="no">:keys</span><span class="w"> </span><span class="p">[</span><span class="n">token</span><span class="w"> </span><span class="n">new-password</span><span class="p">]}</span><span class="w"> </span><span class="n">params</span><span class="p">]</span><span class="w">
   </span><span class="p">(</span><span class="nf">d/transact</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">[[</span><span class="no">:db.fn/set-with-token</span><span class="w"> </span><span class="no">:user/single-use-token</span><span class="w"> </span><span class="n">token</span><span class="w">
                                            </span><span class="no">:user/crypted-password</span><span class="w"> </span><span class="n">new-password</span><span class="p">]]))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>When we transact this data, the transactor invokes our function using
 the most recent database value. In other words, we are making the lookup
 portion serializable with the rest of the operations.</p>
@@ -227,7 +220,7 @@ the use of database functions to maintain atomicity. Of course, database
 functions have uses outside of concurrency contexts. And, as a bonus,
 they can be loaded and invoked on the client as well.</p>
 
-<p>For more information on database functions, see <a href="http://docs.datomic.com/database-functions.html">the
+<p>For more information on database functions, see <a href="https://docs.datomic.com/database-functions.html">the
 docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA">watch
 the video</a>,
 or see <a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial
@@ -252,12 +245,12 @@ serializable isolation level.</p>
     <link rel="alternate" href="http://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"/>
     <id>http://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/</id>
     <published>2015-09-16T20:00:00-04:00</published>
-    <updated>2018-07-02T09:35:59-04:00</updated>
+    <updated>2019-11-22T10:49:11-05:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
     <content type="html">
-      <![CDATA[<p><em>This is a repost. You can find the original <a title="Bulk imports with Datomic" href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic">here</a></em></p>
+      <![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
 
 <p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
 wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve
@@ -291,15 +284,14 @@ in the case of DynamoDB, I save some money, as I don&rsquo;t have to have my
 
 <p>Bulk imports create some garbage, so manually reindexing before backing
 up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">d/connect</span><span class="w"> </span><span class="err">"</span><span class="n">datomic</span><span class="no">:dev://localhost:4334/database-name</span><span class="p">))</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">d/connect</span><span class="w"> </span><span class="err">"</span><span class="n">datomic</span><span class="no">:dev://localhost:4334/database-name</span><span class="p">))</span><span class="w">
 </span><span class="p">(</span><span class="nf">d/request-index</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
 </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="n">d/db</span><span class="w"> </span><span class="n">d/basis-t</span><span class="w"> </span><span class="p">(</span><span class="nf">d/sync-index</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w"> </span><span class="nb">deref</span><span class="p">)</span><span class="w">
-</span><span class="c1">;; blocks until done indexing
+</span><span class="c1">;; blocks until done indexing</span><span class="w">
 </span><span class="p">(</span><span class="nf">d/gc-storage</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">java.util.Date.</span><span class="p">))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>For more information on why this cleanup
-is important, see <a href="http://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
+is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
 documentation</a>.</p>
 
 <h2>Use backup/restore</h2>
@@ -314,7 +306,7 @@ up to production. Assuming you&rsquo;ve already deployed a production transactor
 <li>Run the <code>datomic restore-db</code> command from the backup folder to the
 remote database.</li>
 <li>Turn the &ldquo;write throughput&rdquo; back down to whatever
-value I plan to use for ongoing use (see <a href="http://docs.datomic.com/capacity.html#sec-5">the Datomic
+value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capacity.html#sec-5">the Datomic
 documentation</a> for more
 information).</li>
 </ol>
@@ -336,12 +328,12 @@ is half the battle.</p>
     <link rel="alternate" href="http://joshuadavey.com/2015/06/04/boot-middleman/"/>
     <id>http://joshuadavey.com/2015/06/04/boot-middleman/</id>
     <published>2015-06-03T20:00:00-04:00</published>
-    <updated>2018-07-02T09:35:59-04:00</updated>
+    <updated>2019-11-22T10:48:52-05:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
     <content type="html">
-      <![CDATA[<p><em>This is a repost. You can find the original <a title="Boot + Middleman: The ClojureScript development environment of my dreams" href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams">here</a></em></p>
+      <![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot + Middleman: The ClojureScript development environment of my dreams">here</a></em></p>
 
 <p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
 combination of editor integration, live browser reload, and not having to
@@ -350,12 +342,12 @@ work with.</p>
 
 <p>At Hashrocket, designers and developers work very closely
 together. Visual design and markup is handled by our
-designers, who create &ldquo;stubbed out&rdquo; templates in <a href="http://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
+designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
 directory</a>.
 It&rsquo;s a process that works very well for us, and
 allows us to iteratively add features to an application.</p>
 
-<p>This process has served us very well in Rails using a <a href="http://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
+<p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
 controller</a>,
 available only in development mode.</p>
 
@@ -370,11 +362,11 @@ Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
 get out of sync with a manual process like this. The static resource
 generation should be a part of our build process.</p>
 
-<p>Enter <a href="http://boot-clj.com">boot</a>.</p>
+<p>Enter <a href="https://boot-clj.com">boot</a>.</p>
 
 <h3>Using Boot for ClojureScript development</h3>
 
-<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="http://leiningen.org">Leiningen</a>,
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
 which is the de facto dependency management and build tool for
 Clojure/Script. Boot is similar to Leiningen, but adds the ability to
 compose tasks to create build pipelines. This composability, along with
@@ -416,7 +408,7 @@ Just clone and run <code>boot dev</code>.</p>
 demonstrates how editing front-end files do not require a manual browser
 refresh to see the effects.</p>
 
-<iframe src="https://player.vimeo.com/video/128494099" width="500" height="280" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe src="https://player.vimeo.com/video/128494099" width="600" height="380" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 ]]>
     </content>
   </entry>
@@ -457,10 +449,9 @@ We can do better than copy and paste.</p>
 
 <p>Before we get started, we should get the some basic plugins for clojure
 development. Using your preferred vim plugin manager, add these plugins:</p>
-<pre><code class="highlight plaintext">guns/vim-clojure-static
+<div class="highlight"><pre class="highlight plaintext"><code>guns/vim-clojure-static
 tpope/fireplace.vim
-</code></pre>
-
+</code></pre></div>
 <h1>Setup</h1>
 
 <p>After you&rsquo;ve installed the necessary Vim plugins, enter a project
@@ -486,9 +477,8 @@ session.</p>
 <p>Let&rsquo;s stay with <code>:Eval</code> for a bit longer. <code>:Eval</code> without any arguments
 will send eval and print the outermost form on the current line. For
 example, let&rsquo;s look at a simple expression.</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
-</span></code></pre>
-
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span></code></pre></div>
 <p>When we have our cursor on this line and type <code>:Eval</code> with no arguments,
 we&rsquo;ll see <code>(2 3 4)</code> printed back.</p>
 
@@ -504,9 +494,8 @@ will eval and print the innermost form from the cursor&rsquo;s current
 position.</p>
 
 <p>To demonstrate what this means, let&rsquo;s look at that expression again.</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
-</span></code></pre>
-
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">inc</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span></code></pre></div>
 <p>When our cursor is on the <code>m</code> of <code>map</code>, and we type <code>cpp</code>, we&rsquo;ll see
 <code>(2 3 4)</code>, just as when we did the plain <code>:Eval</code>. But if we move our
 cursor inside the vector and type <code>cpp</code> again, we&rsquo;ll see that inner form
@@ -515,13 +504,12 @@ evaluated.</p>
 <p>Something unique to fireplace is its concept of a quasi-REPL. This is a
 cousin of the <code>cp</code> mappings, but with an intermediate editing window. To
 demonstrate this, let&rsquo;s consider the following example.</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">]</span><span class="w">
      </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">str</span><span class="p">)</span><span class="w">
      </span><span class="nb">reverse</span><span class="w">
      </span><span class="p">(</span><span class="nf">mapv</span><span class="w"> </span><span class="nb">dec</span><span class="p">))</span><span class="w">
 
-</span></code></pre>
-
+</span></code></pre></div>
 <p>In this trivial example, we want to reverse a sequence and decrement
 each number. There&rsquo;s a bug in here, but it&rsquo;s in the middle of the
 thread-through macro. We could just edit the line directly and
@@ -543,9 +531,8 @@ the mapping itself: <code>cq</code> is the &ldquo;Clojure Quasi-REPL&rdquo;.</p>
 
 <p>While we&rsquo;re in this special window, let&rsquo;s type the following, and hit
 enter:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">str</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
-</span></code></pre>
-
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">str</span><span class="w"> </span><span class="p">[</span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span><span class="p">])</span><span class="w">
+</span></code></pre></div>
 <p>Immediately, we can see the issue. Converting each number to a string
 prevents <code>dec</code> from working later on.</p>
 
@@ -587,19 +574,19 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
     <link rel="alternate" href="http://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"/>
     <id>http://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/</id>
     <published>2014-04-09T20:00:00-04:00</published>
-    <updated>2018-07-02T09:43:34-04:00</updated>
+    <updated>2019-11-22T10:46:20-05:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
     <content type="html">
-      <![CDATA[<p><em>This is a repost. You can find the original <a title="Using Datomic as a Graph Database" href="http://hashrocket.com/blog/posts/using-datomic-as-a-graph-database">here</a></em></p>
+      <![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database">here</a></em></p>
 
 <p>Datomic is a database that changes the way that you think about databases. It
 also happens to be effective at modeling graph data and was a great fit for
 performing graph traversal in a recent project I built.</p>
 
 <p>I started out building a six degress of Kevin Bacon project using
-<a href="http://www.neo4j.org/">Neo4j</a>, a popular open-source graph database. It worked very well
+<a href="https://www.neo4j.org/">Neo4j</a>, a popular open-source graph database. It worked very well
 for actors that were a few hops away, but finding paths between actors
 with more than 5 hops proved problematic.  The cypher query language
 gave me little visibility into the graph algorithms actually being
@@ -611,21 +598,21 @@ the appropriate graph searching algorithm, solved my problem elegantly. This
 technique ended up being fast as well.</p>
 
 <p>Quick aside: this post assumes a cursory understanding of Datomic. I won&rsquo;t cover
-the basics, but the <a href="http://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
+the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
 
 <h2>6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold</h2>
 
-<p>The problem domain should be fairly familiar: <a href="http://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
+<p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
 Bacon</a>. I wanted to create an app where you could pick an
 actor and find out what their Bacon Number was. That is, given an actor,
 I wanted to answer the question &ldquo;how many degrees of separation is there
 between that actor and Kevin Bacon?&rdquo;</p>
 
-<p>Using <a href="http://www.imdb.com/interfaces">information freely available from IMDb</a>, I developed the following
+<p>Using <a href="https://www.imdb.com/interfaces">information freely available from IMDb</a>, I developed the following
 schema:</p>
-<pre><code class="highlight clojure"><span class="p">[</span><span class="w">
- </span><span class="c1">;; movies
-</span><span class="w"> </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">[</span><span class="w">
+ </span><span class="c1">;; movies</span><span class="w">
+ </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
   </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:movie/title</span><span class="w">
   </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
   </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
@@ -641,8 +628,8 @@ schema:</p>
   </span><span class="no">:db/doc</span><span class="w"> </span><span class="s">"A movie's release year"</span><span class="w">
   </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}</span><span class="w">
 
- </span><span class="c1">;; actors
-</span><span class="w"> </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
+ </span><span class="c1">;; actors</span><span class="w">
+ </span><span class="p">{</span><span class="no">:db/id</span><span class="w"> </span><span class="o">#</span><span class="n">db/id</span><span class="p">[</span><span class="no">:db.part/db</span><span class="p">]</span><span class="w">
   </span><span class="no">:db/ident</span><span class="w"> </span><span class="no">:person/name</span><span class="w">
   </span><span class="no">:db/valueType</span><span class="w"> </span><span class="no">:db.type/string</span><span class="w">
   </span><span class="no">:db/cardinality</span><span class="w"> </span><span class="no">:db.cardinality/one</span><span class="w">
@@ -659,8 +646,7 @@ schema:</p>
   </span><span class="no">:db.install/_attribute</span><span class="w"> </span><span class="no">:db.part/db</span><span class="p">}</span><span class="w">
  </span><span class="p">]</span><span class="w">
 
-</span></code></pre>
-
+</span></code></pre></div>
 <p>In a nutshell, movies have titles and years. Actors have names and movies.
 The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I&rsquo;ve declared the
 <code>:actor/movies</code> attribute as having a cardinality of many.</p>
@@ -673,7 +659,7 @@ join from our starting point to our ending point with relative ease.</p>
 
 <p>As an example, what if we wanted to know the shortest path or paths from Kevin
 Bacon to Jon Belushi? Let&rsquo;s use a query to find out:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="nf">require</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="n">datomic.api</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">q</span><span class="w"> </span><span class="n">db</span><span class="p">]])</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="nf">require</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="n">datomic.api</span><span class="w"> </span><span class="no">:as</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="no">:refer</span><span class="w"> </span><span class="p">[</span><span class="n">q</span><span class="w"> </span><span class="n">db</span><span class="p">]])</span><span class="w">
 </span><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">d/connect</span><span class="w"> </span><span class="n">...</span><span class="p">))</span><span class="w">
 
 </span><span class="p">(</span><span class="nf">q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?start</span><span class="w"> </span><span class="n">?title</span><span class="w"> </span><span class="n">?end</span><span class="w">
@@ -688,15 +674,14 @@ Bacon to Jon Belushi? Let&rsquo;s use a query to find out:</p>
     </span><span class="s">"Bacon, Kevin (I)"</span><span class="w">
     </span><span class="s">"Belushi, John"</span><span class="p">)</span><span class="w">
 
-</span><span class="c1">;=&gt; #{["Bacon, Kevin (I)" "Animal House (1978)" "Belushi, John"]}
-</span></code></pre>
-
+</span><span class="c1">;=&gt; #{["Bacon, Kevin (I)" "Animal House (1978)" "Belushi, John"]}</span><span class="w">
+</span></code></pre></div>
 <p>That is fine when actors have worked together in a movie (a Bacon Number of 1),
 but doesn&rsquo;t help us solve Bacon numbers when there are 2 or more movies between
 the actors. We could add more where clauses to join over two movies, but that
 isn&rsquo;t sustainable. The queries would quickly become too long to reason about.
 This is a prime opportunity to use Datomic&rsquo;s rules.</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">acted-with-rules</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">acted-with-rules</span><span class="w">
   </span><span class="o">'</span><span class="p">[[(</span><span class="nf">acted-with</span><span class="w"> </span><span class="n">?e1</span><span class="w"> </span><span class="n">?e2</span><span class="w"> </span><span class="n">?path</span><span class="p">)</span><span class="w">
      </span><span class="p">[</span><span class="n">?e1</span><span class="w"> </span><span class="no">:actor/movies</span><span class="w"> </span><span class="n">?m</span><span class="p">]</span><span class="w">
      </span><span class="p">[</span><span class="n">?e2</span><span class="w"> </span><span class="no">:actor/movies</span><span class="w"> </span><span class="n">?m</span><span class="p">]</span><span class="w">
@@ -717,19 +702,17 @@ This is a prime opportunity to use Datomic&rsquo;s rules.</p>
      </span><span class="p">[</span><span class="n">?a2</span><span class="w"> </span><span class="no">:actor/name</span><span class="w"> </span><span class="n">?end</span><span class="p">]</span><span class="w">
      </span><span class="p">(</span><span class="nf">acted-with-2</span><span class="w"> </span><span class="n">?a1</span><span class="w"> </span><span class="n">?a2</span><span class="w"> </span><span class="n">?path</span><span class="p">)]</span><span class="w">
     </span><span class="p">(</span><span class="nf">db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w"> </span><span class="n">acted-with-rules</span><span class="w"> </span><span class="s">"Bieber, Justin"</span><span class="w"> </span><span class="s">"Bacon, Kevin (I)"</span><span class="p">))</span><span class="w">
-</span><span class="c1">;=&gt; #{[(17592186887476 17592186434418 17592187362817 17592186339273 17592186838882)] [(17592186887476 17592186434418 17592188400376 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592187854963 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592186926035 17592186302397 17592186838882)]}
-</span></code></pre>
-
+</span><span class="c1">;=&gt; #{[(17592186887476 17592186434418 17592187362817 17592186339273 17592186838882)] [(17592186887476 17592186434418 17592188400376 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592187854963 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592186926035 17592186302397 17592186838882)]}</span><span class="w">
+</span></code></pre></div>
 <p>This time we get back a collection of paths with entity ids. We can easily
 transform these ids by mapping them into entities and getting the name or title,
 using a function like the following:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">actor-or-movie-name</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">eid</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">actor-or-movie-name</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">eid</span><span class="p">]</span><span class="w">
   </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">ent</span><span class="w"> </span><span class="p">(</span><span class="nf">d/entity</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">eid</span><span class="p">)]</span><span class="w">
     </span><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="p">(</span><span class="no">:movie/title</span><span class="w"> </span><span class="n">ent</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="no">:person/name</span><span class="w"> </span><span class="n">ent</span><span class="p">))))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>So, putting the query together with the above function, we get:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nf">db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nf">db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
       </span><span class="nb">name</span><span class="w"> </span><span class="p">(</span><span class="nb">partial</span><span class="w"> </span><span class="n">actor-or-movie-name</span><span class="w"> </span><span class="n">d</span><span class="p">)]</span><span class="w">
   </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="p">(</span><span class="nf">q</span><span class="w"> </span><span class="o">'</span><span class="p">[</span><span class="no">:find</span><span class="w"> </span><span class="n">?path</span><span class="w">
             </span><span class="no">:in</span><span class="w"> </span><span class="n">$</span><span class="w"> </span><span class="n">%</span><span class="w"> </span><span class="n">?start</span><span class="w"> </span><span class="n">?end</span><span class="w">
@@ -740,9 +723,8 @@ using a function like the following:</p>
           </span><span class="n">d</span><span class="w"> </span><span class="n">acted-with-rules</span><span class="w"> </span><span class="s">"Bieber, Justin"</span><span class="w"> </span><span class="s">"Bacon, Kevin (I)"</span><span class="p">)</span><span class="w">
        </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="nb">first</span><span class="p">)</span><span class="w">
        </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="p">(</span><span class="nb">partial</span><span class="w"> </span><span class="n">mapv</span><span class="w"> </span><span class="nb">name</span><span class="p">))))</span><span class="w">
-</span><span class="c1">;=&gt; (["Bieber, Justin" "Men in Black 3 (2012)" "Jones, Tommy Lee" "JFK (1991)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Howard, Rosemary (II)" "R.I.P.D. (2013)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Segal, Tobias" "R.I.P.D. (2013)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Brolin, Josh" "Hollow Man (2000)" "Bacon, Kevin (I)"])
-</span></code></pre>
-
+</span><span class="c1">;=&gt; (["Bieber, Justin" "Men in Black 3 (2012)" "Jones, Tommy Lee" "JFK (1991)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Howard, Rosemary (II)" "R.I.P.D. (2013)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Segal, Tobias" "R.I.P.D. (2013)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Brolin, Josh" "Hollow Man (2000)" "Bacon, Kevin (I)"])</span><span class="w">
+</span></code></pre></div>
 <p>The rules above are defined statically, but they are simply clojure data
 structures: it would be trivial to generate those rules to an arbitrary
 depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj">Datomic mbrainz
@@ -754,14 +736,14 @@ sample</a>.</p>
 has a distinct advantage of being able to treat your data as local, even if its
 permanent storage lives somewhere else. That means that we can bring our own
 functions to the problem and execute locally, rather than on a database server.
-We can leverage Datomic&rsquo;s <a href="http://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
+We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
 our own graph-searching algorithm, rather than relying on the query engine.</p>
 
 <p>Our IMDb actor data is essentially a dense unweighted graph. Because of its
-density, a <a href="http://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="http://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
+density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
 efficient alogrithm for finding the shortest paths from one point to another. A
 generic bidirectional BFS returning all shortest paths might look like this.</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">paths</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">paths</span><span class="w">
   </span><span class="s">"Returns a lazy seq of all non-looping path vectors starting with
   [&lt;start-node&gt;]"</span><span class="w">
   </span><span class="p">[</span><span class="n">nodes-fn</span><span class="w"> </span><span class="nb">path</span><span class="p">]</span><span class="w">
@@ -794,11 +776,11 @@ generic bidirectional BFS returning all shortest paths might look like this.</p>
                         </span><span class="p">(</span><span class="nf">persistent!</span><span class="w"> </span><span class="p">(</span><span class="nb">reduce</span><span class="w"> </span><span class="p">(</span><span class="k">fn</span><span class="w"> </span><span class="p">[</span><span class="nb">map</span><span class="w"> </span><span class="p">[</span><span class="nb">key</span><span class="w"> </span><span class="nb">val</span><span class="p">]]</span><span class="w">
                                   </span><span class="p">(</span><span class="nf">assoc!</span><span class="w"> </span><span class="nb">map</span><span class="w"> </span><span class="nb">key</span><span class="w"> </span><span class="p">(</span><span class="nb">conj</span><span class="w"> </span><span class="p">(</span><span class="nb">get</span><span class="w"> </span><span class="nb">map</span><span class="w"> </span><span class="nb">key</span><span class="w"> </span><span class="o">#</span><span class="p">{})</span><span class="w"> </span><span class="nb">val</span><span class="p">)))</span><span class="w">
                                 </span><span class="p">(</span><span class="nf">transient</span><span class="w"> </span><span class="nb">map</span><span class="p">)</span><span class="w"> </span><span class="n">pairs</span><span class="p">)))]</span><span class="w">
-    </span><span class="p">(</span><span class="nb">loop</span><span class="w"> </span><span class="p">[</span><span class="n">preds</span><span class="w"> </span><span class="p">{</span><span class="n">start</span><span class="w"> </span><span class="n">nil</span><span class="p">}</span><span class="w"> </span><span class="c1">; map of outgoing nodes to where they came from
-</span><span class="w">           </span><span class="n">succs</span><span class="w"> </span><span class="p">{</span><span class="n">end</span><span class="w"> </span><span class="n">nil</span><span class="p">}</span><span class="w">   </span><span class="c1">; map of incoming nodes to where they came from
-</span><span class="w">           </span><span class="n">q1</span><span class="w"> </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w">   </span><span class="c1">; queue of outgoing things to check
-</span><span class="w">           </span><span class="n">q2</span><span class="w"> </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="n">end</span><span class="p">)]</span><span class="w">    </span><span class="c1">; queue of incoming things to check
-</span><span class="w">      </span><span class="p">(</span><span class="nb">when</span><span class="w"> </span><span class="p">(</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">seq</span><span class="w"> </span><span class="n">q1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">seq</span><span class="w"> </span><span class="n">q2</span><span class="p">))</span><span class="w">
+    </span><span class="p">(</span><span class="nb">loop</span><span class="w"> </span><span class="p">[</span><span class="n">preds</span><span class="w"> </span><span class="p">{</span><span class="n">start</span><span class="w"> </span><span class="n">nil</span><span class="p">}</span><span class="w"> </span><span class="c1">; map of outgoing nodes to where they came from</span><span class="w">
+           </span><span class="n">succs</span><span class="w"> </span><span class="p">{</span><span class="n">end</span><span class="w"> </span><span class="n">nil</span><span class="p">}</span><span class="w">   </span><span class="c1">; map of incoming nodes to where they came from</span><span class="w">
+           </span><span class="n">q1</span><span class="w"> </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w">   </span><span class="c1">; queue of outgoing things to check</span><span class="w">
+           </span><span class="n">q2</span><span class="w"> </span><span class="p">(</span><span class="nb">list</span><span class="w"> </span><span class="n">end</span><span class="p">)]</span><span class="w">    </span><span class="c1">; queue of incoming things to check</span><span class="w">
+      </span><span class="p">(</span><span class="nb">when</span><span class="w"> </span><span class="p">(</span><span class="nb">and</span><span class="w"> </span><span class="p">(</span><span class="nb">seq</span><span class="w"> </span><span class="n">q1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">seq</span><span class="w"> </span><span class="n">q2</span><span class="p">))</span><span class="w">
         </span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">&lt;=</span><span class="w"> </span><span class="p">(</span><span class="nb">count</span><span class="w"> </span><span class="n">q1</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nb">count</span><span class="w"> </span><span class="n">q2</span><span class="p">))</span><span class="w">
           </span><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">pairs</span><span class="w"> </span><span class="p">(</span><span class="nf">find-pairs</span><span class="w"> </span><span class="n">q1</span><span class="w"> </span><span class="n">preds</span><span class="p">)</span><span class="w">
                 </span><span class="n">preds</span><span class="w"> </span><span class="p">(</span><span class="nf">map-set-pairs</span><span class="w"> </span><span class="n">preds</span><span class="w"> </span><span class="n">pairs</span><span class="p">)</span><span class="w">
@@ -812,8 +794,7 @@ generic bidirectional BFS returning all shortest paths might look like this.</p>
             </span><span class="p">(</span><span class="nb">if-let</span><span class="w"> </span><span class="p">[</span><span class="n">all</span><span class="w"> </span><span class="p">(</span><span class="nf">overlaps</span><span class="w"> </span><span class="n">preds</span><span class="w"> </span><span class="n">q2</span><span class="p">)]</span><span class="w">
               </span><span class="p">(</span><span class="nf">find-paths</span><span class="w"> </span><span class="n">preds</span><span class="w"> </span><span class="n">succs</span><span class="w"> </span><span class="p">(</span><span class="nb">set</span><span class="w"> </span><span class="n">all</span><span class="p">))</span><span class="w">
               </span><span class="p">(</span><span class="nf">recur</span><span class="w"> </span><span class="n">preds</span><span class="w"> </span><span class="n">succs</span><span class="w"> </span><span class="n">q1</span><span class="w"> </span><span class="n">q2</span><span class="p">))))))))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>There&rsquo;s a lot of code here, including some optimizations and helper functions.
 The important function here is <code>bidirectional-bfs</code>. I won&rsquo;t explain the details
 of the algorithm, but at a high level, it takes in a start and end node and a
@@ -821,7 +802,7 @@ function to be called on any node to get it&rsquo;s &ldquo;neighbors&rdquo;.</p>
 
 <p>This is a generic, pure function, agnostic of Datomic or our data. In fact, I used
 a simple map as the &ldquo;graph&rdquo; while developing this:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">graph</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">graph</span><span class="w">
   </span><span class="p">{</span><span class="no">:a</span><span class="w"> </span><span class="p">[</span><span class="no">:b</span><span class="p">]</span><span class="w">
    </span><span class="no">:b</span><span class="w"> </span><span class="p">[</span><span class="no">:a</span><span class="w"> </span><span class="no">:c</span><span class="w"> </span><span class="no">:d</span><span class="p">]</span><span class="w">
    </span><span class="no">:c</span><span class="w"> </span><span class="p">[</span><span class="no">:b</span><span class="w"> </span><span class="no">:e</span><span class="p">]</span><span class="w">
@@ -830,13 +811,12 @@ a simple map as the &ldquo;graph&rdquo; while developing this:</p>
    </span><span class="no">:f</span><span class="w"> </span><span class="p">[]})</span><span class="w">
 
 </span><span class="p">(</span><span class="nf">bidirectional-bfs</span><span class="w"> </span><span class="no">:a</span><span class="w"> </span><span class="no">:e</span><span class="w"> </span><span class="n">graph</span><span class="p">)</span><span class="w">
-</span><span class="c1">;=&gt; [[:a :b :c :e] [:a :b :d :e]]
-</span></code></pre>
-
+</span><span class="c1">;=&gt; [[:a :b :c :e] [:a :b :d :e]]</span><span class="w">
+</span></code></pre></div>
 <p>To use this generic algorithm with our database, we need a <code>neighbors</code> function.
 Depending on whether a node is an &ldquo;actor&rdquo; or a &ldquo;movie&rdquo;, we need to return its
 appropriate counterpart. A naive &ldquo;or&rdquo; condition is actually good enough here:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">movie-actors</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">movie-actors</span><span class="w">
   </span><span class="s">"Given a Datomic database value and a movie id,
   returns ids for actors in that movie."</span><span class="w">
   </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">eid</span><span class="p">]</span><span class="w">
@@ -855,27 +835,24 @@ appropriate counterpart. A naive &ldquo;or&rdquo; condition is actually good eno
   </span><span class="p">(</span><span class="nb">or</span><span class="w"> </span><span class="p">(</span><span class="nb">seq</span><span class="w"> </span><span class="p">(</span><span class="nf">actor-movies</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">eid</span><span class="p">))</span><span class="w">
       </span><span class="p">(</span><span class="nb">seq</span><span class="w"> </span><span class="p">(</span><span class="nf">movie-actors</span><span class="w"> </span><span class="n">db</span><span class="w"> </span><span class="n">eid</span><span class="p">))))</span><span class="w">
 
-</span></code></pre>
-
+</span></code></pre></div>
 <p>Gluing everything together is a simple matter of partial application:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">find-id-paths</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">target</span><span class="p">]</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">defn</span><span class="w"> </span><span class="n">find-id-paths</span><span class="w"> </span><span class="p">[</span><span class="n">db</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">target</span><span class="p">]</span><span class="w">
   </span><span class="p">(</span><span class="nf">bidirectional-bfs</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="p">(</span><span class="nb">partial</span><span class="w"> </span><span class="n">neighbors</span><span class="w"> </span><span class="n">db</span><span class="p">)))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>Given a source entity id and a target entity id, this will return all shortest
 paths (ids), much like the query example above. From there, we could map them
 to Datomic entities, get their names, or sort the paths using a domain-specific
 heuristic. Plugging in the previous example, we might do something like the
 following:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nf">db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">let</span><span class="w"> </span><span class="p">[</span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nf">db</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
       </span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nf">d/filter</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="p">(</span><span class="nf">without-documentaries</span><span class="w"> </span><span class="n">d</span><span class="p">))</span><span class="w">
       </span><span class="n">biebs</span><span class="w"> </span><span class="p">(</span><span class="nf">d/entid</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="p">[</span><span class="no">:actor/name</span><span class="w"> </span><span class="s">"Bieber, Justin"</span><span class="p">])</span><span class="w">
       </span><span class="n">bacon</span><span class="w"> </span><span class="p">(</span><span class="nf">d/entid</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="p">[</span><span class="no">:actor/name</span><span class="w"> </span><span class="s">"Bacon, Kevin (I)"</span><span class="p">])</span><span class="w">
       </span><span class="nb">name</span><span class="w"> </span><span class="p">(</span><span class="nb">partial</span><span class="w"> </span><span class="n">actor-or-movie-name</span><span class="w"> </span><span class="n">d</span><span class="p">)]</span><span class="w">
   </span><span class="p">(</span><span class="nb">map</span><span class="w"> </span><span class="p">(</span><span class="nb">partial</span><span class="w"> </span><span class="n">mapv</span><span class="w"> </span><span class="nb">name</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="nf">find-id-paths</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="n">biebs</span><span class="w"> </span><span class="n">bacon</span><span class="p">)))</span><span class="w">
-</span><span class="c1">;=&gt; (["Bieber, Justin" "Men in Black 3 (2012)" "Jones, Tommy Lee" "JFK (1991)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Segal, Tobias" "R.I.P.D. (2013)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Brolin, Josh" "Hollow Man (2000)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Howard, Rosemary (II)" "R.I.P.D. (2013)" "Bacon, Kevin (I)"])
-</span></code></pre>
-
+</span><span class="c1">;=&gt; (["Bieber, Justin" "Men in Black 3 (2012)" "Jones, Tommy Lee" "JFK (1991)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Segal, Tobias" "R.I.P.D. (2013)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Brolin, Josh" "Hollow Man (2000)" "Bacon, Kevin (I)"] ["Bieber, Justin" "Men in Black 3 (2012)" "Howard, Rosemary (II)" "R.I.P.D. (2013)" "Bacon, Kevin (I)"])</span><span class="w">
+</span></code></pre></div>
 <p>This returns the same set of paths as the query method did. However, this
 version has the advantage of going to an arbitrary depth.</p>
 
@@ -908,12 +885,12 @@ good with Neo4j&rsquo;s cypher query language.</p>
     <link rel="alternate" href="http://joshuadavey.com/2013/08/22/deferring-database-constraints/"/>
     <id>http://joshuadavey.com/2013/08/22/deferring-database-constraints/</id>
     <published>2013-08-21T20:00:00-04:00</published>
-    <updated>2018-07-02T09:35:59-04:00</updated>
+    <updated>2019-11-22T10:51:25-05:00</updated>
     <author>
       <name>Joshua Davey</name>
     </author>
     <content type="html">
-      <![CDATA[<p><em>This is a repost. You can find the original <a title="Deferring constraints in PostgreSQL" href="http://hashrocket.com/blog/posts/deferring-database-constraints">here</a></em></p>
+      <![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL">here</a></em></p>
 
 <p>Database constraints are essential to ensuring data integrity, and you
 should use them. Allowing them to be deferrable during transactions
@@ -931,13 +908,12 @@ be modelled in a fairly straightforward manner.</p>
 <p>Each list <code>has_many</code> list items, which are ordered by the <code>position</code>
 column. Each list&rsquo;s items have a position beginning with 1 and
 incrementing with each subsequent item.</p>
-<pre><code class="highlight ruby"><span class="c1"># app/models/list.rb</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="c1"># app/models/list.rb</span>
 <span class="k">class</span> <span class="nc">List</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">has_many</span> <span class="ss">:items</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">order</span> <span class="ss">:position</span> <span class="p">},</span> <span class="ss">class_name: </span><span class="s2">"ListItem"</span>
   <span class="n">validates_presence_of</span> <span class="ss">:name</span>
 <span class="k">end</span>
-</code></pre>
-<pre><code class="highlight ruby"><span class="c1"># app/models/list_item.rb</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby"><code><span class="c1"># app/models/list_item.rb</span>
 <span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">belongs_to</span> <span class="ss">:list</span>
   <span class="n">validates_presence_of</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:list</span><span class="p">,</span> <span class="ss">:position</span>
@@ -946,7 +922,7 @@ incrementing with each subsequent item.</p>
 
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-      <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
@@ -955,31 +931,29 @@ incrementing with each subsequent item.</p>
     <span class="nb">self</span><span class="p">.</span><span class="nf">position</span> <span class="o">||=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">list_id: </span><span class="n">list_id</span><span class="p">).</span><span class="nf">maximum</span><span class="p">(</span><span class="ss">:position</span><span class="p">).</span><span class="nf">to_i</span> <span class="o">+</span> <span class="mi">1</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>A couple things are worth noting about the <code>ListItem</code> class. Firstly, we
 have <code>update_positions</code>, a class method that accepts an array of ids and
 updates each. This method will be called in a <code>sort</code> controller action
 as such:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ItemsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ItemsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="n">expose</span><span class="p">(</span><span class="ss">:list</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">sort</span>
     <span class="c1"># list item ids is an ordered array of ids</span>
-    <span class="n">list</span><span class="p">.</span><span class="nf">items</span><span class="p">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:list_item_ids</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">list</span><span class="p">.</span><span class="nf">items</span><span class="p">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:list_item_ids</span><span class="p">])</span>
     <span class="n">head</span> <span class="ss">:ok</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Secondly, new items don&rsquo;t necessarily know what position they should
 have, so we put list items that don&rsquo;t have <code>position</code> at the end of
 their respective list, just before validating that the position is
 present.</p>
 
-<p>Here are the migrations that we used to create the models&#39; database
+<p>Here are the migrations that we used to create the models&rsquo; database
 tables:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateLists</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">CreateLists</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="n">create_table</span> <span class="ss">:lists</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
       <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="ss">:name</span>
@@ -987,8 +961,7 @@ tables:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">CreateListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="n">create_table</span> <span class="ss">:list_items</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
       <span class="n">t</span><span class="p">.</span><span class="nf">belongs_to</span> <span class="ss">:list</span>
@@ -999,8 +972,7 @@ tables:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Notice anything missing? If you said database constraints, you&rsquo;re
 correct! Our application is enforcing presence for most attributes, but
 our corresponding columns are missing <code>NOT NULL</code> constraints. Also, the
@@ -1013,7 +985,7 @@ list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
 
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
-the <code>list_id</code>. However, as <a title="The Perils of Uniqueness Validations" href="http://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations">thoughtbot recently warned</a>,
+the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations">thoughtbot recently warned</a>,
 application-level uniqueness validations are insufficient <em>at best</em>, and
 fail completely in concurrent environments.</p>
 
@@ -1023,7 +995,7 @@ fail completely in concurrent environments.</p>
 
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
 in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
       alter table list_items
@@ -1038,52 +1010,47 @@ in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Let&rsquo;s wrap our <code>UPDATE</code> statements in a transaction so that any failed
 <code>UPDATE</code> of the position column will result in none of them being
 updated:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction</span> <span class="k">do</span>
       <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-        <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>This ensures at the database level that positions of items are unique
 per list; no two items in the same list can occupy the &ldquo;1&rdquo; position.
 With regard to data integrity, this is a huge improvement over our
 initial implementation. But it has one drawback: <strong>it doesn&rsquo;t work</strong>.</p>
 
 <p>To illustrate why, imagine a list with the following items:</p>
-<pre><code class="highlight plaintext">id | position | name
+<div class="highlight"><pre class="highlight plaintext"><code>id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
 35 | 3        | Bread
-</code></pre>
-
+</code></pre></div>
 <p>To move Bread to the top of the list, we would pass an array of ids,
 <code>[35,13,18]</code> to the <code>update_positions</code> method. This method does a series
 of <code>UPDATE</code> statements to the database. For the first id, the one for
 Bread, we end up sending an update statement that would look like the
 following:</p>
-<pre><code class="highlight sql"><span class="k">UPDATE</span> <span class="n">list_items</span> <span class="k">SET</span> <span class="k">position</span><span class="o">=</span><span class="mi">1</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">35</span><span class="p">;</span>
-</code></pre>
-
+<div class="highlight"><pre class="highlight sql"><code><span class="k">UPDATE</span> <span class="n">list_items</span> <span class="k">SET</span> <span class="k">position</span><span class="o">=</span><span class="mi">1</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">35</span><span class="p">;</span>
+</code></pre></div>
 <p>After this statement is executed in the database, but before we move on
 to the next id in the list, Postgres will fail its constraint checks. At
 the moment that the <code>UPDATE</code> happens, the data would be:</p>
-<pre><code class="highlight plaintext">id | position | name
+<div class="highlight"><pre class="highlight plaintext"><code>id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
 35 | 1        | Bread
-</code></pre>
-
+</code></pre></div>
 <p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
 Of course, we know that we want to change the position of Eggs as well,
 so that its position would be &ldquo;2&rdquo;, and that collision would not happen.
@@ -1113,11 +1080,11 @@ constraint will by default behave just like a non-deferrable constraint,
 checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
-call to <code>SET CONSTRAINTS</code> (<a href="http://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
+call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
 
 <p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
       alter table list_items
@@ -1133,8 +1100,7 @@ defined before:</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>The only thing we&rsquo;ve changed from before is the <code>DEFERRABLE INITIALLY
 IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY
 IMMEDIATE</code> option. This will ensure that other parts of our app, and
@@ -1145,19 +1111,18 @@ constraint, until we explicitly opt in to the deferral.</p>
 <p>We now need to change our transaction block. In our case, the first
 database statement within the transaction must be the <code>SET CONSTRAINTS</code>
 statement:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction</span> <span class="k">do</span>
       <span class="n">connection</span><span class="p">.</span><span class="nf">execute</span> <span class="s2">"SET CONSTRAINTS list_item_position DEFERRED"</span>
       <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-        <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Having now opted in to deferring our uniqueness constraint, reordering
 the items now works as expected. The constraint still ensures that we
 don&rsquo;t have two items that occupy the same position, but waits until the
@@ -1172,18 +1137,18 @@ changed. Knowing that, we leverage PostgreSQL&rsquo;s introspective abilities
 to query the constraint names instead.</p>
 
 <p>For example, we can add the following module to our codebase:</p>
-<pre><code class="highlight ruby"><span class="c1"># lib/deferrable.rb</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="c1"># lib/deferrable.rb</span>
 <span class="k">module</span> <span class="nn">Deferrable</span>
   <span class="k">def</span> <span class="nf">deferrable_uniqueness_constraints_on</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
     <span class="n">usage</span> <span class="o">=</span> <span class="no">Arel</span><span class="o">::</span><span class="no">Table</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'information_schema.constraint_column_usage'</span>
     <span class="n">constraint</span> <span class="o">=</span> <span class="no">Arel</span><span class="o">::</span><span class="no">Table</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'pg_constraint'</span>
-    <span class="n">arel</span> <span class="o">=</span> <span class="n">usage</span><span class="p">.</span><span class="nf">project</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:constraint_name</span><span class="o">]</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">constraint</span><span class="p">).</span><span class="nf">on</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:constraint_name</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="n">constraint</span><span class="o">[</span><span class="ss">:conname</span><span class="o">]</span><span class="p">))</span>
+    <span class="n">arel</span> <span class="o">=</span> <span class="n">usage</span><span class="p">.</span><span class="nf">project</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:constraint_name</span><span class="p">])</span>
+    <span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">constraint</span><span class="p">).</span><span class="nf">on</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:constraint_name</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="ss">:conname</span><span class="p">]))</span>
     <span class="p">.</span><span class="nf">where</span><span class="p">(</span>
-      <span class="p">(</span><span class="n">constraint</span><span class="o">[</span><span class="ss">:contype</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="s1">'u'</span><span class="p">))</span>
-      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">constraint</span><span class="o">[</span><span class="ss">:condeferrable</span><span class="o">]</span><span class="p">)</span>
-      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:table_name</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="n">table_name</span><span class="p">))</span>
-      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:column_name</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span>
+      <span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="ss">:contype</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="s1">'u'</span><span class="p">))</span>
+      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="ss">:condeferrable</span><span class="p">])</span>
+      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:table_name</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="n">table_name</span><span class="p">))</span>
+      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:column_name</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span>
     <span class="p">)</span>
     <span class="n">connection</span><span class="p">.</span><span class="nf">select_values</span> <span class="n">arel</span>
   <span class="k">end</span>
@@ -1196,22 +1161,20 @@ to query the constraint names instead.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>And now change our model to use it:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="kp">extend</span> <span class="no">Deferrable</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction_with_deferred_constraints_on</span><span class="p">(</span><span class="ss">:position</span><span class="p">)</span> <span class="k">do</span>
       <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-        <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>And, boom! Less coupling.</p>
 
 <p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>

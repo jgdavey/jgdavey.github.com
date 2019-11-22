@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<meta content="Please, never say 'widgets' in my presence again." name='description'>
+<meta content='Please, never say &#39;widgets&#39; in my presence again.' name='description'>
 <meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
 <meta content='width=device-width, initial-scale=1' name='viewport'>
 <meta content='True' name='HandheldFriendly'>
@@ -10,7 +10,7 @@
 <link href='/favicon.png' rel='icon'>
 <title>Awkward and Proud - Joshua Davey</title>
 <link href='https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams' rel='canonical'>
-<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/screen.css" rel="stylesheet" />
 <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 <script src='/javascripts/main.js'></script>
@@ -32,7 +32,7 @@
 <div id='main'><div class='post'>
 <div class='post-body'>
 <h2>Boot + Middleman: The ClojureScript development environment of my dreams</h2>
-<p><em>This is a repost. You can find the original <a title="Boot + Middleman: The ClojureScript development environment of my dreams" href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams">here</a></em></p>
+<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot + Middleman: The ClojureScript development environment of my dreams">here</a></em></p>
 
 <p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
 combination of editor integration, live browser reload, and not having to
@@ -41,12 +41,12 @@ work with.</p>
 
 <p>At Hashrocket, designers and developers work very closely
 together. Visual design and markup is handled by our
-designers, who create &ldquo;stubbed out&rdquo; templates in <a href="http://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
+designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
 directory</a>.
 It&rsquo;s a process that works very well for us, and
 allows us to iteratively add features to an application.</p>
 
-<p>This process has served us very well in Rails using a <a href="http://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
+<p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
 controller</a>,
 available only in development mode.</p>
 
@@ -61,11 +61,11 @@ Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
 get out of sync with a manual process like this. The static resource
 generation should be a part of our build process.</p>
 
-<p>Enter <a href="http://boot-clj.com">boot</a>.</p>
+<p>Enter <a href="https://boot-clj.com">boot</a>.</p>
 
 <h3>Using Boot for ClojureScript development</h3>
 
-<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="http://leiningen.org">Leiningen</a>,
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
 which is the de facto dependency management and build tool for
 Clojure/Script. Boot is similar to Leiningen, but adds the ability to
 compose tasks to create build pipelines. This composability, along with
@@ -107,21 +107,19 @@ Just clone and run <code>boot dev</code>.</p>
 demonstrates how editing front-end files do not require a manual browser
 refresh to see the effects.</p>
 
-<iframe src="https://player.vimeo.com/video/128494099" width="500" height="280" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<iframe src="https://player.vimeo.com/video/128494099" width="600" height="380" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 </div>
 </div>
 </div>
 </div>
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(["_setAccount", "UA-330362-1"]);
-  _gaq.push(["_trackPageview"]);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-330362-1', 'auto');
+  ga('send', 'pageview');
 </script>
 </body>
 </html>

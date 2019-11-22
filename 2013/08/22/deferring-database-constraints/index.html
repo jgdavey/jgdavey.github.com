@@ -2,15 +2,15 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<meta content="Please, never say 'widgets' in my presence again." name='description'>
+<meta content='Please, never say &#39;widgets&#39; in my presence again.' name='description'>
 <meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
 <meta content='width=device-width, initial-scale=1' name='viewport'>
 <meta content='True' name='HandheldFriendly'>
 <meta content='320' name='MobileOptimized'>
 <link href='/favicon.png' rel='icon'>
 <title>Awkward and Proud - Joshua Davey</title>
-<link href='http://hashrocket.com/blog/posts/deferring-database-constraints' rel='canonical'>
-<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link href='https://hashrocket.com/blog/posts/deferring-database-constraints' rel='canonical'>
+<link href="/stylesheets/screen.css" rel="stylesheet" />
 <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 <script src='/javascripts/main.js'></script>
@@ -32,7 +32,7 @@
 <div id='main'><div class='post'>
 <div class='post-body'>
 <h2>Deferring constraints in PostgreSQL</h2>
-<p><em>This is a repost. You can find the original <a title="Deferring constraints in PostgreSQL" href="http://hashrocket.com/blog/posts/deferring-database-constraints">here</a></em></p>
+<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL">here</a></em></p>
 
 <p>Database constraints are essential to ensuring data integrity, and you
 should use them. Allowing them to be deferrable during transactions
@@ -50,13 +50,12 @@ be modelled in a fairly straightforward manner.</p>
 <p>Each list <code>has_many</code> list items, which are ordered by the <code>position</code>
 column. Each list&rsquo;s items have a position beginning with 1 and
 incrementing with each subsequent item.</p>
-<pre><code class="highlight ruby"><span class="c1"># app/models/list.rb</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="c1"># app/models/list.rb</span>
 <span class="k">class</span> <span class="nc">List</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">has_many</span> <span class="ss">:items</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">{</span> <span class="n">order</span> <span class="ss">:position</span> <span class="p">},</span> <span class="ss">class_name: </span><span class="s2">"ListItem"</span>
   <span class="n">validates_presence_of</span> <span class="ss">:name</span>
 <span class="k">end</span>
-</code></pre>
-<pre><code class="highlight ruby"><span class="c1"># app/models/list_item.rb</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby"><code><span class="c1"># app/models/list_item.rb</span>
 <span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="n">belongs_to</span> <span class="ss">:list</span>
   <span class="n">validates_presence_of</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:list</span><span class="p">,</span> <span class="ss">:position</span>
@@ -65,7 +64,7 @@ incrementing with each subsequent item.</p>
 
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-      <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
@@ -74,31 +73,29 @@ incrementing with each subsequent item.</p>
     <span class="nb">self</span><span class="p">.</span><span class="nf">position</span> <span class="o">||=</span> <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">where</span><span class="p">(</span><span class="ss">list_id: </span><span class="n">list_id</span><span class="p">).</span><span class="nf">maximum</span><span class="p">(</span><span class="ss">:position</span><span class="p">).</span><span class="nf">to_i</span> <span class="o">+</span> <span class="mi">1</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>A couple things are worth noting about the <code>ListItem</code> class. Firstly, we
 have <code>update_positions</code>, a class method that accepts an array of ids and
 updates each. This method will be called in a <code>sort</code> controller action
 as such:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ItemsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ItemsController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
   <span class="n">expose</span><span class="p">(</span><span class="ss">:list</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">sort</span>
     <span class="c1"># list item ids is an ordered array of ids</span>
-    <span class="n">list</span><span class="p">.</span><span class="nf">items</span><span class="p">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:list_item_ids</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">list</span><span class="p">.</span><span class="nf">items</span><span class="p">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="ss">:list_item_ids</span><span class="p">])</span>
     <span class="n">head</span> <span class="ss">:ok</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Secondly, new items don&rsquo;t necessarily know what position they should
 have, so we put list items that don&rsquo;t have <code>position</code> at the end of
 their respective list, just before validating that the position is
 present.</p>
 
-<p>Here are the migrations that we used to create the models&#39; database
+<p>Here are the migrations that we used to create the models&rsquo; database
 tables:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateLists</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">CreateLists</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="n">create_table</span> <span class="ss">:lists</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
       <span class="n">t</span><span class="p">.</span><span class="nf">string</span> <span class="ss">:name</span>
@@ -106,8 +103,7 @@ tables:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">CreateListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+</code></pre></div><div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">CreateListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">change</span>
     <span class="n">create_table</span> <span class="ss">:list_items</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
       <span class="n">t</span><span class="p">.</span><span class="nf">belongs_to</span> <span class="ss">:list</span>
@@ -118,8 +114,7 @@ tables:</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Notice anything missing? If you said database constraints, you&rsquo;re
 correct! Our application is enforcing presence for most attributes, but
 our corresponding columns are missing <code>NOT NULL</code> constraints. Also, the
@@ -132,7 +127,7 @@ list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
 
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
-the <code>list_id</code>. However, as <a title="The Perils of Uniqueness Validations" href="http://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations">thoughtbot recently warned</a>,
+the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations">thoughtbot recently warned</a>,
 application-level uniqueness validations are insufficient <em>at best</em>, and
 fail completely in concurrent environments.</p>
 
@@ -142,7 +137,7 @@ fail completely in concurrent environments.</p>
 
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
 in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
       alter table list_items
@@ -157,52 +152,47 @@ in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Let&rsquo;s wrap our <code>UPDATE</code> statements in a transaction so that any failed
 <code>UPDATE</code> of the position column will result in none of them being
 updated:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction</span> <span class="k">do</span>
       <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-        <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>This ensures at the database level that positions of items are unique
 per list; no two items in the same list can occupy the &ldquo;1&rdquo; position.
 With regard to data integrity, this is a huge improvement over our
 initial implementation. But it has one drawback: <strong>it doesn&rsquo;t work</strong>.</p>
 
 <p>To illustrate why, imagine a list with the following items:</p>
-<pre><code class="highlight plaintext">id | position | name
+<div class="highlight"><pre class="highlight plaintext"><code>id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
 35 | 3        | Bread
-</code></pre>
-
+</code></pre></div>
 <p>To move Bread to the top of the list, we would pass an array of ids,
 <code>[35,13,18]</code> to the <code>update_positions</code> method. This method does a series
 of <code>UPDATE</code> statements to the database. For the first id, the one for
 Bread, we end up sending an update statement that would look like the
 following:</p>
-<pre><code class="highlight sql"><span class="k">UPDATE</span> <span class="n">list_items</span> <span class="k">SET</span> <span class="k">position</span><span class="o">=</span><span class="mi">1</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">35</span><span class="p">;</span>
-</code></pre>
-
+<div class="highlight"><pre class="highlight sql"><code><span class="k">UPDATE</span> <span class="n">list_items</span> <span class="k">SET</span> <span class="k">position</span><span class="o">=</span><span class="mi">1</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">35</span><span class="p">;</span>
+</code></pre></div>
 <p>After this statement is executed in the database, but before we move on
 to the next id in the list, Postgres will fail its constraint checks. At
 the moment that the <code>UPDATE</code> happens, the data would be:</p>
-<pre><code class="highlight plaintext">id | position | name
+<div class="highlight"><pre class="highlight plaintext"><code>id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
 35 | 1        | Bread
-</code></pre>
-
+</code></pre></div>
 <p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
 Of course, we know that we want to change the position of Eggs as well,
 so that its position would be &ldquo;2&rdquo;, and that collision would not happen.
@@ -232,11 +222,11 @@ constraint will by default behave just like a non-deferrable constraint,
 checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
-call to <code>SET CONSTRAINTS</code> (<a href="http://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
+call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
 
 <p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">AddUniquenessValidationOnListItems</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Migration</span>
   <span class="k">def</span> <span class="nf">up</span>
     <span class="n">execute</span> <span class="o">&lt;&lt;-</span><span class="no">SQL</span><span class="sh">
       alter table list_items
@@ -252,8 +242,7 @@ defined before:</p>
 </span><span class="no">    SQL</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>The only thing we&rsquo;ve changed from before is the <code>DEFERRABLE INITIALLY
 IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY
 IMMEDIATE</code> option. This will ensure that other parts of our app, and
@@ -264,19 +253,18 @@ constraint, until we explicitly opt in to the deferral.</p>
 <p>We now need to change our transaction block. In our case, the first
 database statement within the transaction must be the <code>SET CONSTRAINTS</code>
 statement:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction</span> <span class="k">do</span>
       <span class="n">connection</span><span class="p">.</span><span class="nf">execute</span> <span class="s2">"SET CONSTRAINTS list_item_position DEFERRED"</span>
       <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-        <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>Having now opted in to deferring our uniqueness constraint, reordering
 the items now works as expected. The constraint still ensures that we
 don&rsquo;t have two items that occupy the same position, but waits until the
@@ -291,18 +279,18 @@ changed. Knowing that, we leverage PostgreSQL&rsquo;s introspective abilities
 to query the constraint names instead.</p>
 
 <p>For example, we can add the following module to our codebase:</p>
-<pre><code class="highlight ruby"><span class="c1"># lib/deferrable.rb</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="c1"># lib/deferrable.rb</span>
 <span class="k">module</span> <span class="nn">Deferrable</span>
   <span class="k">def</span> <span class="nf">deferrable_uniqueness_constraints_on</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span>
     <span class="n">usage</span> <span class="o">=</span> <span class="no">Arel</span><span class="o">::</span><span class="no">Table</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'information_schema.constraint_column_usage'</span>
     <span class="n">constraint</span> <span class="o">=</span> <span class="no">Arel</span><span class="o">::</span><span class="no">Table</span><span class="p">.</span><span class="nf">new</span> <span class="s1">'pg_constraint'</span>
-    <span class="n">arel</span> <span class="o">=</span> <span class="n">usage</span><span class="p">.</span><span class="nf">project</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:constraint_name</span><span class="o">]</span><span class="p">)</span>
-    <span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">constraint</span><span class="p">).</span><span class="nf">on</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:constraint_name</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="n">constraint</span><span class="o">[</span><span class="ss">:conname</span><span class="o">]</span><span class="p">))</span>
+    <span class="n">arel</span> <span class="o">=</span> <span class="n">usage</span><span class="p">.</span><span class="nf">project</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:constraint_name</span><span class="p">])</span>
+    <span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">constraint</span><span class="p">).</span><span class="nf">on</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:constraint_name</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="ss">:conname</span><span class="p">]))</span>
     <span class="p">.</span><span class="nf">where</span><span class="p">(</span>
-      <span class="p">(</span><span class="n">constraint</span><span class="o">[</span><span class="ss">:contype</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="s1">'u'</span><span class="p">))</span>
-      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">constraint</span><span class="o">[</span><span class="ss">:condeferrable</span><span class="o">]</span><span class="p">)</span>
-      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:table_name</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="n">table_name</span><span class="p">))</span>
-      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="o">[</span><span class="ss">:column_name</span><span class="o">]</span><span class="p">.</span><span class="nf">eq</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span>
+      <span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="ss">:contype</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="s1">'u'</span><span class="p">))</span>
+      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="ss">:condeferrable</span><span class="p">])</span>
+      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:table_name</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="n">table_name</span><span class="p">))</span>
+      <span class="p">.</span><span class="nf">and</span><span class="p">(</span><span class="n">usage</span><span class="p">[</span><span class="ss">:column_name</span><span class="p">].</span><span class="nf">eq</span><span class="p">(</span><span class="n">column_name</span><span class="p">))</span>
     <span class="p">)</span>
     <span class="n">connection</span><span class="p">.</span><span class="nf">select_values</span> <span class="n">arel</span>
   <span class="k">end</span>
@@ -315,22 +303,20 @@ to query the constraint names instead.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>And now change our model to use it:</p>
-<pre><code class="highlight ruby"><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">ListItem</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
   <span class="kp">extend</span> <span class="no">Deferrable</span>
   <span class="c1"># ...</span>
   <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">update_positions</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>
     <span class="n">transaction_with_deferred_constraints_on</span><span class="p">(</span><span class="ss">:position</span><span class="p">)</span> <span class="k">do</span>
       <span class="n">ids</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="nb">id</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
-        <span class="n">where</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">where</span><span class="p">(</span><span class="ss">id: </span><span class="nb">id</span><span class="p">).</span><span class="nf">update_all</span><span class="p">(</span><span class="ss">position: </span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
       <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</code></pre>
-
+</code></pre></div>
 <p>And, boom! Less coupling.</p>
 
 <p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
@@ -348,14 +334,12 @@ sections above.</p>
 </div>
 </div>
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(["_setAccount", "UA-330362-1"]);
-  _gaq.push(["_trackPageview"]);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-330362-1', 'auto');
+  ga('send', 'pageview');
 </script>
 </body>
 </html>

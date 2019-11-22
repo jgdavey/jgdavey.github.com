@@ -2,15 +2,15 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<meta content="Please, never say 'widgets' in my presence again." name='description'>
+<meta content='Please, never say &#39;widgets&#39; in my presence again.' name='description'>
 <meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
 <meta content='width=device-width, initial-scale=1' name='viewport'>
 <meta content='True' name='HandheldFriendly'>
 <meta content='320' name='MobileOptimized'>
 <link href='/favicon.png' rel='icon'>
 <title>Awkward and Proud - Joshua Davey</title>
-<link href='http://hashrocket.com/blog/posts/easier-atomic-commits' rel='canonical'>
-<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link href='https://hashrocket.com/blog/posts/easier-atomic-commits' rel='canonical'>
+<link href="/stylesheets/screen.css" rel="stylesheet" />
 <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 <script src='/javascripts/main.js'></script>
@@ -32,7 +32,7 @@
 <div id='main'><div class='post'>
 <div class='post-body'>
 <h2>Easier Atomic Commits</h2>
-<p><em>This is a repost. You can find the original <a title="Easier Atomic Commits" href="http://hashrocket.com/blog/posts/easier-atomic-commits">here</a></em></p>
+<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits">here</a></em></p>
 
 <p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
 
@@ -63,57 +63,53 @@ of checking every commit between your upstream and you. Before pushing,
 you can ensure every commit is atomic by running the script.</p>
 
 <p>To use, just pass atomically the command as arguments:</p>
-<pre><code class="highlight plaintext">$ atomically rake
-</code></pre>
-
+<div class="highlight"><pre class="highlight plaintext"><code>$ atomically rake
+</code></pre></div>
 <p>The above command will start at the current branch&rsquo;s HEAD and run rake.
 After that, it will check out the previous commit and run the command
 again. It will do so for all commits between you and origin.</p>
 
 <p>If you are confident that nothing in your spec suite changed, you can
 run only your cucumber features the same way:</p>
-<pre><code class="highlight plaintext">$ atomically cucumber
-</code></pre>
-
+<div class="highlight"><pre class="highlight plaintext"><code>$ atomically cucumber
+</code></pre></div>
 <p>Or just your spec suite:</p>
-<pre><code class="highlight plaintext">$ atomically rspec
-</code></pre>
-
+<div class="highlight"><pre class="highlight plaintext"><code>$ atomically rspec
+</code></pre></div>
 <p>Regardless, keeping atomic commits is a vital part of good source
 control, and this tool makes it slightly easier to do so.</p>
 
 <p>Here&rsquo;s the source of <code>atomically</code>:</p>
-<pre><code class="highlight shell"><span class="c">#!/bin/bash</span>
+<div class="highlight"><pre class="highlight shell"><code><span class="c">#!/bin/bash</span>
 
-<span class="k">if</span> <span class="o">[</span> -n <span class="s2">"</span><span class="k">$(</span>git status --porcelain<span class="k">)</span><span class="s2">"</span> <span class="o">]</span>; <span class="k">then
+<span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="si">$(</span>git status <span class="nt">--porcelain</span><span class="si">)</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
   </span><span class="nb">echo</span> <span class="s2">"ERROR: You have a dirty working copy. This command would remove any files not already checked in"</span>
   <span class="nb">exit </span>1
 <span class="k">fi
 
-</span><span class="nv">b</span><span class="o">=</span><span class="s2">"</span><span class="k">$(</span>git symbolic-ref HEAD 2&gt;/dev/null<span class="k">)</span><span class="s2">"</span>
-<span class="nv">branch</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span>basename <span class="nv">$b</span><span class="sb">`</span><span class="s2">"</span>
+</span><span class="nv">b</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>git symbolic-ref HEAD 2&gt;/dev/null<span class="si">)</span><span class="s2">"</span>
+<span class="nv">branch</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span><span class="nb">basename</span> <span class="nv">$b</span><span class="sb">`</span><span class="s2">"</span>
 <span class="nv">program</span><span class="o">=</span><span class="nv">$*</span>
 
 reset_branch<span class="o">()</span> <span class="o">{</span>
-  git co <span class="nv">$branch</span> --quiet
+  git co <span class="nv">$branch</span> <span class="nt">--quiet</span>
 <span class="o">}</span>
 
-git rev-list origin/<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span>..<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span> | <span class="k">while </span><span class="nb">read </span>rev; <span class="k">do
+git rev-list origin/<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span>..<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span> | <span class="k">while </span><span class="nb">read </span>rev<span class="p">;</span> <span class="k">do
   </span><span class="nb">trap</span> <span class="s2">"exit 1"</span> SIGINT SIGTERM
   <span class="nb">echo
   echo</span> <span class="s2">"Running at revision </span><span class="nv">$rev</span><span class="s2">"</span>
   <span class="nb">echo
-  </span>git co <span class="nv">$rev</span> --quiet <span class="o">&amp;&amp;</span> git clean -fd <span class="o">&amp;&amp;</span> <span class="nv">$program</span>
+  </span>git co <span class="nv">$rev</span> <span class="nt">--quiet</span> <span class="o">&amp;&amp;</span> git clean <span class="nt">-fd</span> <span class="o">&amp;&amp;</span> <span class="nv">$program</span>
   <span class="nb">echo
   trap</span> - SIGINT SIGTERM
 <span class="k">done
 
 </span>reset_branch
-</code></pre>
-
+</code></pre></div>
 <p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
 
-<p>Thanks to Gary Bernhardt for the scripts&#39; inspiration,
+<p>Thanks to Gary Bernhardt for the scripts&rsquo; inspiration,
 <code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions">his
 dotfiles</a>.</p>
 
@@ -122,14 +118,12 @@ dotfiles</a>.</p>
 </div>
 </div>
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(["_setAccount", "UA-330362-1"]);
-  _gaq.push(["_trackPageview"]);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-330362-1', 'auto');
+  ga('send', 'pageview');
 </script>
 </body>
 </html>

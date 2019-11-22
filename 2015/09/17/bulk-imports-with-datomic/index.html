@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset='utf-8'>
-<meta content="Please, never say 'widgets' in my presence again." name='description'>
+<meta content='Please, never say &#39;widgets&#39; in my presence again.' name='description'>
 <meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
 <meta content='width=device-width, initial-scale=1' name='viewport'>
 <meta content='True' name='HandheldFriendly'>
@@ -10,7 +10,7 @@
 <link href='/favicon.png' rel='icon'>
 <title>Awkward and Proud - Joshua Davey</title>
 <link href='https://hashrocket.com/blog/posts/bulk-imports-with-datomic' rel='canonical'>
-<link href="/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+<link href="/stylesheets/screen.css" rel="stylesheet" />
 <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
 <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
 <script src='/javascripts/main.js'></script>
@@ -32,7 +32,7 @@
 <div id='main'><div class='post'>
 <div class='post-body'>
 <h2>Bulk imports with Datomic</h2>
-<p><em>This is a repost. You can find the original <a title="Bulk imports with Datomic" href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic">here</a></em></p>
+<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
 
 <p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
 wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve
@@ -66,15 +66,14 @@ in the case of DynamoDB, I save some money, as I don&rsquo;t have to have my
 
 <p>Bulk imports create some garbage, so manually reindexing before backing
 up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
-<pre><code class="highlight clojure"><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">d/connect</span><span class="w"> </span><span class="err">"</span><span class="n">datomic</span><span class="no">:dev://localhost:4334/database-name</span><span class="p">))</span><span class="w">
+<div class="highlight"><pre class="highlight clojure"><code><span class="p">(</span><span class="k">def</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">d/connect</span><span class="w"> </span><span class="err">"</span><span class="n">datomic</span><span class="no">:dev://localhost:4334/database-name</span><span class="p">))</span><span class="w">
 </span><span class="p">(</span><span class="nf">d/request-index</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w">
 </span><span class="p">(</span><span class="nf">-&gt;&gt;</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="n">d/db</span><span class="w"> </span><span class="n">d/basis-t</span><span class="w"> </span><span class="p">(</span><span class="nf">d/sync-index</span><span class="w"> </span><span class="n">conn</span><span class="p">)</span><span class="w"> </span><span class="nb">deref</span><span class="p">)</span><span class="w">
-</span><span class="c1">;; blocks until done indexing
+</span><span class="c1">;; blocks until done indexing</span><span class="w">
 </span><span class="p">(</span><span class="nf">d/gc-storage</span><span class="w"> </span><span class="n">conn</span><span class="w"> </span><span class="p">(</span><span class="nf">java.util.Date.</span><span class="p">))</span><span class="w">
-</span></code></pre>
-
+</span></code></pre></div>
 <p>For more information on why this cleanup
-is important, see <a href="http://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
+is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
 documentation</a>.</p>
 
 <h2>Use backup/restore</h2>
@@ -89,7 +88,7 @@ up to production. Assuming you&rsquo;ve already deployed a production transactor
 <li>Run the <code>datomic restore-db</code> command from the backup folder to the
 remote database.</li>
 <li>Turn the &ldquo;write throughput&rdquo; back down to whatever
-value I plan to use for ongoing use (see <a href="http://docs.datomic.com/capacity.html#sec-5">the Datomic
+value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capacity.html#sec-5">the Datomic
 documentation</a> for more
 information).</li>
 </ol>
@@ -107,14 +106,12 @@ is half the battle.</p>
 </div>
 </div>
 <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(["_setAccount", "UA-330362-1"]);
-  _gaq.push(["_trackPageview"]);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-330362-1', 'auto');
+  ga('send', 'pageview');
 </script>
 </body>
 </html>
