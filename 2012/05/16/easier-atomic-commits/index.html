@@ -1,42 +1,89 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset='utf-8'>
-<meta content='Please, never say &#39;widgets&#39; in my presence again.' name='description'>
-<meta content='IE=edge;chrome=1' http-equiv='X-UA-Compatible'>
-<meta content='width=device-width, initial-scale=1' name='viewport'>
-<meta content='True' name='HandheldFriendly'>
-<meta content='320' name='MobileOptimized'>
-<link href='/favicon.png' rel='icon'>
-<title>Awkward and Proud - Joshua Davey</title>
-<link href='https://hashrocket.com/blog/posts/easier-atomic-commits' rel='canonical'>
-<link href="/stylesheets/screen.css" rel="stylesheet" />
-<link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/atom.xml" />
-<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
-<script src='/javascripts/main.js'></script>
-</head>
-<body>
-<div id='content'>
-<header>
-<h1><a href="/">Awkward and Proud</a></h1>
-</header>
-<div id='description'>
-<ul class='meta'>
-<li>
-<a href="/about">About</a>
-/
-<a href="/atom.xml">RSS</a>
-</li>
-</ul>
-</div>
-<div id='main'><div class='post'>
-<div class='post-body'>
-<h2>Easier Atomic Commits</h2>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Joshua Davey">
+    <meta name="description" content="Joshua Davey&#39;s Website">
+    <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Easier Atomic Commits"/>
+<meta name="twitter:description" content="This is a repost. You can find the original here
+How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.
+Problem As a practitioner of good source control, you and your team have decided to make all of your git commits atomic within your projects. That is, every commit has a green test suite, and you prefer small, incremental commits to large, monolithic ones. Keeping commits small and atomic has tons of benefits, from more consistent continuous integration results, to better team cohesion (have you ever gotten upset with another team member for committing red?"/>
+<meta property="og:title" content="Easier Atomic Commits" />
+<meta property="og:description" content="This is a repost. You can find the original here
+How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.
+Problem As a practitioner of good source control, you and your team have decided to make all of your git commits atomic within your projects. That is, every commit has a green test suite, and you prefer small, incremental commits to large, monolithic ones. Keeping commits small and atomic has tons of benefits, from more consistent continuous integration results, to better team cohesion (have you ever gotten upset with another team member for committing red?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://joshuadavey.com/2012/05/16/easier-atomic-commits/" />
+<meta property="article:published_time" content="2012-05-16T00:00:00+00:00" />
+<meta property="article:modified_time" content="2012-05-16T00:00:00+00:00" />
+
+    <base href="https://joshuadavey.com/2012/05/16/easier-atomic-commits/">
+    <title>
+  Easier Atomic Commits · Joshua Davey
+</title><link rel="canonical" href="https://joshuadavey.com/2012/05/16/easier-atomic-commits/"><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" /><link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
+      <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
+
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+  </head>
+  <body class="colorscheme-light">
+    <main class="wrapper">
+      <nav class="navigation">
+  <section class="container">
+    <a class="navigation-title" href="https://joshuadavey.com/">
+      Joshua Davey
+    </a>
+    <input type="checkbox" id="menu-toggle" />
+    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
+    <ul class="navigation-list">
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+          </li>
+          <li class="navigation-item">
+            <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+          </li>
+    </ul>
+  </section>
+</nav>
+
+
+      <div class="content">
+        
+  <section class="container post">
+    <article>
+      <header>
+        <div class="post-title">
+          <h1 class="title">Easier Atomic Commits</h1>
+        </div>
+        <div class="post-meta">
+          <div class="date">
+            <span class="posted-on">
+              <i class="fas fa-calendar"></i>
+              <time datetime='2012-05-16T00:00:00Z'>
+                May 16, 2012
+              </time>
+            </span>
+            <span class="reading-time">
+              <i class="fas fa-clock"></i>
+              3 minutes read
+            </span>
+          </div>
+          
+          
+        </div>
+      </header>
+
+      <div>
+        
+
 <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits">here</a></em></p>
 
 <p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
 
-<h2>Problem</h2>
+<h2 id="problem">Problem</h2>
 
 <p>As a practitioner of good source control, you and your team have decided
 to make all of your git commits <a href="http://goo.gl/P95KkZ">atomic</a> within your projects. That is,
@@ -56,74 +103,93 @@ every single commit and running the suite, how can you be certain that
 every commit is atomic? What a pain! I don&rsquo;t want to check out every
 commit by hand.</p>
 
-<h2>Solution</h2>
+<h2 id="solution">Solution</h2>
 
 <p>Enter <code>atomically</code>, a simple shell script designed to take the pain out
 of checking every commit between your upstream and you. Before pushing,
 you can ensure every commit is atomic by running the script.</p>
 
 <p>To use, just pass atomically the command as arguments:</p>
-<div class="highlight"><pre class="highlight plaintext"><code>$ atomically rake
-</code></pre></div>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rake</code></pre></div>
 <p>The above command will start at the current branch&rsquo;s HEAD and run rake.
 After that, it will check out the previous commit and run the command
 again. It will do so for all commits between you and origin.</p>
 
 <p>If you are confident that nothing in your spec suite changed, you can
 run only your cucumber features the same way:</p>
-<div class="highlight"><pre class="highlight plaintext"><code>$ atomically cucumber
-</code></pre></div>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically cucumber</code></pre></div>
 <p>Or just your spec suite:</p>
-<div class="highlight"><pre class="highlight plaintext"><code>$ atomically rspec
-</code></pre></div>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rspec</code></pre></div>
 <p>Regardless, keeping atomic commits is a vital part of good source
 control, and this tool makes it slightly easier to do so.</p>
 
 <p>Here&rsquo;s the source of <code>atomically</code>:</p>
-<div class="highlight"><pre class="highlight shell"><code><span class="c">#!/bin/bash</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+</span><span style="color:#75715e"></span>
+<span style="color:#00a8c8">if</span> <span style="color:#f92672">[</span> -n <span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git status --porcelain<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span> <span style="color:#f92672">]</span><span style="color:#111">;</span> <span style="color:#00a8c8">then</span>
+  <span style="color:#111">echo</span> <span style="color:#d88200">&#34;ERROR: You have a dirty working copy. This command would remove any files not already checked in&#34;</span>
+  <span style="color:#111">exit</span> <span style="color:#ae81ff">1</span>
+<span style="color:#00a8c8">fi</span>
 
-<span class="k">if</span> <span class="o">[</span> <span class="nt">-n</span> <span class="s2">"</span><span class="si">$(</span>git status <span class="nt">--porcelain</span><span class="si">)</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
-  </span><span class="nb">echo</span> <span class="s2">"ERROR: You have a dirty working copy. This command would remove any files not already checked in"</span>
-  <span class="nb">exit </span>1
-<span class="k">fi
+<span style="color:#111">b</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git symbolic-ref HEAD <span style="color:#ae81ff">2</span>&gt;/dev/null<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span>
+<span style="color:#111">branch</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;`basename </span><span style="color:#111">$b</span><span style="color:#d88200">`&#34;</span>
+<span style="color:#111">program</span><span style="color:#f92672">=</span><span style="color:#111">$*</span>
 
-</span><span class="nv">b</span><span class="o">=</span><span class="s2">"</span><span class="si">$(</span>git symbolic-ref HEAD 2&gt;/dev/null<span class="si">)</span><span class="s2">"</span>
-<span class="nv">branch</span><span class="o">=</span><span class="s2">"</span><span class="sb">`</span><span class="nb">basename</span> <span class="nv">$b</span><span class="sb">`</span><span class="s2">"</span>
-<span class="nv">program</span><span class="o">=</span><span class="nv">$*</span>
+reset_branch<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  git co <span style="color:#111">$branch</span> --quiet
+<span style="color:#f92672">}</span>
 
-reset_branch<span class="o">()</span> <span class="o">{</span>
-  git co <span class="nv">$branch</span> <span class="nt">--quiet</span>
-<span class="o">}</span>
+git rev-list origin/<span style="color:#d88200">${</span><span style="color:#111">branch</span><span style="color:#111">-master</span><span style="color:#d88200">}</span>..<span style="color:#d88200">${</span><span style="color:#111">branch</span><span style="color:#111">-master</span><span style="color:#d88200">}</span> <span style="color:#111">|</span> <span style="color:#00a8c8">while</span> <span style="color:#111">read</span> rev<span style="color:#111">;</span> <span style="color:#00a8c8">do</span>
+  <span style="color:#111">trap</span> <span style="color:#d88200">&#34;exit 1&#34;</span> SIGINT SIGTERM
+  <span style="color:#111">echo</span>
+  <span style="color:#111">echo</span> <span style="color:#d88200">&#34;Running at revision </span><span style="color:#111">$rev</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">echo</span>
+  git co <span style="color:#111">$rev</span> --quiet <span style="color:#f92672">&amp;&amp;</span> git clean -fd <span style="color:#f92672">&amp;&amp;</span> <span style="color:#111">$program</span>
+  <span style="color:#111">echo</span>
+  <span style="color:#111">trap</span> - SIGINT SIGTERM
+<span style="color:#00a8c8">done</span>
 
-git rev-list origin/<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span>..<span class="k">${</span><span class="nv">branch</span><span class="p">-master</span><span class="k">}</span> | <span class="k">while </span><span class="nb">read </span>rev<span class="p">;</span> <span class="k">do
-  </span><span class="nb">trap</span> <span class="s2">"exit 1"</span> SIGINT SIGTERM
-  <span class="nb">echo
-  echo</span> <span class="s2">"Running at revision </span><span class="nv">$rev</span><span class="s2">"</span>
-  <span class="nb">echo
-  </span>git co <span class="nv">$rev</span> <span class="nt">--quiet</span> <span class="o">&amp;&amp;</span> git clean <span class="nt">-fd</span> <span class="o">&amp;&amp;</span> <span class="nv">$program</span>
-  <span class="nb">echo
-  trap</span> - SIGINT SIGTERM
-<span class="k">done
-
-</span>reset_branch
-</code></pre></div>
+reset_branch</code></pre></div>
 <p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
 
 <p>Thanks to Gary Bernhardt for the scripts&rsquo; inspiration,
 <code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions">his
 dotfiles</a>.</p>
 
-</div>
-</div>
-</div>
-</div>
-<script type="text/javascript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-330362-1', 'auto');
-  ga('send', 'pageview');
+      </div>
+
+      <footer>
+        
+
+
+        
+        
+        
+      </footer>
+    </article>
+
+    
+  </section>
+
+      </div>
+
+      <footer class="footer">
+  <section class="container"> © 2019</section>
+</footer>
+
+    </main>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-330362-1', 'auto');
+	
+	ga('send', 'pageview');
+}
 </script>
-</body>
+
+  </body>
 </html>

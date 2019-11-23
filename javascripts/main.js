@@ -1,1 +1,0 @@
-!function(e){function t(){a.content="width=device-width,minimum-scale="+r[0]+",maximum-scale="+r[1],e.removeEventListener(i,t,!0)}var n="addEventListener",i="gesturestart",m="querySelectorAll",r=[1,1],a=m in e?e[m]("meta[name=viewport]"):[];(a=a[a.length-1])&&n in e&&(t(),r=[.25,1.6],e[n](i,t,!0))}(document);

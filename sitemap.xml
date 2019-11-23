@@ -1,51 +1,108 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
-    <url>
-        <loc>
-            http://joshuadavey.com/2010/09/17/rails-migrations-checking-the-existing-of-a-table/
-        </loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>http://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/</loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>http://joshuadavey.com/2011/06/13/qr-codes-in-ruby/</loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>http://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/</loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/
-        </loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>http://joshuadavey.com/2012/03/30/add-untracked-files-in-git/</loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/
-        </loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>
-            http://joshuadavey.com/2012/05/22/top-ten-things-github-will-do-with-vc-funding/
-        </loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>http://joshuadavey.com/about/</loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
-    <url>
-        <loc>http://joshuadavey.com/</loc>
-        <lastmod>2013-03-28T23:38:36-05:00</lastmod>
-    </url>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://joshuadavey.com/</loc>
+    <lastmod>2016-09-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/posts/</loc>
+    <lastmod>2016-09-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/</loc>
+    <lastmod>2016-09-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/</loc>
+    <lastmod>2015-09-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2015/06/04/boot-middleman/</loc>
+    <lastmod>2015-06-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/</loc>
+    <lastmod>2014-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/</loc>
+    <lastmod>2014-04-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2013/08/22/deferring-database-constraints/</loc>
+    <lastmod>2013-08-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/</loc>
+    <lastmod>2013-02-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/</loc>
+    <lastmod>2012-09-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2012/05/22/sql-window-functions/</loc>
+    <lastmod>2012-05-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2012/05/16/easier-atomic-commits/</loc>
+    <lastmod>2012-05-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/</loc>
+    <lastmod>2012-05-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2012/03/30/add-untracked-files-in-git/</loc>
+    <lastmod>2012-03-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/</loc>
+    <lastmod>2012-01-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/</loc>
+    <lastmod>2011-10-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/</loc>
+    <lastmod>2011-06-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/</loc>
+    <lastmod>2010-11-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/about/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://joshuadavey.com/tags/</loc>
+  </url>
+  
 </urlset>
