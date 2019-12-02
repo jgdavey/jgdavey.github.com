@@ -3,13 +3,326 @@
   <generator>Hugo -- gohugo.io</generator>
   <link href="https://joshuadavey.com/" rel="alternate" type="text/html"/>
   <link href="https://joshuadavey.com/atom.xml" rel="self" type="application/atom+xml"/>
-  <updated>2016-09-30T00:00:00+00:00</updated>
+  <updated>2019-12-01T00:00:00+00:00</updated>
   <id>https://joshuadavey.com/</id>
   <title type="html">Joshua Davey</title>
   <author>
     <name>Joshua Davey</name>
     <email>josh@joshuadavey.com</email>
   </author>
+  <entry>
+    <title type="html">Introducting clj-pgcopy</title>
+    <link href="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/" rel="alternate" type="text/html" title="Introducting clj-pgcopy"/>
+    <published>2019-12-01T00:00:00+00:00</published>
+    <updated>2019-12-01T00:00:00+00:00</updated>
+    <id>https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/</id>
+    <author>
+      <name>Joshua Davey</name>
+      <email>josh@joshuadavey.com</email>
+    </author>
+    <content type="html" xml:base="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/"><![CDATA[<p>On a recent project, I was working on an ETL process, where
+the transform step happened in Clojure. After all of the data
+had been shaped the way we wanted, we imported the data into a
+Postgresql database. As with our typical pattern, we used the
+<code>clojure.java.jdbc/insert-multi!</code> function to insert rows in batches.
+But the performance for the database insertion wasn't quite what we
+were hoping for.</p>
+<p>Although the overhead from <code>org.clojure.jdbc</code> is negligible in most
+scenarios, and certainly in virtually all CRUD-like workflows, it can
+become significant with batch insertions at scale: all of the work of
+converting data types to String-y parameters adds up.</p>
+<p>Having previously used the <code>COPY</code> syntax for importing textual
+data like CSVs, I found that Postgresql's <code>COPY</code> also has a binary
+variant that allows direct insertion into tables. Because the binary
+on-the-wire representation of Postgresql's data types is virtually
+the same as the storage representation, there is significantly less
+overhead for importing using <code>COPY ... FROM STDIN WITH BINARY</code>.</p>
+<p>So, there are immediately two benefits to using the binary <code>COPY</code> approach:</p>
+<ol>
+<li>The binary on-the-wire representation weighs less than its textual,
+<code>INSERT</code>-based counterpart.</li>
+<li>The Postgres server has less work to do to extract data from a
+binary <code>COPY</code> than it does with <code>INSERT</code> statement because the
+binary representation so closely mirrors the internal storage
+representation.</li>
+</ol>
+<p>There may be other benefits I'm unaware of, but those two things alone
+made me curious if there was a way to get the <code>COPY</code> goodness with
+idiomatic Clojure. The best library I found was <a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>,
+which works with JDBC, but has a very Java-centric API. Eventually, my
+work culminated in <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a>.</p>
+<p>The primary API of clj-pgcopy is <code>clj-pgcopy.core/copy-into!</code>, which
+aims to be drop-in compatible with most places where
+<code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
+<h2 id="example-usage">Example usage</h2>
+<p>For example, let's say that we have a table of product listings, looking like this:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">create</span> <span style="color:#00a8c8">table</span> <span style="color:#111">inventory</span> <span style="color:#111">(</span>
+  <span style="color:#111">guid</span> <span style="color:#111">uuid</span> <span style="color:#00a8c8">primary</span> <span style="color:#00a8c8">key</span><span style="color:#111">,</span>
+  <span style="color:#111">created_at</span> <span style="color:#111">timestamptz</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span><span style="color:#111">,</span>
+  <span style="color:#111">active</span> <span style="color:#111">boolean</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span> <span style="color:#00a8c8">default</span> <span style="color:#00a8c8">false</span><span style="color:#111">,</span>
+  <span style="color:#111">price</span> <span style="color:#111">decimal</span><span style="color:#111">(</span><span style="color:#ae81ff">8</span><span style="color:#111">,</span><span style="color:#ae81ff">2</span><span style="color:#111">)</span><span style="color:#111">,</span>
+  <span style="color:#111">average_rating</span> <span style="color:#111">float4</span>
+<span style="color:#111">)</span><span style="color:#111">;</span>
+</code></pre></div><p>And some data we'd like to import that looks like this:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">data</span>
+  <span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;d44c2977-0a9f-4d12-88d2-7d85e07ce1e2&#34;</span>,
+    <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T23:37:33.701-00:00&#34;</span>,
+    <span style="color:#d88200">:active</span> <span style="color:#111">true</span>,
+    <span style="color:#d88200">:price</span> <span style="color:#ae81ff">998.49</span><span style="color:#111">M</span>,
+    <span style="color:#d88200">:average_rating</span> <span style="color:#ae81ff">3.3</span><span style="color:#111">}</span>
+   <span style="color:#111">{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;220603d4-c1b9-4ea4-b5f4-c61a38e9f515&#34;</span>,
+    <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T16:22:35.826-00:00&#34;</span>,
+    <span style="color:#d88200">:active</span> <span style="color:#111">false</span>,
+    <span style="color:#d88200">:price</span> <span style="color:#ae81ff">847.90</span><span style="color:#111">M</span>,
+    <span style="color:#d88200">:average_rating</span> <span style="color:#ae81ff">2.1</span><span style="color:#111">}</span><span style="color:#111">]</span><span style="color:#111">)</span>
+</code></pre></div><p>A typical way to import data with <code>clojure.java.jdbc/insert-multi!</code> would look like this:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
+      <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)</span><span style="color:#111">]</span>
+  <span style="color:#111">(</span><span style="color:#75af00">jdbc/with-db-connection</span> <span style="color:#111">[</span><span style="color:#111">conn</span> <span style="color:#111">conn-spec</span><span style="color:#111">]</span>
+    <span style="color:#111">(</span><span style="color:#75af00">jdbc/insert-multi!</span> <span style="color:#111">conn</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+</code></pre></div><p>To use <code>clj-pgcopy</code>, the only thing that needs to change is adding a
+<code>require</code>, and changing the callsite:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">clj-pgcopy.core</span> <span style="color:#d88200">:as</span> <span style="color:#111">copy</span><span style="color:#111">]</span><span style="color:#111">)</span>
+
+<span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
+      <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)</span><span style="color:#111">]</span>
+  <span style="color:#111">(</span><span style="color:#75af00">jdbc/with-db-connection</span> <span style="color:#111">[</span><span style="color:#111">conn</span> <span style="color:#111">conn-spec</span><span style="color:#111">]</span>
+    <span style="color:#111">(</span><span style="color:#75af00">copy/copy-into!</span> <span style="color:#111">(</span><span style="color:#d88200">:connection</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+</code></pre></div><p>Please note that <code>copy-into!</code> expects a &ldquo;raw&rdquo; JDBC connection, not a
+Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
+<h2 id="performance">Performance</h2>
+<p>Using the same table as our above example, I did some non-definitive benchmarking. For most typical use-cases, <code>clj-pgcopy</code> should be a little more than twice as fast as <code>insert-multi</code>:</p>
+<table>
+<thead>
+<tr>
+<th>tuples</th>
+<th>batch size</th>
+<th>insert-multi</th>
+<th>clj-pgcopy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10000</td>
+<td>100</td>
+<td>218.4 ms</td>
+<td>107.2 ms</td>
+</tr>
+<tr>
+<td>10000</td>
+<td>500</td>
+<td>205.2 ms</td>
+<td>90.35 ms</td>
+</tr>
+<tr>
+<td>50000</td>
+<td>100</td>
+<td>1.030 sec</td>
+<td>422.3 ms</td>
+</tr>
+<tr>
+<td>50000</td>
+<td>500</td>
+<td>1.272 sec</td>
+<td>382.3 ms</td>
+</tr>
+<tr>
+<td>100000</td>
+<td>100</td>
+<td>2.051 sec</td>
+<td>1.005 sec</td>
+</tr>
+</tbody>
+</table>
+<p>For measurement methodology, or to run your own benchmarks, see the
+<a href="https://github.com/jgdavey/clj-pgcopy/blob/master/bench/clj_pgcopy/benchmark.clj">benchmark</a>
+namespace of the <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> repository.</p>
+<h2 id="type-mappings">Type Mappings</h2>
+<p>Out of the box, clj-pgcopy supports many data types, with what I
+consider reasonable default mappings.</p>
+<h3 id="basic-type-mapping">Basic type mapping</h3>
+<table>
+<thead>
+<tr>
+<th>JVM type</th>
+<th>Postgres type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Short</td>
+<td>int2 (aka smallint)</td>
+</tr>
+<tr>
+<td>Integer</td>
+<td>int4 (aka integer)</td>
+</tr>
+<tr>
+<td>Long</td>
+<td>int8 (aka bigint)</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>float4 (aka real)</td>
+</tr>
+<tr>
+<td>Double</td>
+<td>float8 (aka double presicion)</td>
+</tr>
+<tr>
+<td>BigDecimal</td>
+<td>numeric/decimal</td>
+</tr>
+<tr>
+<td>Boolean</td>
+<td>boolean</td>
+</tr>
+<tr>
+<td>String</td>
+<td>text/varchar/char</td>
+</tr>
+<tr>
+<td>java.util.UUID</td>
+<td>uuid</td>
+</tr>
+</tbody>
+</table>
+<h3 id="daterelated-mappings">Date-related mappings</h3>
+<table>
+<thead>
+<tr>
+<th>JVM type</th>
+<th>Postgres type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>java.sql.Date</td>
+<td>date</td>
+</tr>
+<tr>
+<td>java.time.LocalDate</td>
+<td>date</td>
+</tr>
+<tr>
+<td>java.util.Date</td>
+<td>timestamp[tz]</td>
+</tr>
+<tr>
+<td>java.sql.Timestamp</td>
+<td>timestamp[tz]</td>
+</tr>
+<tr>
+<td>java.time.Instant</td>
+<td>timestamp[tz]</td>
+</tr>
+<tr>
+<td>java.time.ZonedDateTime</td>
+<td>timestamp[tz]</td>
+</tr>
+<tr>
+<td>java.time.OffsetDatetime</td>
+<td>timestamp[tz]</td>
+</tr>
+<tr>
+<td>org.postgres.util.PGInterval</td>
+<td>interval</td>
+</tr>
+</tbody>
+</table>
+<h3 id="geometric-mappings">Geometric mappings</h3>
+<table>
+<thead>
+<tr>
+<th>JVM type</th>
+<th>Postgres type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>org.postgres.geometric.PGpoint</td>
+<td>point</td>
+</tr>
+<tr>
+<td>org.postgres.geometric.PGline</td>
+<td>line</td>
+</tr>
+<tr>
+<td>org.postgres.geometric.PGpath</td>
+<td>path</td>
+</tr>
+<tr>
+<td>org.postgres.geometric.PGbox</td>
+<td>box</td>
+</tr>
+<tr>
+<td>org.postgres.geometric.PGcircle</td>
+<td>circle</td>
+</tr>
+<tr>
+<td>org.postgres.geometric.PGpolygon</td>
+<td>polygon</td>
+</tr>
+</tbody>
+</table>
+<h3 id="arrays">Arrays</h3>
+<p>Impemented for the following JVM-typed arrays for:</p>
+<table>
+<thead>
+<tr>
+<th>JVM type</th>
+<th>Postgres type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>int[]</td>
+<td>int4[] (aka integer[])</td>
+</tr>
+<tr>
+<td>long[]</td>
+<td>int8[] (aka bigint[])</td>
+</tr>
+<tr>
+<td>float[]</td>
+<td>float4[] (aka real[])</td>
+</tr>
+<tr>
+<td>double[]</td>
+<td>float8[] (aka double precision[])</td>
+</tr>
+<tr>
+<td>byte[]</td>
+<td>bytea</td>
+</tr>
+<tr>
+<td>String[]</td>
+<td>text[] (or varchar)</td>
+</tr>
+<tr>
+<td>java.util.UUID[]</td>
+<td>uuid[]</td>
+</tr>
+</tbody>
+</table>
+<p>Currently, only 1-dimensional Postgres arrays are supported.</p>
+<h3 id="jsonb">jsonb</h3>
+<p>Things that are String-like, or serialized in string form, should work
+using the String -&gt; text mapping. An exception is the <code>jsonb</code> postgres
+type, because the binary format requires a version signifier. Wrapping
+a JSON string in a <code>clj-pgcopy.core/JsonB</code> handles that.</p>
+<p>Note that this library does not serialize to JSON, it simply wraps a
+valid JSON string such that it can actually be used.</p>
+<h2 id="what-about-my-weird-type">What about my weird type?</h2>
+<p>These type mappings are implented using a clojure protocol, namely
+<code>clj-pgcopy.core/IPGBinaryWrite</code>. In order to add support for another
+type, just extend that protocol with an implementation. You can and
+should use the implementation of other types in the library for
+guidance on doing so.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Go forth and import!</p>
+]]></content>
+  </entry>
   <entry>
     <title type="html">Single-Use Tokens in Datomic</title>
     <link href="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/" rel="alternate" type="text/html" title="Single-Use Tokens in Datomic"/>
