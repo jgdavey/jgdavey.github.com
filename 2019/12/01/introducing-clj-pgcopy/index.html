@@ -67,7 +67,7 @@ Although the overhead from org." />
             </span>
             <span class="reading-time">
               <i class="fas fa-clock"></i>
-              4 minutes read
+              5 minutes read
             </span>
           </div>
           
@@ -104,14 +104,29 @@ representation.</li>
 </ol>
 <p>There may be other benefits I'm unaware of, but those two things alone
 made me curious if there was a way to get the <code>COPY</code> goodness with
-idiomatic Clojure. The best library I found was <a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>,
-which works with JDBC, but has a very Java-centric API. Eventually, my
-work culminated in <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a>.</p>
-<p>The primary API of clj-pgcopy is <code>clj-pgcopy.core/copy-into!</code>, which
-aims to be drop-in compatible with most places where
-<code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
+idiomatic Clojure.</p>
+<p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/">https://jdbc.postgresql.org/</a> and
+<a href="https://impossibl.github.io/pgjdbc-ng/">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
+into COPY mode, after which data can be streamed into or out of
+postgresql. However, both drivers don't do anything to help you get
+the data into the raw format that postgresql expects. For the text
+(default) format, that's basically a tab-delimited or CSV payload.</p>
+<p>The binary COPY format, however, is a different beast entirely. Each
+postgresql data type has a very specific binary representation. Again,
+while the postgresql jdbc drivers provide a way to stream in or stream
+out COPY data, the data within those streams is left entirely up to
+you. The best library I found to do this kind of serialization was
+<a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
+API.</p>
+<p>That's where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
+their binary represenation, with the hope that using the binary COPY
+style of importing data is as easy to use as clojure.java.jdbc
+methods. The primary API of clj-pgcopy is
+<code>clj-pgcopy.core/copy-into!</code>, which aims to be drop-in compatible with
+most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
 <h2 id="example-usage">Example usage</h2>
-<p>For example, let's say that we have a table of product listings, looking like this:</p>
+<p>For example, let's say that we have a table of product listings,
+looking like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">create</span> <span style="color:#00a8c8">table</span> <span style="color:#111">inventory</span> <span style="color:#111">(</span>
   <span style="color:#111">guid</span> <span style="color:#111">uuid</span> <span style="color:#00a8c8">primary</span> <span style="color:#00a8c8">key</span><span style="color:#111">,</span>
   <span style="color:#111">created_at</span> <span style="color:#111">timestamptz</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span><span style="color:#111">,</span>
