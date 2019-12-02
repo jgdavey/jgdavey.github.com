@@ -25,7 +25,7 @@ Database constraints are essential to ensuring data integrity, and you should us
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -76,31 +76,26 @@ Database constraints are essential to ensuring data integrity, and you should us
       </header>
 
       <div>
-        
-
-<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL">here</a></em></p>
-
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL">here</a></em></p>
 <p>Database constraints are essential to ensuring data integrity, and you
 should use them. Allowing them to be deferrable during transactions
 makes them even more convenient. A common scenario in which the database
 can help us is in a sortable list implementation. This post outlines
 the how and why of deferring database constraints, using a sortable list
 domain as an example.</p>
-
 <h1 id="modeling-lists-of-sortable-items">Modeling lists of sortable items</h1>
-
 <p>Imagine that you have an application with multiple lists. Each list has
 items that can be reordered with a drag-and-drop interaction. This can
 be modelled in a fairly straightforward manner.</p>
-
 <p>Each list <code>has_many</code> list items, which are ordered by the <code>position</code>
-column. Each list&rsquo;s items have a position beginning with 1 and
+column. Each list's items have a position beginning with 1 and
 incrementing with each subsequent item.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/list.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">List</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">has_many</span> <span style="color:#d88200">:items</span><span style="color:#111">,</span> <span style="color:#f92672">-&gt;</span> <span style="color:#111">{</span> <span style="color:#111">order</span> <span style="color:#d88200">:position</span> <span style="color:#111">},</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;ListItem&#34;</span>
+  <span style="color:#111">has_many</span> <span style="color:#d88200">:items</span><span style="color:#111">,</span> <span style="color:#f92672">-</span><span style="color:#f92672">&gt;</span> <span style="color:#111">{</span> <span style="color:#111">order</span> <span style="color:#d88200">:position</span> <span style="color:#111">}</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">ListItem</span><span style="color:#d88200">&#34;</span>
   <span style="color:#111">validates_presence_of</span> <span style="color:#d88200">:name</span>
-<span style="color:#00a8c8">end</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/list_item.rb</span>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/list_item.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">ListItem</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:list</span>
   <span style="color:#111">validates_presence_of</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:list</span><span style="color:#111">,</span> <span style="color:#d88200">:position</span>
@@ -109,44 +104,44 @@ incrementing with each subsequent item.</p>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">update_positions</span><span style="color:#111">(</span><span style="color:#111">ids</span><span style="color:#111">)</span>
     <span style="color:#111">ids</span><span style="color:#f92672">.</span><span style="color:#111">each_with_index</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">index</span><span style="color:#f92672">|</span>
-      <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+      <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#f92672"></span><span style="color:#111">)</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">ensure_position</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">position</span> <span style="color:#f92672">||=</span> <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">class</span><span style="color:#f92672">.</span><span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">list_id</span><span style="color:#111">:</span> <span style="color:#111">list_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">maximum</span><span style="color:#111">(</span><span style="color:#d88200">:position</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_i</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>A couple things are worth noting about the <code>ListItem</code> class. Firstly, we
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">ensure_position</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">position</span> <span style="color:#f92672">||</span><span style="color:#f92672">=</span> <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">class</span><span style="color:#f92672">.</span><span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">list_id</span><span style="color:#111">:</span> <span style="color:#111">list_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">maximum</span><span style="color:#111">(</span><span style="color:#d88200">:position</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_i</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>
+  <span style="color:#f92672"></span><span style="color:#00a8c8">end</span>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>A couple things are worth noting about the <code>ListItem</code> class. Firstly, we
 have <code>update_positions</code>, a class method that accepts an array of ids and
 updates each. This method will be called in a <code>sort</code> controller action
 as such:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">ItemsController</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ApplicationController</span>
   <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:list</span><span style="color:#111">)</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">sort</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">sort</span>
     <span style="color:#75715e"># list item ids is an ordered array of ids</span>
     <span style="color:#111">list</span><span style="color:#f92672">.</span><span style="color:#111">items</span><span style="color:#f92672">.</span><span style="color:#111">update_positions</span><span style="color:#111">(</span><span style="color:#111">params</span><span style="color:#f92672">[</span><span style="color:#d88200">:list_item_ids</span><span style="color:#f92672">]</span><span style="color:#111">)</span>
     <span style="color:#111">head</span> <span style="color:#d88200">:ok</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Secondly, new items don&rsquo;t necessarily know what position they should
-have, so we put list items that don&rsquo;t have <code>position</code> at the end of
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Secondly, new items don't necessarily know what position they should
+have, so we put list items that don't have <code>position</code> at the end of
 their respective list, just before validating that the position is
 present.</p>
-
 <p>Here are the migrations that we used to create the models&rsquo; database
 tables:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateLists</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">change</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">change</span>
     <span style="color:#111">create_table</span> <span style="color:#d88200">:lists</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">t</span><span style="color:#f92672">|</span>
       <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">string</span> <span style="color:#d88200">:name</span>
       <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">timestamps</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">change</span>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">change</span>
     <span style="color:#111">create_table</span> <span style="color:#d88200">:list_items</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">t</span><span style="color:#f92672">|</span>
       <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">belongs_to</span> <span style="color:#d88200">:list</span>
       <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">integer</span> <span style="color:#d88200">:position</span>
@@ -155,45 +150,40 @@ tables:</p>
       <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">timestamps</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Notice anything missing? If you said database constraints, you&rsquo;re
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Notice anything missing? If you said database constraints, you're
 correct! Our application is enforcing presence for most attributes, but
 our corresponding columns are missing <code>NOT NULL</code> constraints. Also, the
 <code>list_id</code> column on <code>list_items</code> is missing a foreign key constraint.</p>
-
-<p>But I&rsquo;d like to focus on another missing constraint. Our domain model has
-an implicit requirement that we haven&rsquo;t enforced with either validations
-or database constraints: each list item&rsquo;s position should be <em>unique per
+<p>But I'd like to focus on another missing constraint. Our domain model has
+an implicit requirement that we haven't enforced with either validations
+or database constraints: each list item's position should be <em>unique per
 list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
-
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
 the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations">thoughtbot recently warned</a>,
 application-level uniqueness validations are insufficient <em>at best</em>, and
 fail completely in concurrent environments.</p>
-
 <p>The <code>position</code> column needs a database-level constraint.</p>
-
 <h1 id="adding-constraints">Adding constraints</h1>
-
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
-in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
+in PostgreSQL. We'll just create a new migration with the following:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">up</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#111">alter</span> <span style="color:#111">table</span> <span style="color:#111">list_items</span>
-        <span style="color:#111">add</span> <span style="color:#111">constraint</span> <span style="color:#111">list_item_position</span> <span style="color:#111">unique</span> <span style="color:#111">(</span><span style="color:#111">list_id</span><span style="color:#111">,</span> <span style="color:#111">position</span><span style="color:#111">);</span>
+        <span style="color:#111">add</span> <span style="color:#111">constraint</span> <span style="color:#111">list_item_position</span> <span style="color:#111">unique</span> <span style="color:#111">(</span><span style="color:#111">list_id</span><span style="color:#111">,</span> <span style="color:#111">position</span><span style="color:#111">)</span><span style="color:#111">;</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">down</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">down</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#111">alter</span> <span style="color:#111">table</span> <span style="color:#111">list_items</span>
         <span style="color:#111">drop</span> <span style="color:#111">constraint</span> <span style="color:#00a8c8">if</span> <span style="color:#111">exists</span> <span style="color:#111">list_item_position</span><span style="color:#111">;</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Let&rsquo;s wrap our <code>UPDATE</code> statements in a transaction so that any failed
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Let's wrap our <code>UPDATE</code> statements in a transaction so that any failed
 <code>UPDATE</code> of the position column will result in none of them being
 updated:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">ListItem</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -201,69 +191,62 @@ updated:</p>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">update_positions</span><span style="color:#111">(</span><span style="color:#111">ids</span><span style="color:#111">)</span>
     <span style="color:#111">transaction</span> <span style="color:#00a8c8">do</span>
       <span style="color:#111">ids</span><span style="color:#f92672">.</span><span style="color:#111">each_with_index</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">index</span><span style="color:#f92672">|</span>
-        <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+        <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#f92672"></span><span style="color:#111">)</span>
       <span style="color:#00a8c8">end</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>This ensures at the database level that positions of items are unique
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>This ensures at the database level that positions of items are unique
 per list; no two items in the same list can occupy the &ldquo;1&rdquo; position.
 With regard to data integrity, this is a huge improvement over our
-initial implementation. But it has one drawback: <strong>it doesn&rsquo;t work</strong>.</p>
-
+initial implementation. But it has one drawback: <strong>it doesn't work</strong>.</p>
 <p>To illustrate why, imagine a list with the following items:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
-35 | 3        | Bread</code></pre></div>
-<p>To move Bread to the top of the list, we would pass an array of ids,
+35 | 3        | Bread
+</code></pre></div><p>To move Bread to the top of the list, we would pass an array of ids,
 <code>[35,13,18]</code> to the <code>update_positions</code> method. This method does a series
 of <code>UPDATE</code> statements to the database. For the first id, the one for
 Bread, we end up sending an update statement that would look like the
 following:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">UPDATE</span> <span style="color:#111">list_items</span> <span style="color:#00a8c8">SET</span> <span style="color:#00a8c8">position</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#00a8c8">WHERE</span> <span style="color:#111">id</span><span style="color:#f92672">=</span><span style="color:#ae81ff">35</span><span style="color:#111">;</span></code></pre></div>
-<p>After this statement is executed in the database, but before we move on
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">UPDATE</span> <span style="color:#111">list_items</span> <span style="color:#00a8c8">SET</span> <span style="color:#00a8c8">position</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#00a8c8">WHERE</span> <span style="color:#111">id</span><span style="color:#f92672">=</span><span style="color:#ae81ff">35</span><span style="color:#111">;</span>
+</code></pre></div><p>After this statement is executed in the database, but before we move on
 to the next id in the list, Postgres will fail its constraint checks. At
 the moment that the <code>UPDATE</code> happens, the data would be:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">id | position | name
 13 | 1        | Eggs
 18 | 2        | Milk
-35 | 1        | Bread</code></pre></div>
-<p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
+35 | 1        | Bread
+</code></pre></div><p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
 Of course, we know that we want to change the position of Eggs as well,
 so that its position would be &ldquo;2&rdquo;, and that collision would not happen.
-But at the time that the constraint-check happens, the database doesn&rsquo;t
+But at the time that the constraint-check happens, the database doesn't
 know this.</p>
-
 <p>Even within a transaction, database uniqueness constraints are enforced
 immediately <strong>per row</strong>. It seems our dreams of data integrity are
 smashed. If only there were a way to enforce uniqueness constraints at
 the end of the transaction, rather than the end of each statement&hellip;</p>
-
 <h1 id="deferrable-constraints">Deferrable Constraints</h1>
-
 <p>As mentioned before, constraints are immediately enforced. This
 behavior can be changed within a transaction by changing a constraints
 deferrable characteristics. In PostgreSQL, constraints are assumed to
 be <code>NOT DEFERRABLE</code> by default.</p>
-
 <p>However, constraints can also behave as deferrable in one of two ways:
 <code>DEFERRABLE INITIALLY IMMEDIATE</code> or <code>DEFERRABLE INITIALLY DEFERRED</code>.
 The first part, <code>DEFERRABLE</code>, is what allows the database constraint
 behavior to change within transactions. The second part describes what
 the default behavior will be within a transaction.</p>
-
 <p>With a constraint that is deferrable, but initially immediate, the
 constraint will by default behave just like a non-deferrable constraint,
 checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
 call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
-
-<p>With that information, let&rsquo;s change the definition of the constraint we
+<p>With that information, let's change the definition of the constraint we
 defined before:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">up</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#111">alter</span> <span style="color:#111">table</span> <span style="color:#111">list_items</span>
         <span style="color:#111">add</span> <span style="color:#111">constraint</span> <span style="color:#111">list_item_position</span> <span style="color:#111">unique</span> <span style="color:#111">(</span><span style="color:#111">list_id</span><span style="color:#111">,</span> <span style="color:#111">position</span><span style="color:#111">)</span>
@@ -271,20 +254,17 @@ defined before:</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">down</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">down</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#111">alter</span> <span style="color:#111">table</span> <span style="color:#111">list_items</span>
         <span style="color:#111">drop</span> <span style="color:#111">constraint</span> <span style="color:#00a8c8">if</span> <span style="color:#111">exists</span> <span style="color:#111">list_item_position</span><span style="color:#111">;</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>The only thing we&rsquo;ve changed from before is the <code>DEFERRABLE INITIALLY
-IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY
-IMMEDIATE</code> option. This will ensure that other parts of our app, and
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>The only thing we've changed from before is the <code>DEFERRABLE INITIALLY IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY IMMEDIATE</code> option. This will ensure that other parts of our app, and
 other consumers of the database will not be surprised by the behavior of
 the constraint; it will continue to act a like a normal, non-deferrable
 constraint, until we explicitly opt in to the deferral.</p>
-
 <p>We now need to change our transaction block. In our case, the first
 database statement within the transaction must be the <code>SET CONSTRAINTS</code>
 statement:</p>
@@ -292,69 +272,63 @@ statement:</p>
   <span style="color:#75715e"># ...</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">update_positions</span><span style="color:#111">(</span><span style="color:#111">ids</span><span style="color:#111">)</span>
     <span style="color:#111">transaction</span> <span style="color:#00a8c8">do</span>
-      <span style="color:#111">connection</span><span style="color:#f92672">.</span><span style="color:#111">execute</span> <span style="color:#d88200">&#34;SET CONSTRAINTS list_item_position DEFERRED&#34;</span>
+      <span style="color:#111">connection</span><span style="color:#f92672">.</span><span style="color:#111">execute</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">SET CONSTRAINTS list_item_position DEFERRED</span><span style="color:#d88200">&#34;</span>
       <span style="color:#111">ids</span><span style="color:#f92672">.</span><span style="color:#111">each_with_index</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">index</span><span style="color:#f92672">|</span>
-        <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+        <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#f92672"></span><span style="color:#111">)</span>
       <span style="color:#00a8c8">end</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Having now opted in to deferring our uniqueness constraint, reordering
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Having now opted in to deferring our uniqueness constraint, reordering
 the items now works as expected. The constraint still ensures that we
-don&rsquo;t have two items that occupy the same position, but waits until the
+don't have two items that occupy the same position, but waits until the
 end of the transaction to do that check. We can have our data integrity
 cake and eat it too.</p>
-
 <h1 id="bonus-deferrable-introspection">Bonus: deferrable introspection</h1>
-
 <p>Having to name the constraint in two places is a bit of a bummer, and
 introduces a coupling that could bite us if the constraint name ever
-changed. Knowing that, we leverage PostgreSQL&rsquo;s introspective abilities
+changed. Knowing that, we leverage PostgreSQL's introspective abilities
 to query the constraint names instead.</p>
-
 <p>For example, we can add the following module to our codebase:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># lib/deferrable.rb</span>
 <span style="color:#00a8c8">module</span> <span style="color:#111">Deferrable</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">deferrable_uniqueness_constraints_on</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">deferrable_uniqueness_constraints_on</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span>
     <span style="color:#111">usage</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">Arel</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Table</span><span style="color:#f92672">.</span><span style="color:#111">new</span> <span style="color:#d88200">&#39;information_schema.constraint_column_usage&#39;</span>
     <span style="color:#111">constraint</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">Arel</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Table</span><span style="color:#f92672">.</span><span style="color:#111">new</span> <span style="color:#d88200">&#39;pg_constraint&#39;</span>
     <span style="color:#111">arel</span> <span style="color:#f92672">=</span> <span style="color:#111">usage</span><span style="color:#f92672">.</span><span style="color:#111">project</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:constraint_name</span><span style="color:#f92672">]</span><span style="color:#111">)</span>
-    <span style="color:#f92672">.</span><span style="color:#111">join</span><span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">on</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:constraint_name</span><span style="color:#f92672">].</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#f92672">[</span><span style="color:#d88200">:conname</span><span style="color:#f92672">]</span><span style="color:#111">))</span>
+    <span style="color:#f92672">.</span><span style="color:#111">join</span><span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">on</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:constraint_name</span><span style="color:#f92672">]</span><span style="color:#f92672">.</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#f92672">[</span><span style="color:#d88200">:conname</span><span style="color:#f92672">]</span><span style="color:#111">)</span><span style="color:#111">)</span>
     <span style="color:#f92672">.</span><span style="color:#111">where</span><span style="color:#111">(</span>
-      <span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#f92672">[</span><span style="color:#d88200">:contype</span><span style="color:#f92672">].</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#d88200">&#39;u&#39;</span><span style="color:#111">))</span>
+      <span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#f92672">[</span><span style="color:#d88200">:contype</span><span style="color:#f92672">]</span><span style="color:#f92672">.</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#d88200">&#39;u&#39;</span><span style="color:#111">)</span><span style="color:#111">)</span>
       <span style="color:#f92672">.</span><span style="color:#111">and</span><span style="color:#111">(</span><span style="color:#111">constraint</span><span style="color:#f92672">[</span><span style="color:#d88200">:condeferrable</span><span style="color:#f92672">]</span><span style="color:#111">)</span>
-      <span style="color:#f92672">.</span><span style="color:#111">and</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:table_name</span><span style="color:#f92672">].</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#111">table_name</span><span style="color:#111">))</span>
-      <span style="color:#f92672">.</span><span style="color:#111">and</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:column_name</span><span style="color:#f92672">].</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">))</span>
+      <span style="color:#f92672">.</span><span style="color:#111">and</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:table_name</span><span style="color:#f92672">]</span><span style="color:#f92672">.</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#111">table_name</span><span style="color:#111">)</span><span style="color:#111">)</span>
+      <span style="color:#f92672">.</span><span style="color:#111">and</span><span style="color:#111">(</span><span style="color:#111">usage</span><span style="color:#f92672">[</span><span style="color:#d88200">:column_name</span><span style="color:#f92672">]</span><span style="color:#f92672">.</span><span style="color:#111">eq</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span><span style="color:#111">)</span>
     <span style="color:#111">)</span>
     <span style="color:#111">connection</span><span style="color:#f92672">.</span><span style="color:#111">select_values</span> <span style="color:#111">arel</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">transaction_with_deferred_constraints_on</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">transaction_with_deferred_constraints_on</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span>
     <span style="color:#111">transaction</span> <span style="color:#00a8c8">do</span>
-      <span style="color:#111">constraints</span> <span style="color:#f92672">=</span> <span style="color:#111">deferrable_uniqueness_constraints_on</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">join</span> <span style="color:#d88200">&#34;,&#34;</span>
-      <span style="color:#111">connection</span><span style="color:#f92672">.</span><span style="color:#111">execute</span><span style="color:#111">(</span><span style="color:#d88200">&#34;SET CONSTRAINTS %s DEFERRED&#34;</span> <span style="color:#f92672">%</span> <span style="color:#111">constraints</span><span style="color:#111">)</span>
+      <span style="color:#111">constraints</span> <span style="color:#f92672">=</span> <span style="color:#111">deferrable_uniqueness_constraints_on</span><span style="color:#111">(</span><span style="color:#111">column_name</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">join</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">,</span><span style="color:#d88200">&#34;</span>
+      <span style="color:#111">connection</span><span style="color:#f92672">.</span><span style="color:#111">execute</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">SET CONSTRAINTS %s DEFERRED</span><span style="color:#d88200">&#34;</span> <span style="color:#f92672">%</span> <span style="color:#111">constraints</span><span style="color:#111">)</span>
       <span style="color:#00a8c8">yield</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>And now change our model to use it:</p>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>And now change our model to use it:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">ListItem</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#00a8c8">extend</span> <span style="color:#00a8c8">Deferrable</span>
   <span style="color:#75715e"># ...</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">update_positions</span><span style="color:#111">(</span><span style="color:#111">ids</span><span style="color:#111">)</span>
     <span style="color:#111">transaction_with_deferred_constraints_on</span><span style="color:#111">(</span><span style="color:#d88200">:position</span><span style="color:#111">)</span> <span style="color:#00a8c8">do</span>
       <span style="color:#111">ids</span><span style="color:#f92672">.</span><span style="color:#111">each_with_index</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">index</span><span style="color:#f92672">|</span>
-        <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span>
+        <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">:</span> <span style="color:#111">id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">update_all</span><span style="color:#111">(</span><span style="color:#d88200">position</span><span style="color:#111">:</span> <span style="color:#111">index</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span><span style="color:#f92672"></span><span style="color:#111">)</span>
       <span style="color:#00a8c8">end</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>And, boom! Less coupling.</p>
-
-<p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
-
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>And, boom! Less coupling.</p>
+<p><strong>NOTE</strong> That's a lot of Arel! Use at your own risk. ;-)</p>
 <h1 id="example-application">Example application</h1>
-
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example">sample Rails app</a> to iterate
 quickly. I used TDD to write the initial approach, and reused the specs
 while I &ldquo;refactored&rdquo; the implementation to the subsequent approaches.

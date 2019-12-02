@@ -7,10 +7,10 @@
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SQL Window Functions and You"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
-Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&rsquo;d like to feature one picture from each category. It can&rsquo;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price."/>
+Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&#39;d like to feature one picture from each category. It can&#39;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price."/>
 <meta property="og:title" content="SQL Window Functions and You" />
 <meta property="og:description" content="This is a repost. You can find the original here
-Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&rsquo;d like to feature one picture from each category. It can&rsquo;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price." />
+Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&#39;d like to feature one picture from each category. It can&#39;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2012/05/22/sql-window-functions/" />
 <meta property="article:published_time" content="2012-05-22T00:00:00+00:00" />
@@ -25,7 +25,7 @@ Suppose you have a storefront application that sells pictures of cats. These cat
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -76,37 +76,28 @@ Suppose you have a storefront application that sells pictures of cats. These cat
       </header>
 
       <div>
-        
-
-<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-window-functions" title="SQL Window Functions and You">here</a></em></p>
-
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-window-functions" title="SQL Window Functions and You">here</a></em></p>
 <p>Suppose you have a storefront application that sells pictures of cats.
 These cat pictures are categorized in meaningful ways. For example,
 there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the
-landing page of the store, you&rsquo;d like to feature one picture from each
-category. It can&rsquo;t be a random picture from each. You need to feature
+landing page of the store, you'd like to feature one picture from each
+category. It can't be a random picture from each. You need to feature
 the cheapest picture from each category, displaying its name and price.</p>
-
 <p>Also, it turns out that some &ldquo;low&rdquo; prices are very common. For example,
 $9.99 is a common sale price for LOLcats pictures. However, we should
 only ever feature one picture per category. When there are multiple
 pictures with the same low price, we fallback to the name, and show the
 first one alphabetically. How can we solve this problem, while also
 remaining performant?</p>
-
 <p>As an aside, adding a cat to a Rennaisance painting amplifies its appeal
 ninefold.</p>
-
-<p><img src="https://s3.amazonaws.com/hashrocket-blog-production/catpictures.com.jpg" alt="catpictures.biz" /></p>
-
-<p>Let&rsquo;s look at some of the ways that we can approach this problem,
+<p><img src="https://s3.amazonaws.com/hashrocket-blog-production/catpictures.com.jpg" alt="catpictures.biz"></p>
+<p>Let's look at some of the ways that we can approach this problem,
 displaying a list of cat pictures that are the cheapest for their
 respective category.</p>
-
 <h2 id="approach-1-ruby">Approach 1: Ruby</h2>
-
 <p>Implementing the solution in Ruby is fairly straightforward.
-<del>ActiveSupport</del> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
+<!-- raw HTML omitted -->ActiveSupport<!-- raw HTML omitted --> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
 collections, and we can use those to help us cut down on some typing.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
@@ -117,43 +108,35 @@ collections, and we can use those to help us cut down on some typing.</p>
       <span style="color:#111">subset</span><span style="color:#f92672">.</span><span style="color:#111">sort_by</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">pic</span><span style="color:#f92672">|</span> <span style="color:#f92672">[</span><span style="color:#111">pic</span><span style="color:#f92672">.</span><span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">pic</span><span style="color:#f92672">.</span><span style="color:#111">name</span><span style="color:#f92672">]</span> <span style="color:#111">}</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>First, we group all of the cat pictures by their category. Then, for
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>First, we group all of the cat pictures by their category. Then, for
 each set of pictures, we sort them by their price and name, and take
 only the first one.</p>
-
 <p>Perhaps you are wondering if inverting the responsibility would improve
 the implementation, putting the mapping and reduction impetus in the
 Category model instead. Although it would be possible to go through
 the Category model to find its cheapest picture, that would lead to an
 &ldquo;n+1&rdquo;, as each category would subsequently need fetch its cat pictures.
 Alternatively, eager-loading all categories with their cat pictures
-would be expensive, and would essentially duplicate what we&rsquo;ve done
+would be expensive, and would essentially duplicate what we've done
 above with the <code>group_by</code>.</p>
-
 <p>Either way, as you can probably imagine, the above method would become
 more expensive as the data set continued to grow. Additionally, we lose
 the ability to continue to chain ActiveRecord scopes to filter the set
 further: as soon as we fetch the collection from the database, all
 filtering has to be done in Ruby.</p>
-
 <p>Pros:</p>
-
 <ul>
 <li>Easy to grok</li>
 <li>All domain logic stays in application</li>
 </ul>
-
 <p>Cons:</p>
-
 <ul>
 <li>Expensive (all objects loaded into memory)</li>
 <li>No scope chaining</li>
-<li>Once you go Ruby, you don&rsquo;t go back</li>
+<li>Once you go Ruby, you don't go back</li>
 </ul>
-
 <h2 id="approach-2-sql-subselects">Approach 2: SQL subselects</h2>
-
 <p>We can improve performance by doing the filtering at the database level,
 rather than loading all cat pictures into memory each time.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -164,34 +147,31 @@ rather than loading all cat pictures into memory each time.</p>
     <span style="color:#111">find_by_sql</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#00a8c8">SELECT</span> <span style="color:#00a8c8">DISTINCT</span> <span style="color:#00a8c8">ON</span><span style="color:#111">(</span><span style="color:#111">category_id</span><span style="color:#111">)</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">*</span>
       <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-      <span style="color:#00a8c8">WHERE</span> <span style="color:#111">((</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">price</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
+      <span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">(</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">price</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
         <span style="color:#00a8c8">SELECT</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">min</span><span style="color:#111">(</span><span style="color:#111">price</span><span style="color:#111">)</span>
         <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
         <span style="color:#00a8c8">GROUP</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span>
-      <span style="color:#111">))</span>
+      <span style="color:#111">)</span><span style="color:#111">)</span>
       <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ASC</span><span style="color:#111">,</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">name</span> <span style="color:#00a8c8">ASC</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Here, we use a subselect to filter the initial set down to only those
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Here, we use a subselect to filter the initial set down to only those
 that have the cheapest price per category. In this inner query, each row
 will contain a <code>category_id</code> and its lowest <code>price</code>. In the outer query,
 we choose all cat pictures whose <code>price</code> and <code>category_id</code> match a row
 from this inner query, using the <code>IN</code> syntax.</p>
-
 <p>We would be done here, except that there still exists the possibility
 that there could be more than one that have that low price for a given
 category. So, depending on the database vendor, we can here find
 &ldquo;distinct&rdquo; rows, according the columns of interest. In Postgresql,
 the syntax for this is <code>DISTINCT ON([column,...])</code>, which will omit
-duplicates of the listed columns. For our purposes, we don&rsquo;t want more
+duplicates of the listed columns. For our purposes, we don't want more
 than one per category, so we distinct on <code>category_id</code>.</p>
-
 <p>It is worth noting that without an <code>ORDER BY</code> clause, <code>DISTINCT ON</code> is
 nondeterministic: we are not guaranteed to get the same result each
 time. Thus, we order by <code>category_id</code> and <code>name</code>, so that only the first
 cat picture alphabetically will show up.</p>
-
 <p>We can improve the implementation above by making it a true chainable
 scope. Whereas <code>find_by_sql</code> returns an array of objects, we can
 refactor this to return an ActiveRelation instead.</p>
@@ -200,42 +180,35 @@ refactor this to return an ActiveRelation instead.</p>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(category_id, price) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">category_id_and_lowest_price_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;DISTINCT ON(category_id) </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.*&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id ASC, </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.name ASC&#34;</span><span style="color:#111">)</span>
+    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">(category_id, price) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">category_id_and_lowest_price_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">DISTINCT ON(category_id) </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.*</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">category_id ASC, </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.name ASC</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">category_id_and_lowest_price_sql</span>
-    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id, min(price)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">group</span><span style="color:#111">(</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
+    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">category_id, min(price)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">group</span><span style="color:#111">(</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Functionally, this generates the exact same query as before, but allows
-further chaining. Using ActiveRelation&rsquo;s <code>to_sql</code> method, we&rsquo;re able
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Functionally, this generates the exact same query as before, but allows
+further chaining. Using ActiveRelation's <code>to_sql</code> method, we're able
 to build up our inner query without actually executing it. We then
-interpolate that query into what was the outer query, which we&rsquo;ve
+interpolate that query into what was the outer query, which we've
 reduced to calls to <code>where</code>, <code>select</code> and <code>order</code>.</p>
-
 <p>Pros:</p>
-
 <ul>
 <li>More performant than Ruby method</li>
 <li>Scope chaining still possible</li>
 </ul>
-
 <p>Cons:</p>
-
 <ul>
 <li>Nested subselects</li>
 <li>Very difficult to read in application code</li>
 <li>The use of <code>DISTINCT ON</code> - only some RDBMS&rsquo; have such functionality</li>
 </ul>
-
 <h2 id="approach-3-window-functions">Approach 3: Window functions</h2>
-
 <p>But there is still another option. The SQL standard defines a concept
-called window functions, which act a lot like aggregates, but don&rsquo;t
-change the result set. From the Postgresql documentation&rsquo;s <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">excellent
+called window functions, which act a lot like aggregates, but don't
+change the result set. From the Postgresql documentation's <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">excellent
 introduction to window functions</a>:</p>
-
 <blockquote>
 <p>A window function performs a calculation across a set of table rows that
 are somehow related to the current row. This is comparable to the type
@@ -244,8 +217,7 @@ regular aggregate functions, use of a window function does not cause
 rows to become grouped into a single output row - the rows retain their
 separate identities.</p>
 </blockquote>
-
-<p>Let&rsquo;s see how this would work with our dataset. First of all, let&rsquo;s assume the following cat pictures:</p>
+<p>Let's see how this would work with our dataset. First of all, let's assume the following cat pictures:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
 
  id |         name         | category_id | price 
@@ -257,19 +229,20 @@ separate identities.</p>
   6 | Cats in it for me    |           1 | 22.99
   4 | Turkleton&#39;s Folly    |           2 | 11.99
   1 | Meowna Lisa          |           2 | 19.99
-  8 | Lady Caterly&#39;s Lover |           2 | 22.99</code></pre></div>
-<p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s
+  8 | Lady Caterly&#39;s Lover |           2 | 22.99
+</code></pre></div><p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton's
 Folly&rdquo;, which are the cheapest pictures from their categories.</p>
-
 <p>Whereas a normal aggregate function with <code>GROUP BY</code> would collapse the
-results, a window function retains the original row. Let&rsquo;s consider how
+results, a window function retains the original row. Let's consider how
 this would affect the inner query from the subselect approach above:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
 
  category_id |  min  
 -------------+-------
            1 |  9.99
-           2 | 11.99</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
+           2 | 11.99
+
+</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
 
  category_id |  min  
 -------------+-------
@@ -280,8 +253,8 @@ this would affect the inner query from the subselect approach above:</p>
            1 |  9.99
            2 | 11.99
            2 | 11.99
-           2 | 11.99</code></pre></div>
-<p>Above, we&rsquo;ve replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
+           2 | 11.99
+</code></pre></div><p>Above, we've replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
 have the original rows with an additional column for this aggregate
 data. This is useful in its own right, but the real power of window
 functions comes from this concept of window framing. The use of
@@ -290,7 +263,6 @@ two frames, one for each <code>category_id</code>. Then, all aggregate and windo
 functions before the <code>OVER</code> clause operate against this frame. Each
 window frame effectively has its own result set, according to the
 defined partition.</p>
-
 <p>When a window frame is ordered, using an <code>ORDER BY</code> clause, even more
 options are possible. For example, consider the following:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
@@ -304,13 +276,12 @@ options are possible. For example, consider the following:</p>
   6 | Cats in it for me    |           1 | 22.99 |    5
   4 | Turkleton&#39;s Folly    |           2 | 11.99 |    1
   1 | Meowna Lisa          |           2 | 19.99 |    2
-  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |    3</code></pre></div>
-<p>Look familiar? This is essentially the original , except we&rsquo;ve added a
+  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |    3
+</code></pre></div><p>Look familiar? This is essentially the original , except we've added a
 new column: its price rank within a window partitioned by <code>category_id</code>.
-It&rsquo;s a mouthful to describe, but we&rsquo;re very close to our original goal
+It's a mouthful to describe, but we're very close to our original goal
 of finding the cheapest cat picture per category. All we need to do now
 is select rows that have a rank of 1.</p>
-
 <p>Not so fast. Can you spot the issue with the above? The <code>rank()</code> window
 function assigns the same rank to ties, but we need the first one
 alphabetically in the case of &ldquo;ties&rdquo;. We can remedy that by using a
@@ -327,74 +298,66 @@ numbers.</p>
   6 | Cats in it for me    |           1 | 22.99 |          5
   4 | Turkleton&#39;s Folly    |           2 | 11.99 |          1
   1 | Meowna Lisa          |           2 | 19.99 |          2
-  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |          3</code></pre></div>
-<p>Perfect! Looking at the rows with &ldquo;1&rdquo; as their &ldquo;row_number&rdquo;, we see
-what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s Folly&rdquo;, which are the
+  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |          3
+</code></pre></div><p>Perfect! Looking at the rows with &ldquo;1&rdquo; as their &ldquo;row_number&rdquo;, we see
+what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton's Folly&rdquo;, which are the
 cheapest pictures from their categories. We can use an <code>IN</code> clause for
 filtering, similar to the previous approach:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
 <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
 <span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
-  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">()</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
+  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">(</span><span style="color:#111">)</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-<span style="color:#111">);</span></code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id | category_id |         name         | price 
+<span style="color:#111">)</span><span style="color:#111">;</span>
+</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id | category_id |         name         | price 
 ----+-------------+----------------------+-------
   5 |           1 | Hugs not Drugs       |  9.99
-  4 |           2 | Turkleton&#39;s Folly    | 11.99</code></pre></div>
-<p>The where clause above filters records that both have an id that appears
+  4 |           2 | Turkleton&#39;s Folly    | 11.99
+
+</code></pre></div><p>The where clause above filters records that both have an id that appears
 in the subquery next to a rank of 1. Now that we have the SQL down,
-let&rsquo;s convert our Ruby model to take advantage of this window function
+let's convert our Ruby model to take advantage of this window function
 technique:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
     <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id, 1) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">price_rank_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span>
+    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">(</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id, 1) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">price_rank_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">price_rank_sql</span>
-    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
+    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Groovy. Just like before, we can use to the power of ActiveRelation
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Groovy. Just like before, we can use to the power of ActiveRelation
 to build up our subselect, which then gets interpolated into the
-<code>where</code> clause. I&rsquo;ve also prepended <code>id</code> in the <code>where</code> clause with
+<code>where</code> clause. I've also prepended <code>id</code> in the <code>where</code> clause with
 <code>table_name</code>, to avoid potential ambiguous column problems.</p>
-
 <p>There is one potential issue with using window functions: limited vendor
 support. While most of the big boys implement window functions (Oracle,
 Postgresql, and SQLServer, to name a few), MySQL and SQLite users are
 out of luck.</p>
-
 <p>Pros:</p>
-
 <ul>
 <li>Very performant (consistently twice as fast as Approach 2 on my laptop)</li>
 <li>Much less noise than SQL subselect stuff</li>
 <li>Easy to understand, assuming a basic knowledge of SQL window functions</li>
 </ul>
-
 <p>Cons:</p>
-
 <ul>
 <li>Not portable (window functions are not available in MySQL or SQLite)</li>
 </ul>
-
 <h2 id="conclusion">Conclusion</h2>
-
 <p>While they may not be appropriate for every situation, window functions
 are a great tool for your toolbelt. They excel at filtering down rows
-based on aggregate data, or adding aggregate data to the rows you&rsquo;d
+based on aggregate data, or adding aggregate data to the rows you'd
 already like to select.</p>
-
 <p>For more information about window functions, the Postgres documentation
 is an excellent resource, both for its <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">introduction</a>,
 and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.html" title="List of PostgreSQL window functions">list of window functions</a>.</p>
-
 <h2 id="example-app">Example app</h2>
-
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/windowing-example/" title="Window functions example application">sample Rails app</a> to iterate
 quickly. I used TDD to write the pure-ruby approach, and reused the
 specs while I &ldquo;refactored&rdquo; the implementation to the subsequent

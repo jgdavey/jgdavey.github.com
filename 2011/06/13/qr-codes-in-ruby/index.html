@@ -6,9 +6,9 @@
     <meta name="description" content="Joshua Davey&#39;s Website">
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="QR Codes in Ruby"/>
-<meta name="twitter:description" content="QR codes seem to be everywhere these days. I&rsquo;ve seen them in advertisements on the train, on the back of magazines, and, most recently, on someone&rsquo;s wedding invitation. A lot of folks are using QR codes as a quick way to share URLs. But that&rsquo;s not all that they are good for. We recently had a client that needed to authorize paper tickets, and a QR-encoded token turned out to be a great solution."/>
+<meta name="twitter:description" content="QR codes seem to be everywhere these days. I&#39;ve seen them in advertisements on the train, on the back of magazines, and, most recently, on someone&#39;s wedding invitation. A lot of folks are using QR codes as a quick way to share URLs. But that&#39;s not all that they are good for. We recently had a client that needed to authorize paper tickets, and a QR-encoded token turned out to be a great solution."/>
 <meta property="og:title" content="QR Codes in Ruby" />
-<meta property="og:description" content="QR codes seem to be everywhere these days. I&rsquo;ve seen them in advertisements on the train, on the back of magazines, and, most recently, on someone&rsquo;s wedding invitation. A lot of folks are using QR codes as a quick way to share URLs. But that&rsquo;s not all that they are good for. We recently had a client that needed to authorize paper tickets, and a QR-encoded token turned out to be a great solution." />
+<meta property="og:description" content="QR codes seem to be everywhere these days. I&#39;ve seen them in advertisements on the train, on the back of magazines, and, most recently, on someone&#39;s wedding invitation. A lot of folks are using QR codes as a quick way to share URLs. But that&#39;s not all that they are good for. We recently had a client that needed to authorize paper tickets, and a QR-encoded token turned out to be a great solution." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/" />
 <meta property="article:published_time" content="2011-06-13T00:00:00+00:00" />
@@ -23,7 +23,7 @@
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -74,56 +74,42 @@
       </header>
 
       <div>
-        
-
-<p>QR codes seem to be everywhere these days. I&rsquo;ve seen them in
+        <p>QR codes seem to be everywhere these days. I've seen them in
 advertisements on the train, on the back of magazines, and, most
-recently, on someone&rsquo;s wedding invitation. A lot of folks are using
-QR codes as a quick way to share URLs. But that&rsquo;s not all that they
+recently, on someone's wedding invitation. A lot of folks are using
+QR codes as a quick way to share URLs. But that's not all that they
 are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
-
 <h2 id="qr-code-generation-in-ruby">QR Code Generation in Ruby</h2>
-
 <p>From my experience, there are two solid options for QR code generation in Ruby:</p>
-
 <ul>
 <li><a href="http://whomwah.github.com/rqrcode/">rQRCode</a> Pure ruby QR code generator</li>
 <li><a href="https://github.com/harrisj/qrencoder">qrencoder</a> A Ruby wrapper around libqrencode</li>
 </ul>
-
 <h3 id="rqrcode">rQRCode</h3>
-
 <ul>
 <li>Pure ruby</li>
 <li>Portable: will run on many Ruby platforms</li>
 <li>Few dependencies</li>
 <li>Relatively slow</li>
 </ul>
-
 <h3 id="qrencoder">QREncoder</h3>
-
 <ul>
 <li>Very, very fast</li>
 <li>Uses a C library (libqrencode) that works wherever <code>make</code> does</li>
 <li>Likely not to run on JRuby</li>
 </ul>
-
 <h2 id="qr-code-decoding-in-ruby">QR Code Decoding in Ruby</h2>
-
 <p>The QR Decoding landscape varies even more than its QR encoding
 counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
-libraries that I&rsquo;ve found are:</p>
-
+libraries that I've found are:</p>
 <ul>
 <li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
 <li><a href="https://github.com/ecin/zxing.rb">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
 <li><a href="https://github.com/jgdavey/qrdecoder">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
 </ul>
-
 <h3 id="qrio">Qrio</h3>
-
 <ul>
 <li>Pure ruby</li>
 <li>Source is readable for ruby developers</li>
@@ -131,40 +117,32 @@ libraries that I&rsquo;ve found are:</p>
 <li>Only reads in PNG formatted images</li>
 <li>Slower than the other options</li>
 </ul>
-
-<h3 id="zxing-rb">Zxing.rb</h3>
-
+<h3 id="zxingrb">Zxing.rb</h3>
 <ul>
 <li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
 <li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
 <li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
 </ul>
-
 <h3 id="qrdecoder">QRDecoder</h3>
-
 <ul>
 <li>Wrapper for libzxing, a C++ port of the ZXing Java library</li>
 <li>By far the fastest option for MRI</li>
 <li>The C++ port of ZXing is less maintained than its big brother</li>
 <li>You must build <a href="https://github.com/jgdavey/zxing-cpp">libzxing</a> from source (a homebrew package is pending)</li>
 </ul>
-
 <h2 id="the-bottom-line">The Bottom Line</h2>
-
-<p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you&rsquo;re on a stack that can install
-libraries and you&rsquo;re using an MRI ruby (1.8 or 1.9), use qrencoder and
+<p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you're on a stack that can install
+libraries and you're using an MRI ruby (1.8 or 1.9), use qrencoder and
 qrdecoder. They are both very fast and awesome. Additionally, their
-APIs complement each other. If you&rsquo;re on Heroku, use rQRCode and qrio.
-They&rsquo;re both pure ruby and play nice with an environment where you can&rsquo;t
-install you&rsquo;re own libraries. If you&rsquo;re on JRuby, use Zxing.rb for
-decoding, and try both rQRCode and qrencoder. I haven&rsquo;t tried qrencoder
+APIs complement each other. If you're on Heroku, use rQRCode and qrio.
+They're both pure ruby and play nice with an environment where you can't
+install you're own libraries. If you're on JRuby, use Zxing.rb for
+decoding, and try both rQRCode and qrencoder. I haven't tried qrencoder
 with JRuby&ndash;or any compiled gems for that matter&ndash;so your mileage may
 vary.</p>
-
 <p><strong>N.B.</strong> In the interest of full disclosure, I have contributed to both
 qrencoder and zxing.rb, and maintain qrdecoder, and tend to favor them.
 Nevertheless, the pure ruby options are solid and well worth a look.</p>
-
 <p>Regardless of what your needs are, there are lots of options. Which one
 fits your needs best will largely depend on your stack.</p>
 

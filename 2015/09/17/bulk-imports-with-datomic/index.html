@@ -7,12 +7,12 @@
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Bulk imports with Datomic"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
-I&rsquo;ve been really happy with Datomic, but doing an initial bulk import wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve learned from doing several imports.
-Use core.async The Datomic transactor handles concurrency by transacting datoms serially, but that doesn&rsquo;t mean it isn&rsquo;t fast! In my experience, the bottleneck is actually in the reshaping of data and formatting transactions."/>
+I&#39;ve been really happy with Datomic, but doing an initial bulk import wasn&#39;t as familiar as SQL dump/restore. Here are some things that I&#39;ve learned from doing several imports.
+Use core.async The Datomic transactor handles concurrency by transacting datoms serially, but that doesn&#39;t mean it isn&#39;t fast! In my experience, the bottleneck is actually in the reshaping of data and formatting transactions."/>
 <meta property="og:title" content="Bulk imports with Datomic" />
 <meta property="og:description" content="This is a repost. You can find the original here
-I&rsquo;ve been really happy with Datomic, but doing an initial bulk import wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve learned from doing several imports.
-Use core.async The Datomic transactor handles concurrency by transacting datoms serially, but that doesn&rsquo;t mean it isn&rsquo;t fast! In my experience, the bottleneck is actually in the reshaping of data and formatting transactions." />
+I&#39;ve been really happy with Datomic, but doing an initial bulk import wasn&#39;t as familiar as SQL dump/restore. Here are some things that I&#39;ve learned from doing several imports.
+Use core.async The Datomic transactor handles concurrency by transacting datoms serially, but that doesn&#39;t mean it isn&#39;t fast! In my experience, the bottleneck is actually in the reshaping of data and formatting transactions." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/" />
 <meta property="article:published_time" content="2015-09-17T00:00:00+00:00" />
@@ -27,7 +27,7 @@ Use core.async The Datomic transactor handles concurrency by transacting datoms 
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -78,57 +78,43 @@ Use core.async The Datomic transactor handles concurrency by transacting datoms 
       </header>
 
       <div>
-        
-
-<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
-
-<p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
-wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
+<p>I've been really happy with Datomic, but doing an initial bulk import
+wasn't as familiar as SQL dump/restore. Here are some things that I've
 learned from doing several imports.</p>
-
-<h2 id="use-core-async">Use core.async</h2>
-
+<h2 id="use-coreasync">Use core.async</h2>
 <p>The Datomic transactor handles concurrency by transacting datoms
-serially, but that doesn&rsquo;t mean it isn&rsquo;t fast! In my experience, the bottleneck is actually in the
+serially, but that doesn't mean it isn't fast! In my experience, the bottleneck is actually in the
 reshaping of data and formatting transactions. I
 use <code>core.async</code> to parallelize just about everything in the import
 pipeline.</p>
-
-<p>One example of how I&rsquo;ve leveraged <code>core.async</code> for
+<p>One example of how I've leveraged <code>core.async</code> for
 import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/master/src/kevin/loader.clj">Kevin Bacon project
 repository</a>.</p>
-
 <h2 id="run-the-import-locally">Run the import locally</h2>
-
 <p>I use DynamoDB as my storage backend in production. I used to try to
 run my import tasks directly to the production transactor/storage.
-Lately, though, I&rsquo;ve found it really helpful to run my import tasks to
+Lately, though, I've found it really helpful to run my import tasks to
 a locally-running transactor and the <code>dev</code> storage backend.</p>
-
-<p>Running an import locally means I don&rsquo;t have to worry about networking, which speeds the whole process up quite a bit; also, it give me a much more freedom to iterate on the database
+<p>Running an import locally means I don't have to worry about networking, which speeds the whole process up quite a bit; also, it give me a much more freedom to iterate on the database
 design itself. (I rarely get an import correct the first time.) And
-in the case of DynamoDB, I save some money, as I don&rsquo;t have to have my
+in the case of DynamoDB, I save some money, as I don't have to have my
 &ldquo;write throughput&rdquo; cranked way up for as long.</p>
-
 <h2 id="clean-up-the-local-database">Clean up the local database</h2>
-
 <p>Bulk imports create some garbage, so manually reindexing before backing
-up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#d88200">&#34;datomic:dev://localhost:4334/database-name&#34;</span><span style="color:#111">))</span>
+up is advantageous. Here's what a REPL session looks like:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#d88200">&#34;datomic:dev://localhost:4334/database-name&#34;</span><span style="color:#111">)</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#75af00">d/request-index</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">conn</span> <span style="color:#111">d/db</span> <span style="color:#111">d/basis-t</span> <span style="color:#111">(</span><span style="color:#75af00">d/sync-index</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#111">deref</span><span style="color:#111">)</span>
 <span style="color:#75715e">;; blocks until done indexing</span>
-<span style="color:#111">(</span><span style="color:#75af00">d/gc-storage</span> <span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">java.util.Date.</span><span style="color:#111">))</span></code></pre></div>
-<p>For more information on why this cleanup
+<span style="color:#111">(</span><span style="color:#75af00">d/gc-storage</span> <span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">java.util.Date.</span><span style="color:#111">)</span><span style="color:#111">)</span>
+</code></pre></div><p>For more information on why this cleanup
 is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
 documentation</a>.</p>
-
-<h2 id="use-backup-restore">Use backup/restore</h2>
-
+<h2 id="use-backuprestore">Use backup/restore</h2>
 <p>Once everything looks good on the local production database, I use
-Datomic&rsquo;s builtin backup/restore facilities to send the database
-up to production. Assuming you&rsquo;ve already deployed a production transactor and provisioned DynamoDB storage, here&rsquo;s the process I follow:</p>
-
+Datomic's builtin backup/restore facilities to send the database
+up to production. Assuming you've already deployed a production transactor and provisioned DynamoDB storage, here's the process I follow:</p>
 <ol>
 <li>Run the <code>datomic backup-db</code> command against the local import.</li>
 <li>Crank my &ldquo;write throughput&rdquo; on DynamoDB <em>way</em> up (on the order of 1000).</li>
@@ -139,13 +125,11 @@ value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capac
 documentation</a> for more
 information).</li>
 </ol>
-
 <p>The heart of almost every business is its data. Datomic is a great
 choice for business data, in part because it treats <em>all</em> data as
 important: nothing is overwritten. New things are learned, but the old
 facts are not replaced. And knowing how to get your data into Datomic
 is half the battle.</p>
-
 <p>Go forth and import!</p>
 
       </div>

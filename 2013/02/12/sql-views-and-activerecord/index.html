@@ -8,13 +8,13 @@
 <meta name="twitter:title" content="has_one view"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
 Sometimes, aggregating data can become overly complex in a normal ActiveRecord model. Because Rails works well with SQL views, we can create associations to SQL views that aggregate data for us, simplifying our models and potentially speeding up queries.
-Modeling an inbox I&rsquo;ve got an inbox. A cat inbox. For real.
-There are many possible implementations for modeling an inbox."/>
+Modeling an inbox I&#39;ve got an inbox. A cat inbox. For real.
+There are many possible implementations for modeling an inbox. I&#39;ve gone with a relatively simple approach."/>
 <meta property="og:title" content="has_one view" />
 <meta property="og:description" content="This is a repost. You can find the original here
 Sometimes, aggregating data can become overly complex in a normal ActiveRecord model. Because Rails works well with SQL views, we can create associations to SQL views that aggregate data for us, simplifying our models and potentially speeding up queries.
-Modeling an inbox I&rsquo;ve got an inbox. A cat inbox. For real.
-There are many possible implementations for modeling an inbox." />
+Modeling an inbox I&#39;ve got an inbox. A cat inbox. For real.
+There are many possible implementations for modeling an inbox. I&#39;ve gone with a relatively simple approach." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/" />
 <meta property="article:published_time" content="2013-02-12T00:00:00+00:00" />
@@ -29,7 +29,7 @@ There are many possible implementations for modeling an inbox." />
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -80,22 +80,15 @@ There are many possible implementations for modeling an inbox." />
       </header>
 
       <div>
-        
-
-<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-views-and-activerecord" title="has_one view">here</a></em></p>
-
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-views-and-activerecord" title="has_one view">here</a></em></p>
 <p>Sometimes, aggregating data can become overly complex in a normal
 ActiveRecord model. Because Rails works well with SQL views, we can
 create associations to SQL views that aggregate data for us, simplifying
 our models and potentially speeding up queries.</p>
-
 <h2 id="modeling-an-inbox">Modeling an inbox</h2>
-
-<p>I&rsquo;ve got an inbox. A cat inbox. For real.</p>
-
-<p><img src="https://s3.amazonaws.com/hashrocket-blog-production/inbox.png" alt="" /></p>
-
-<p>There are many possible implementations for modeling an inbox. I&rsquo;ve
+<p>I've got an inbox. A cat inbox. For real.</p>
+<p><img src="https://s3.amazonaws.com/hashrocket-blog-production/inbox.png" alt=""></p>
+<p>There are many possible implementations for modeling an inbox. I've
 gone with a relatively simple approach. Two users participate in a
 conversation, sending messages back and forth to each other. The
 Conversation model has a subject, but the body of the initial message is
@@ -103,8 +96,8 @@ part of the Message object.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/conversation.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># fields: to_id, from_id, subject</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
   <span style="color:#111">has_many</span> <span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">dependent</span><span style="color:#111">:</span> <span style="color:#d88200">:destroy</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:conversation</span>
 <span style="color:#00a8c8">end</span>
 
@@ -113,16 +106,14 @@ part of the Message object.</p>
   <span style="color:#75715e"># fields: user_id, conversation_id, body</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:messages</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:user</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>After the initial message, the two participants on the conversation send
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>After the initial message, the two participants on the conversation send
 messages back and forth. A user may have any number of conversations
 with other users. As such, the main inbox view must list the
 conversations a user is a participant on, as well as some summary
 information about that conversation.</p>
-
-<p>For our purposes, we&rsquo;ve decided on an HTML table view with the following
+<p>For our purposes, we've decided on an HTML table view with the following
 columns:</p>
-
 <ul>
 <li>From - Who the original message was sent from</li>
 <li>To - The original recipient of the message</li>
@@ -132,11 +123,10 @@ of the most recent message</li>
 <li>Replies - The number of replies on the conversation (excluding the
 first message)</li>
 </ul>
-
 <p>Although the subject is part of the conversation itself, everything else
 comes from its various associations. This is the view, which reveals the
 expected interface each conversation object should have:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haml" data-lang="haml">%table#inbox
+<pre><code class="language-haml" data-lang="haml">%table#inbox
   %thead
     %tr
       %th From
@@ -156,37 +146,36 @@ expected interface each conversation object should have:</p>
         %td
           = time_ago_in_words(conversation.most_recent_message_sent_at)
           ago
-        %td= conversation.reply_count</code></pre></div>
-<p>Let&rsquo;s explore a typical way to model this in our model directly.</p>
-
+        %td= conversation.reply_count
+</code></pre><p>Let's explore a typical way to model this in our model directly.</p>
 <h2 id="a-typical-ruby-implementation">A typical Ruby implementation</h2>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/conversation.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Converation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># associations, etc...</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_body</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_body</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">body</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_sent_at</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_sent_at</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">created_at</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">reply_count</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">reply_count</span>
     <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">size</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
-  <span style="color:#00a8c8">end</span>
+  <span style="color:#f92672"></span><span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">to_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">to_name</span>
     <span style="color:#111">to</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">from_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">from_name</span>
     <span style="color:#111">from</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message</span>
-    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message</span>
+    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||</span><span style="color:#f92672">=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 
@@ -195,27 +184,24 @@ expected interface each conversation object should have:</p>
   <span style="color:#75715e"># associations, etc...</span>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">by_date</span>
-    <span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;created_at DESC&#34;</span><span style="color:#111">)</span>
+    <span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">created_at DESC</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>This approach is fairly straightforward. We obtain the
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>This approach is fairly straightforward. We obtain the
 <code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code> from the
-most recent message, which is trivial after we&rsquo;ve ordered the <code>messages</code>
+most recent message, which is trivial after we've ordered the <code>messages</code>
 association by date. The <code>to_name</code> and <code>from_name</code> methods are delegated
 to their respective associations. And <code>reply_count</code> is simple the total
-number of messages, minus one (the initial message doesn&rsquo;t count as a
+number of messages, minus one (the initial message doesn't count as a
 &ldquo;reply&rdquo;).</p>
-
 <p>This approach offers a number of advantages. For one, it is familiar.
 I believe most Rails developers would be able to understand exactly
-what&rsquo;s going on above. It also locates all of the domain logic within
+what's going on above. It also locates all of the domain logic within
 the <code>Conversation</code> model, making it easy to find.</p>
-
 <p>Having everything in the <code>Conversation</code> model is actually a blessing
 and a curse. Although everything is easy to find, the model is also
 quickly becoming bloated. It may not seem like much right now, but as
 more information is added to the inbox, it will become unruly.</p>
-
 <p>The other problem with the above is the multitude of N+1 queries that
 it has introduced. With only 3 conversations in play, loading the inbox
 outputs a log like this:</p>
@@ -237,9 +223,8 @@ Processing by InboxesController#show as HTML
   Message Load (0.5ms)  SELECT &#34;messages&#34;.* FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 9 ORDER BY created_at DESC LIMIT 1
    (0.4ms)  SELECT COUNT(*) FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 9
   Rendered inboxes/show.html.haml within layouts/application (683.9ms)
-Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)</code></pre></div>
-<h2 id="eager-loading">Eager-loading</h2>
-
+Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)
+</code></pre></div><h2 id="eagerloading">Eager-loading</h2>
 <p>We can definitely cut down on the N+1 query problem by introducing eager
 loading. In our controller, the <code>conversations</code> exposure is currently
 defined thusly:</p>
@@ -247,10 +232,10 @@ defined thusly:</p>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">InboxesController</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ApplicationController</span>
   <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:user</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#00a8c8">User</span><span style="color:#f92672">.</span><span style="color:#111">first</span> <span style="color:#111">}</span>
   <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span> <span style="color:#111">}</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Let&rsquo;s change that to eagerly load its associations:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">  <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">:from</span><span style="color:#111">)</span> <span style="color:#111">}</span></code></pre></div>
-<p>With eager-loading in place, the log now looks slightly more reasonable:</p>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Let's change that to eagerly load its associations:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">  <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">:from</span><span style="color:#111">)</span> <span style="color:#111">}</span>
+</code></pre></div><p>With eager-loading in place, the log now looks slightly more reasonable:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Started GET &#34;/&#34; for 127.0.0.1 at 2013-02-11 09:55:24 -0600
 Processing by InboxesController#show as HTML
   User Load (0.3ms)  SELECT &#34;users&#34;.* FROM &#34;users&#34; LIMIT 1
@@ -262,47 +247,41 @@ Processing by InboxesController#show as HTML
   Message Load (0.4ms)  SELECT &#34;messages&#34;.* FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 8 ORDER BY created_at DESC LIMIT 1
   Message Load (0.3ms)  SELECT &#34;messages&#34;.* FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 9 ORDER BY created_at DESC LIMIT 1
   Rendered inboxes/show.html.haml within layouts/application (9.5ms)
-Completed 200 OK in 13ms (Views: 10.0ms | ActiveRecord: 2.4ms)</code></pre></div>
-<p>There are more optimizations we could make here in Ruby land. But data
+Completed 200 OK in 13ms (Views: 10.0ms | ActiveRecord: 2.4ms)
+</code></pre></div><p>There are more optimizations we could make here in Ruby land. But data
 transformation and aggregation is something that databases are good at.
 We can use a native feature of SQL to aggregate information for us:
 views.</p>
-
 <h2 id="sql-views">SQL views</h2>
-
 <p>A SQL view is essentially a virtual table. It can be queried just like a
 normal table, but does not physically store anything itself. Instead, a
 view has a query definition that it uses to represent its data.</p>
-
 <p>In our case, SQL views can allow us to treat a complex SQL query as a
 table, abstracting away the complexity into view itself. SQL views are
 also read-only, and therefore are usually only used for querying, but
 not updating data directly.</p>
-
 <p>ActiveRecord plays nicely with SQL views out of the box. It considers a
 SQL view a normal table, and all associations and querying methods work
 like they would with a normal table, with one exception: the records are
 read-only.</p>
-
 <h2 id="add-a-migration-for-the-view">Add a migration for the view</h2>
-
-<p>Let&rsquo;s create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
+<p>Let's create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
 conversation. We can do this in a normal migration, but it needs to be
 created with raw SQL:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateConversationSummaries</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">up</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#00a8c8">CREATE</span> <span style="color:#00a8c8">VIEW</span> <span style="color:#111">conversation_summaries</span> <span style="color:#00a8c8">AS</span>
         <span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">...</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">down</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">down</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&#39;DROP VIEW conversation_summaries&#39;</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>This is the basic syntax for adding a view with ActiveRecord migrations.
-Our view needs to incorporate <code>to_name</code> and <code>from_name</code>, so let&rsquo;s add
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>This is the basic syntax for adding a view with ActiveRecord migrations.
+Our view needs to incorporate <code>to_name</code> and <code>from_name</code>, so let's add
 those fields:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">CREATE</span> <span style="color:#00a8c8">VIEW</span> <span style="color:#111">conversation_summaries</span> <span style="color:#00a8c8">AS</span>
   <span style="color:#00a8c8">SELECT</span> <span style="color:#00a8c8">c</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
@@ -310,8 +289,8 @@ those fields:</p>
   <span style="color:#111">t</span><span style="color:#111">.</span><span style="color:#111">name</span> <span style="color:#00a8c8">as</span> <span style="color:#111">to_name</span>
   <span style="color:#00a8c8">FROM</span> <span style="color:#111">conversations</span> <span style="color:#00a8c8">c</span>
   <span style="color:#00a8c8">inner</span> <span style="color:#00a8c8">join</span> <span style="color:#111">users</span> <span style="color:#111">t</span> <span style="color:#00a8c8">on</span> <span style="color:#111">t</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">c</span><span style="color:#111">.</span><span style="color:#111">to_id</span>
-  <span style="color:#00a8c8">inner</span> <span style="color:#00a8c8">join</span> <span style="color:#111">users</span> <span style="color:#111">f</span> <span style="color:#00a8c8">on</span> <span style="color:#111">f</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">c</span><span style="color:#111">.</span><span style="color:#111">from_id</span></code></pre></div>
-<p>After we migrate our database, we can use our database console to verify
+  <span style="color:#00a8c8">inner</span> <span style="color:#00a8c8">join</span> <span style="color:#111">users</span> <span style="color:#111">f</span> <span style="color:#00a8c8">on</span> <span style="color:#111">f</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">c</span><span style="color:#111">.</span><span style="color:#111">from_id</span>
+</code></pre></div><p>After we migrate our database, we can use our database console to verify
 that we see what we expect:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">mailbox_development=# select * from conversation_summaries;
  id |    from_name    |     to_name
@@ -319,59 +298,54 @@ that we see what we expect:</p>
   7 | Felionel Richie | Cat Stevens
   8 | Nelly Purrtado  | Cat Stevens
   9 | Cat Stevens     | Felionel Richie
-(3 rows)</code></pre></div>
-<p>Cool. The <code>id</code> corresponds to the conversation, and <code>to_name</code> and
-<code>from_name</code> columns come from the users table, but it&rsquo;s all displayed to
+(3 rows)
+</code></pre></div><p>Cool. The <code>id</code> corresponds to the conversation, and <code>to_name</code> and
+<code>from_name</code> columns come from the users table, but it's all displayed to
 us as one table.</p>
-
 <h2 id="activerecord-associations-for-views">ActiveRecord associations for views</h2>
-
 <p>Now that our view exists, we can integrate it into our application:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#00a8c8">class</span> <span style="color:#75af00">Summary</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;conversation_summaries&#34;</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;id&#34;</span>
-    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">conversation_summaries</span><span style="color:#d88200">&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>Let&rsquo;s break down what&rsquo;s going on here.</p>
-
-<p>I&rsquo;ve chosen to nest the Summary model within the Conversation
-namespace, mostly to call out the fact that we&rsquo;re doing something
+  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>Let's break down what's going on here.</p>
+<p>I've chosen to nest the Summary model within the Conversation
+namespace, mostly to call out the fact that we're doing something
 non-standard. Also, the Summary class only makes sense in the context of
 a Conversation. For that reason, we need to manually set the name of the
 table.</p>
-
 <p>We must also choose a primary key, because Rails cannot infer it for SQL
 views. The association itself should be familiar. It works like a normal
-<code>has_one</code>/<code>belongs_to</code> relationship, except that we override the foreign
+<code>has_one`/</code>belongs_to` relationship, except that we override the foreign
 key.</p>
-
-<p>Now that the relationships are set up, let&rsquo;s actually take advantage
+<p>Now that the relationships are set up, let's actually take advantage
 of our new view by changing the implementation of the <code>to_name</code> and
 <code>from_name</code> methods.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># ...</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">to_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">to_name</span>
     <span style="color:#75715e"># Used to be to.name</span>
     <span style="color:#111">summary</span><span style="color:#f92672">.</span><span style="color:#111">to_name</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">from_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">from_name</span>
     <span style="color:#75715e"># Used to be from.name</span>
     <span style="color:#111">summary</span><span style="color:#f92672">.</span><span style="color:#111">from_name</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>One the biggest benefits about this approach is that we can <em>eager-load
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>One the biggest benefits about this approach is that we can <em>eager-load
 a view assocation</em>. We no longer need the <code>to</code> or <code>from</code> associations
 eager-loaded, since we are no longer using any attributes from them in
-the view. Let&rsquo;s update our controller&rsquo;s exposure to only eager-load the
+the view. Let's update our controller's exposure to only eager-load the
 necessary parts:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">:messages</span><span style="color:#111">)</span> <span style="color:#111">}</span></code></pre></div>
-<p>And when we visit the inbox again, the log looks like this:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">:messages</span><span style="color:#111">)</span> <span style="color:#111">}</span>
+</code></pre></div><p>And when we visit the inbox again, the log looks like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Started GET &#34;/&#34; for 127.0.0.1 at 2013-02-11 14:26:12 -0600
 Processing by InboxesController#show as HTML
   User Load (0.5ms)  SELECT &#34;users&#34;.* FROM &#34;users&#34; LIMIT 1
@@ -382,16 +356,14 @@ Processing by InboxesController#show as HTML
   Message Load (0.4ms)  SELECT &#34;messages&#34;.* FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 8 ORDER BY created_at DESC LIMIT 1
   Message Load (0.4ms)  SELECT &#34;messages&#34;.* FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 9 ORDER BY created_at DESC LIMIT 1
   Rendered inboxes/show.html.haml within layouts/application (10.4ms)
-Completed 200 OK in 13ms (Views: 9.5ms | ActiveRecord: 2.9ms)</code></pre></div>
-<p>That&rsquo;s definitely an improvement, albeit a small one. We&rsquo;ve pushed data
-from the user model into our SQL view, but we don&rsquo;t need to stop there.</p>
-
+Completed 200 OK in 13ms (Views: 9.5ms | ActiveRecord: 2.9ms)
+</code></pre></div><p>That's definitely an improvement, albeit a small one. We've pushed data
+from the user model into our SQL view, but we don't need to stop there.</p>
 <h2 id="push-it-down">Push it down!</h2>
-
-<p>Let&rsquo;s update our view migration to include more aggregated information
+<p>Let's update our view migration to include more aggregated information
 about each conversation.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateConversationSummaries</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">up</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#00a8c8">CREATE</span> <span style="color:#00a8c8">VIEW</span> <span style="color:#111">conversation_summaries</span> <span style="color:#00a8c8">AS</span>
         <span style="color:#00a8c8">SELECT</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
@@ -399,7 +371,7 @@ about each conversation.</p>
         <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">name</span> <span style="color:#111">as</span> <span style="color:#111">to_name</span><span style="color:#111">,</span>
         <span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">body</span> <span style="color:#111">as</span> <span style="color:#111">most_recent_message_body</span><span style="color:#111">,</span>
         <span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">created_at</span> <span style="color:#111">as</span> <span style="color:#111">most_recent_message_sent_at</span><span style="color:#111">,</span>
-        <span style="color:#111">(</span><span style="color:#111">select</span> <span style="color:#111">count</span><span style="color:#111">(</span><span style="color:#f92672">*</span><span style="color:#111">)</span> <span style="color:#111">from</span> <span style="color:#111">messages</span> <span style="color:#111">m2</span> <span style="color:#111">where</span> <span style="color:#111">m2</span><span style="color:#f92672">.</span><span style="color:#111">conversation_id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">)</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#111">as</span> <span style="color:#111">reply_count</span>
+        <span style="color:#111">(</span><span style="color:#111">select</span> <span style="color:#111">count</span><span style="color:#111">(</span><span style="color:#f92672">*</span><span style="color:#111">)</span> <span style="color:#111">from</span> <span style="color:#111">messages</span> <span style="color:#111">m2</span> <span style="color:#111">where</span> <span style="color:#111">m2</span><span style="color:#f92672">.</span><span style="color:#111">conversation_id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">)</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672"></span><span style="color:#111">as</span> <span style="color:#111">reply_count</span>
         <span style="color:#00a8c8">FROM</span> <span style="color:#111">conversations</span> <span style="color:#111">c</span>
         <span style="color:#111">inner</span> <span style="color:#111">join</span> <span style="color:#111">users</span> <span style="color:#111">t</span> <span style="color:#111">on</span> <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">to_id</span>
         <span style="color:#111">inner</span> <span style="color:#111">join</span> <span style="color:#111">users</span> <span style="color:#111">f</span> <span style="color:#111">on</span> <span style="color:#111">f</span><span style="color:#f92672">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">from_id</span>
@@ -411,11 +383,11 @@ about each conversation.</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">down</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">down</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&#39;DROP VIEW conversation_summaries&#39;</span>
   <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>After running <code>rake db:migrate:redo</code>, we can verify that everything is
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>After running <code>rake db:migrate:redo</code>, we can verify that everything is
 still working as expect in the database console:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">mailbox_development=# select * from conversation_summaries;
  id |    from_name    |     to_name     |        most_recent_message_body        | most_recent_message_sent_at | reply_count 
@@ -423,12 +395,11 @@ still working as expect in the database console:</p>
   7 | Felionel Richie | Cat Stevens     | Say you. Say meow.                     | 2013-02-08 02:45:27.07712   |           2
   8 | Nelly Purrtado  | Cat Stevens     | Except that I&#39;m a cat                  | 2013-02-05 16:45:27.088292  |           0
   9 | Cat Stevens     | Felionel Richie | I&#39;m sorry that you&#39;re feeling that way | 2013-01-30 16:45:27.092443  |           1
-(3 rows)</code></pre></div>
-<p>That&rsquo;s a lot of SQL! But actually, all I&rsquo;ve added are one join to a
-subquery, and a subselect. Let&rsquo;s review both of these changes.</p>
-
+(3 rows)
+</code></pre></div><p>That's a lot of SQL! But actually, all I've added are one join to a
+subquery, and a subselect. Let's review both of these changes.</p>
 <p>There are many ways to grab the most recent message for a conversation
-in SQL, including using <a href="https://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I&rsquo;ve opted for
+in SQL, including using <a href="https://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I've opted for
 here is a <a href="https://www.postgresql.org/docs/9.2/static/queries-table-expressions.html#QUERIES-SUBQUERIES" title="Postgresql documentation">subquery in the table expression</a>. The subquery
 alone would return rows for only the most recent messages for each
 conversation:</p>
@@ -436,48 +407,46 @@ conversation:</p>
 ----------------+----------------------------------------+----------------------------
               7 | Say you. Say meow.                     | 2013-02-08 02:45:27.07712
               8 | Except that I&#39;m a cat                  | 2013-02-05 16:45:27.088292
-              9 | I&#39;m sorry that you&#39;re feeling that way | 2013-01-30 16:45:27.092443</code></pre></div>
-<p>By joining with only the most recent message per conversation, we avoid
+              9 | I&#39;m sorry that you&#39;re feeling that way | 2013-01-30 16:45:27.092443
+</code></pre></div><p>By joining with only the most recent message per conversation, we avoid
 duplicate rows and only get the <code>body</code> and <code>created_at</code> columns from
 the most recent message. Then, joining against this subquery, we can
 add the <code>body</code> and <code>created_at</code> to the list of projections, naming
 them <code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code>,
 respectively.</p>
-
-<p>The other thing we&rsquo;ve added to the view this iteration is the
+<p>The other thing we've added to the view this iteration is the
 <code>reply_count</code> column, which is a subselect to get the count. We also
 subtract 1, just as before.</p>
-
-<p>Let&rsquo;s take a look at our Conversation model now:</p>
+<p>Let's take a look at our Conversation model now:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># before</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
   <span style="color:#111">has_many</span> <span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">dependent</span><span style="color:#111">:</span> <span style="color:#d88200">:destroy</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:conversation</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_body</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_body</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">body</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_sent_at</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_sent_at</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">created_at</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">reply_count</span>
-    <span style="color:#f92672">[</span><span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">size</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">].</span><span style="color:#111">max</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">reply_count</span>
+    <span style="color:#f92672">[</span><span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">size</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span><span style="color:#f92672"></span><span style="color:#111">,</span> <span style="color:#ae81ff">0</span><span style="color:#f92672"></span><span style="color:#f92672">]</span><span style="color:#f92672">.</span><span style="color:#111">max</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">to_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">to_name</span>
     <span style="color:#111">to</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">from_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">from_name</span>
     <span style="color:#111">from</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message</span>
-    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message</span>
+    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||</span><span style="color:#f92672">=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 
@@ -485,88 +454,76 @@ subtract 1, just as before.</p>
 <span style="color:#75715e"># after</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#00a8c8">class</span> <span style="color:#75af00">Summary</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;conversation_summaries&#34;</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;id&#34;</span>
-    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">conversation_summaries</span><span style="color:#d88200">&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
   <span style="color:#111">has_many</span> <span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">dependent</span><span style="color:#111">:</span> <span style="color:#d88200">:destroy</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:conversation</span>
-  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
+  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
 
   <span style="color:#111">delegate</span> <span style="color:#d88200">:most_recent_message_sent_at</span><span style="color:#111">,</span> <span style="color:#d88200">:most_recent_message_body</span><span style="color:#111">,</span>
     <span style="color:#d88200">:reply_count</span><span style="color:#111">,</span> <span style="color:#d88200">:to_name</span><span style="color:#111">,</span> <span style="color:#d88200">:from_name</span><span style="color:#111">,</span> <span style="color:#d88200">to</span><span style="color:#111">:</span> <span style="color:#d88200">:summary</span>
 
-<span style="color:#00a8c8">end</span></code></pre></div>
-<p>With much of our data transformation and aggregation in our SQL view,
+<span style="color:#00a8c8">end</span>
+</code></pre></div><p>With much of our data transformation and aggregation in our SQL view,
 our model has become trivially simple. It literally only contains
 assocations and delegation now. We update our exposure to only
 eager-load the conversation summary:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:summary</span><span style="color:#111">)</span> <span style="color:#111">}</span></code></pre></div>
-<p>Now, reloading the page yields the following log output:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:summary</span><span style="color:#111">)</span> <span style="color:#111">}</span>
+</code></pre></div><p>Now, reloading the page yields the following log output:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Started GET &#34;/&#34; for 127.0.0.1 at 2013-02-11 15:37:49 -0600
 Processing by InboxesController#show as HTML
   User Load (1.0ms)  SELECT &#34;users&#34;.* FROM &#34;users&#34; LIMIT 1
   Conversation Load (0.2ms)  SELECT &#34;conversations&#34;.* FROM &#34;conversations&#34; WHERE (1 IN (from_id, to_id))
   Conversation::Summary Load (0.8ms)  SELECT &#34;conversation_summaries&#34;.* FROM &#34;conversation_summaries&#34; WHERE &#34;conversation_summaries&#34;.&#34;id&#34; IN (7, 8, 9)
   Rendered inboxes/show.html.haml within layouts/application (5.5ms)
-Completed 200 OK in 8ms (Views: 6.0ms | ActiveRecord: 2.0ms)</code></pre></div>
-<p>Now we see some real improvement. All N+1 queries are gone, replaced
+Completed 200 OK in 8ms (Views: 6.0ms | ActiveRecord: 2.0ms)
+</code></pre></div><p>Now we see some real improvement. All N+1 queries are gone, replaced
 instead with the eager-loading of the the Conversation::Summary model.</p>
-
 <h2 id="real-world-benefits">Real World Benefits</h2>
-
 <p>I used this technique in a real-world application. It helped abstract
 some of the mundane details of the inbox and allowed us to think about
 each conversation at a higher level with a summary.</p>
-
-<p>In fact the app included even more business rules than I&rsquo;ve included
+<p>In fact the app included even more business rules than I've included
 here. Each conversation had to include a read/unread status that updated
 with each sent message. Although it was easily implemented in pure Ruby,
 it cluttered the model and created yet more N+1 queries in the app view.</p>
-
 <p>The inbox also had to be sorted by the most recent message date,
 so that the conversation with the most recent activity would
 appear first in the list. This kind of sorting without SQL is both
 cumbersome and inefficient in Ruby; you have to load all messages
 for each conversation. With the SQL view, it was as simple as
 changing the scope from <code>user.conversations.include(:summary)</code> to
-<code>user.conversations.include(:summary).order(&quot;conversation_summaries.most
-_recent_message_sent_at DESC&quot;)</code>.</p>
-
+<code>user.conversations.include(:summary).order(&quot;conversation_summaries.most _recent_message_sent_at DESC&quot;)</code>.</p>
 <h2 id="conclusion">Conclusion</h2>
-
 <p>Any time that we push stuff into the database, we make a tradeoff.
 In this case, when we move data transformation into the SQL view, we
 sacrifice the co-location of the conversation model and the definition
 of its summary. With the summary definition located in the database,
-there&rsquo;s one extra layer of indirection.</p>
-
-<p>The other tradeoff is that any time we&rsquo;d like to make a non-trivial
+there's one extra layer of indirection.</p>
+<p>The other tradeoff is that any time we'd like to make a non-trivial
 change the view, we actually have to create an entirely new view,
 replacing the old one. If for example, we knew that our inbox was likely
 to change or add fields, the SQL view approach might be too brittle.</p>
-
 <p>On the other hand, we effectively removed N+1 queries from our
 application and simplified our model considerably. By abstracting the
-conversation&rsquo;s summary into a model backed by a SQL view, we&rsquo;re able
+conversation's summary into a model backed by a SQL view, we're able
 to think of the Summary as an object in its own right. This provides
 a cognitive simplification, but also yields performance gains as the
 dataset grows.</p>
-
 <p>It may not be right for every situation, but knowing and understanding
 how we can use SQL views in our Rails applications adds another tool to
 our toolbelt.</p>
-
 <h2 id="example-app">Example app</h2>
-
 <p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views">sample Rails app</a> to
 iterate quickly. I used TDD to write the pure-ruby approach, and reused
 the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
-approaches. Of particular note is the <a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo
-dels/category.rb">history of the Conversation
-model</a>, which mirrors the code above.</p>
+approaches. Of particular note is the <a href="https://github.com/jgdavey/sql_views/commits/master/app/models/conversation.rb">history of the Conversation
+model</a>(<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
+dels/category.rb), which mirrors the code above.</p>
 
       </div>
 

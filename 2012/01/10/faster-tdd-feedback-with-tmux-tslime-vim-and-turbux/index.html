@@ -6,11 +6,11 @@
     <meta name="description" content="Joshua Davey&#39;s Website">
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Faster TDD feedback with tmux, tslime.vim, and turbux.vim"/>
-<meta name="twitter:description" content="tl;dr Developing in a tmux session has sped up my TDD cycle considerably, especially with the help of tslime.vim and turbux.vim. I get immediate feedback in one pane, but never have to leave vim or lose context of what I&rsquo;m working on to see the test result.
-Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been using tmux lately as my primary workspace. There are excellent introductions to tmux elsewhere, but I&rsquo;ve really enjoyed the switch from MacVim/Terminal to a single tmux session for development."/>
+<meta name="twitter:description" content="tl;dr Developing in a tmux session has sped up my TDD cycle considerably, especially with the help of tslime.vim and turbux.vim. I get immediate feedback in one pane, but never have to leave vim or lose context of what I&#39;m working on to see the test result.
+Taking a cue from Xavier Shay&#39;s excellent intro to tmux, I&#39;ve been using tmux lately as my primary workspace. There are excellent introductions to tmux elsewhere, but I&#39;ve really enjoyed the switch from MacVim/Terminal to a single tmux session for development."/>
 <meta property="og:title" content="Faster TDD feedback with tmux, tslime.vim, and turbux.vim" />
-<meta property="og:description" content="tl;dr Developing in a tmux session has sped up my TDD cycle considerably, especially with the help of tslime.vim and turbux.vim. I get immediate feedback in one pane, but never have to leave vim or lose context of what I&rsquo;m working on to see the test result.
-Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been using tmux lately as my primary workspace. There are excellent introductions to tmux elsewhere, but I&rsquo;ve really enjoyed the switch from MacVim/Terminal to a single tmux session for development." />
+<meta property="og:description" content="tl;dr Developing in a tmux session has sped up my TDD cycle considerably, especially with the help of tslime.vim and turbux.vim. I get immediate feedback in one pane, but never have to leave vim or lose context of what I&#39;m working on to see the test result.
+Taking a cue from Xavier Shay&#39;s excellent intro to tmux, I&#39;ve been using tmux lately as my primary workspace. There are excellent introductions to tmux elsewhere, but I&#39;ve really enjoyed the switch from MacVim/Terminal to a single tmux session for development." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/" />
 <meta property="article:published_time" content="2012-01-10T00:00:00+00:00" />
@@ -25,7 +25,7 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -76,39 +76,31 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
       </header>
 
       <div>
-        
-
-<p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
+        <p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
-context of what I&rsquo;m working on to see the test result.</p>
-
-<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
+context of what I'm working on to see the test result.</p>
+<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay's excellent intro to tmux</a>, I've
 been using tmux lately as my primary workspace. There are excellent
-<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I&rsquo;ve really
+<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I've really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
-development. But rather than sing tmux&rsquo;s praises, I&rsquo;d like to talk about
+development. But rather than sing tmux's praises, I'd like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
 better.</p>
-
-<h2 id="other-test-running-solutions">Other test-running solutions</h2>
-
+<h2 id="other-testrunning-solutions">Other test-running solutions</h2>
 <p>Autotesting gives you immediate feedback, but runs everytime you save a
-file. Even though this often is desired behavior, I can&rsquo;t tell you how
-many times I&rsquo;ve saved a feature file, only to immediately notice a typo.
+file. Even though this often is desired behavior, I can't tell you how
+many times I've saved a feature file, only to immediately notice a typo.
 Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
-
-<p>I&rsquo;ve also tried more editor-embedding techniques of running tests. Both
+<p>I've also tried more editor-embedding techniques of running tests. Both
 <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
 for the command to finish before I can type, or even navigate again. And
-I can&rsquo;t look at a failure message and my code at the same time.</p>
-
+I can't look at a failure message and my code at the same time.</p>
 <h2 id="a-faster-feedback-loop">A faster feedback loop</h2>
-
 <p>A practice that is quickly gaining popularity in the Ruby community is
 isolating your business logic from your persistance logic and framework.
 Rather than load Rails (or some other large library or framework),
@@ -117,69 +109,51 @@ test that class or module in isolation. This has a ton of benefits for
 the longevity of your code, but one of the side benefits is the speed
 increase for running individual specs or tests. This technique is being
 championed by Gary Bernhardt and Corey Haines, among others.</p>
-
-<p>Because tmux is so scriptable, it isn&rsquo;t hard to send commands to other
+<p>Because tmux is so scriptable, it isn't hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
-the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I've created a vim plugin that shortens
+the feedback loop when practicing TDD in a tmux session. It's called
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
-
-<h2 id="using-tslime-vim">Using tslime.vim</h2>
-
+<h2 id="using-tslimevim">Using tslime.vim</h2>
 <p>My typical workflow now involves setting up a tmux session for my
-project, splitting vertically (<code>&lt;C-b&gt; %</code>), and using layout 4 (<code>&lt;C-b&gt;
-&lt;Alt-4&gt;</code>). In fullscreen, the result is about 30% for my shell on the
+project, splitting vertically (<code>&lt;C-b&gt; %</code>), and using layout 4 (<code>&lt;C-b&gt; &lt;Alt-4&gt;</code>). In fullscreen, the result is about 30% for my shell on the
 left, and 70% for vim on the right.</p>
-
 <p>The first time you use it, tslime.vim will prompt you to input your tmux
 session name, window number, and pane number. There is completion for
 each of these prompts, so you can happily mash <code>&lt;Tab&gt;</code>.</p>
-
 <p>The plugin exposes a general-purpose function to send arbitrary text to
 the configured tmux pane. For example, you can use it in the following way:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4">:call Send_to_Tmux(&#34;rspec &#34;.expand(&#34;%&#34;).&#34;\n&#34;)</pre></div>
+<pre><code>:call Send_to_Tmux(&quot;rspec &quot;.expand(&quot;%&quot;).&quot;\n&quot;)
+</code></pre>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
-open is so common that I&rsquo;ve packaged up some useful defaults in
+open is so common that I've packaged up some useful defaults in
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
-
-<h2 id="using-turbux-vim">Using turbux.vim</h2>
-
+<h2 id="using-turbuxvim">Using turbux.vim</h2>
 <p>Turbux.vim tries to intelligently choose the right spec, test or feature
-to run when you invoke it. If you&rsquo;re in a spec, invoking the plugin
+to run when you invoke it. If you're in a spec, invoking the plugin
 (by default with <code>&lt;leader&gt;t</code>) will run <code>rspec path/to/my_spec.rb</code> in
-the corresponding pane. In a test-unit file, it will run <code>ruby -Itest
-path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber
-path/to/my.feature</code>.</p>
-
-<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
+the corresponding pane. In a test-unit file, it will run <code>ruby -Itest path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber path/to/my.feature</code>.</p>
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&lsquo;s awesomeness, I've also provided some mappings for
 when the current file has a corresponding test or spec. For example,
-When I&rsquo;m in a file that has a corresponding spec, such as a model or
+When I'm in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
-
 <p>Finally, if the plugin is invoked outside the context of any feature
 or spec-related file, it will simply run the most recent test command
 again.</p>
-
-<p>Also, I&rsquo;ve added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
-cucumber scenario. It works by adding the vim cursor&rsquo;s line number to
+<p>Also, I've added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
+cucumber scenario. It works by adding the vim cursor's line number to
 the rspec or cucumber command.</p>
-
 <h2 id="conclusion">Conclusion</h2>
-
-<p>This setup has been really rewarding so far. There&rsquo;s far less context
+<p>This setup has been really rewarding so far. There's far less context
 switching, as I never have to leave my editor. There are also fewer
-surprises. As far as I&rsquo;m concerned, the faster my feedback, the better.</p>
-
+surprises. As far as I'm concerned, the faster my feedback, the better.</p>
 <p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
-
 <h2 id="bonus">Bonus</h2>
-
 <p>See the plugin in action. If the video is hard to see, visit vimeo. There is a link to download at full size.</p>
-
-<iframe src="https://player.vimeo.com/video/34879707?title=0&amp;byline=0&amp;portrait=0" width="600" height="400" frameborder="0"  allow="autoplay; fullscreen" allowfullscreen></iframe>
+<!-- raw HTML omitted -->
 
       </div>
 

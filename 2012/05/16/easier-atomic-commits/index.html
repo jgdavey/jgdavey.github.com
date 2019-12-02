@@ -7,11 +7,11 @@
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Easier Atomic Commits"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
-How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.
+How do you keep your commits atomic easily? Let&#39;s explore one possible approach.
 Problem As a practitioner of good source control, you and your team have decided to make all of your git commits atomic within your projects. That is, every commit has a green test suite, and you prefer small, incremental commits to large, monolithic ones. Keeping commits small and atomic has tons of benefits, from more consistent continuous integration results, to better team cohesion (have you ever gotten upset with another team member for committing red?"/>
 <meta property="og:title" content="Easier Atomic Commits" />
 <meta property="og:description" content="This is a repost. You can find the original here
-How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.
+How do you keep your commits atomic easily? Let&#39;s explore one possible approach.
 Problem As a practitioner of good source control, you and your team have decided to make all of your git commits atomic within your projects. That is, every commit has a green test suite, and you prefer small, incremental commits to large, monolithic ones. Keeping commits small and atomic has tons of benefits, from more consistent continuous integration results, to better team cohesion (have you ever gotten upset with another team member for committing red?" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2012/05/16/easier-atomic-commits/" />
@@ -27,7 +27,7 @@ Problem As a practitioner of good source control, you and your team have decided
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -78,14 +78,9 @@ Problem As a practitioner of good source control, you and your team have decided
       </header>
 
       <div>
-        
-
-<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits">here</a></em></p>
-
-<p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
-
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits">here</a></em></p>
+<p>How do you keep your commits atomic easily? Let's explore one possible approach.</p>
 <h2 id="problem">Problem</h2>
-
 <p>As a practitioner of good source control, you and your team have decided
 to make all of your git commits <a href="http://goo.gl/P95KkZ">atomic</a> within your projects. That is,
 every commit has a green test suite, and you prefer small, incremental
@@ -94,37 +89,30 @@ tons of benefits, from more consistent continuous integration results,
 to better team cohesion (have you ever gotten upset with another team
 member for committing red?). But in practice, keeping all of your commits
 atomic can present some challenges.</p>
-
 <p>After doing a bunch of work, making incremental, atomic commits along
-the way, it&rsquo;s time to push your work up. However, when you run <code>git pull
---rebase</code>, you find that another team member has made changes since you
+the way, it's time to push your work up. However, when you run <code>git pull --rebase</code>, you find that another team member has made changes since you
 last pushed. Your commits are now sitting on top of a different git
 history. Are all of your commits still atomic? Short of checking out
 every single commit and running the suite, how can you be certain that
-every commit is atomic? What a pain! I don&rsquo;t want to check out every
+every commit is atomic? What a pain! I don't want to check out every
 commit by hand.</p>
-
 <h2 id="solution">Solution</h2>
-
 <p>Enter <code>atomically</code>, a simple shell script designed to take the pain out
 of checking every commit between your upstream and you. Before pushing,
 you can ensure every commit is atomic by running the script.</p>
-
 <p>To use, just pass atomically the command as arguments:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rake</code></pre></div>
-<p>The above command will start at the current branch&rsquo;s HEAD and run rake.
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rake
+</code></pre></div><p>The above command will start at the current branch's HEAD and run rake.
 After that, it will check out the previous commit and run the command
 again. It will do so for all commits between you and origin.</p>
-
 <p>If you are confident that nothing in your spec suite changed, you can
 run only your cucumber features the same way:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically cucumber</code></pre></div>
-<p>Or just your spec suite:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rspec</code></pre></div>
-<p>Regardless, keeping atomic commits is a vital part of good source
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically cucumber
+</code></pre></div><p>Or just your spec suite:</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rspec
+</code></pre></div><p>Regardless, keeping atomic commits is a vital part of good source
 control, and this tool makes it slightly easier to do so.</p>
-
-<p>Here&rsquo;s the source of <code>atomically</code>:</p>
+<p>Here's the source of <code>atomically</code>:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
 </span><span style="color:#75715e"></span>
 <span style="color:#00a8c8">if</span> <span style="color:#f92672">[</span> -n <span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git status --porcelain<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span> <span style="color:#f92672">]</span><span style="color:#111">;</span> <span style="color:#00a8c8">then</span>
@@ -132,27 +120,26 @@ control, and this tool makes it slightly easier to do so.</p>
   <span style="color:#111">exit</span> <span style="color:#ae81ff">1</span>
 <span style="color:#00a8c8">fi</span>
 
-<span style="color:#111">b</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git symbolic-ref HEAD <span style="color:#ae81ff">2</span>&gt;/dev/null<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span>
-<span style="color:#111">branch</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;`basename </span><span style="color:#111">$b</span><span style="color:#d88200">`&#34;</span>
+<span style="color:#111">b</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git symbolic-ref HEAD 2&gt;/dev/null<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span>
+<span style="color:#111">branch</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">`basename </span><span style="color:#111">$b</span><span style="color:#d88200">`</span><span style="color:#d88200">&#34;</span>
 <span style="color:#111">program</span><span style="color:#f92672">=</span><span style="color:#111">$*</span>
 
-reset_branch<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+reset_branch<span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
   git co <span style="color:#111">$branch</span> --quiet
 <span style="color:#f92672">}</span>
 
 git rev-list origin/<span style="color:#d88200">${</span><span style="color:#111">branch</span><span style="color:#111">-master</span><span style="color:#d88200">}</span>..<span style="color:#d88200">${</span><span style="color:#111">branch</span><span style="color:#111">-master</span><span style="color:#d88200">}</span> <span style="color:#111">|</span> <span style="color:#00a8c8">while</span> <span style="color:#111">read</span> rev<span style="color:#111">;</span> <span style="color:#00a8c8">do</span>
   <span style="color:#111">trap</span> <span style="color:#d88200">&#34;exit 1&#34;</span> SIGINT SIGTERM
   <span style="color:#111">echo</span>
-  <span style="color:#111">echo</span> <span style="color:#d88200">&#34;Running at revision </span><span style="color:#111">$rev</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">echo</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">Running at revision </span><span style="color:#111">$rev</span><span style="color:#d88200">&#34;</span>
   <span style="color:#111">echo</span>
   git co <span style="color:#111">$rev</span> --quiet <span style="color:#f92672">&amp;&amp;</span> git clean -fd <span style="color:#f92672">&amp;&amp;</span> <span style="color:#111">$program</span>
   <span style="color:#111">echo</span>
   <span style="color:#111">trap</span> - SIGINT SIGTERM
 <span style="color:#00a8c8">done</span>
 
-reset_branch</code></pre></div>
-<p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
-
+reset_branch
+</code></pre></div><p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
 <p>Thanks to Gary Bernhardt for the scripts&rsquo; inspiration,
 <code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions">his
 dotfiles</a>.</p>

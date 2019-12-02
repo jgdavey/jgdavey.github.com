@@ -6,11 +6,11 @@
     <meta name="description" content="Joshua Davey&#39;s Website">
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Screencast: Clojure &#43; vim basics"/>
-<meta name="twitter:description" content="In this screencast I cover how to do basic evaluation and get Clojure documentation from within vim. I&rsquo;m also including the transcript below.
- Vim is a powerful text editor. Clojure is a powerful programming language. While its been possible to edit Clojure code in vim for years, the toolchain has improved greatly over the past year. Today we&rsquo;re going to see how we can integrate vim with our Clojure REPL environment."/>
+<meta name="twitter:description" content="In this screencast I cover how to do basic evaluation and get Clojure documentation from within vim. I&#39;m also including the transcript below.
+Vim is a powerful text editor. Clojure is a powerful programming language. While its been possible to edit Clojure code in vim for years, the toolchain has improved greatly over the past year. Today we&#39;re going to see how we can integrate vim with our Clojure REPL environment."/>
 <meta property="og:title" content="Screencast: Clojure &#43; vim basics" />
-<meta property="og:description" content="In this screencast I cover how to do basic evaluation and get Clojure documentation from within vim. I&rsquo;m also including the transcript below.
- Vim is a powerful text editor. Clojure is a powerful programming language. While its been possible to edit Clojure code in vim for years, the toolchain has improved greatly over the past year. Today we&rsquo;re going to see how we can integrate vim with our Clojure REPL environment." />
+<meta property="og:description" content="In this screencast I cover how to do basic evaluation and get Clojure documentation from within vim. I&#39;m also including the transcript below.
+Vim is a powerful text editor. Clojure is a powerful programming language. While its been possible to edit Clojure code in vim for years, the toolchain has improved greatly over the past year. Today we&#39;re going to see how we can integrate vim with our Clojure REPL environment." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/" />
 <meta property="article:published_time" content="2014-06-13T00:00:00+00:00" />
@@ -25,7 +25,7 @@
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.59.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -76,139 +76,110 @@
       </header>
 
       <div>
-        
-
-<p>In this screencast I cover how to do basic evaluation and get Clojure
-documentation from within vim. I&rsquo;m also including the transcript below.</p>
-
-<iframe src="//player.vimeo.com/video/98052766" width="100%" height="280" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
+        <p>In this screencast I cover how to do basic evaluation and get Clojure
+documentation from within vim. I'm also including the transcript below.</p>
+<!-- raw HTML omitted -->
 <p>Vim is a powerful text editor. Clojure is a powerful programming
 language. While its been possible to edit Clojure code in vim for years,
-the toolchain has improved greatly over the past year. Today we&rsquo;re going
+the toolchain has improved greatly over the past year. Today we're going
 to see how we can integrate vim with our Clojure REPL environment.</p>
-
 <h1 id="life-without-integration">Life without integration</h1>
-
-<p>In a shell session, let&rsquo;s fire up a Clojure REPL. I&rsquo;m going to use <code>lein
-repl</code> to do this. In another shell session, let&rsquo;s start vim and edit a
+<p>In a shell session, let's fire up a Clojure REPL. I'm going to use <code>lein repl</code> to do this. In another shell session, let's start vim and edit a
 clojure file.</p>
-
 <p>As I edit my file, I can copy code from the editor, switch to the window
-with the REPL in it, and paste that code in. This works, but it&rsquo;s an
+with the REPL in it, and paste that code in. This works, but it's an
 awkward, slow process. REPLs are supposed to be all about fast feedback.
 We can do better than copy and paste.</p>
-
 <h1 id="plugins">Plugins</h1>
-
 <p>Before we get started, we should get the some basic plugins for clojure
 development. Using your preferred vim plugin manager, add these plugins:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4">guns/vim-clojure-static
-tpope/fireplace.vim</pre></div>
+<pre><code>guns/vim-clojure-static
+tpope/fireplace.vim
+</code></pre>
 <h1 id="setup">Setup</h1>
-
-<p>After you&rsquo;ve installed the necessary Vim plugins, enter a project
+<p>After you've installed the necessary Vim plugins, enter a project
 directory. For example, if you have a leiningen project, cd into the
 directory. In one shell session, fire up a REPL with <code>lein repl</code>. In
 another shell session, cd that that folder once again, and then open
 vim.</p>
-
 <p>Fireplace is able to detect when you are in the same directory as an
 active REPL, and will attempt to automatically connect for you. This
 process is transparent, but should be obvious once we attempt to to send
 a command to the connected REPL.</p>
-
 <h1 id="evaluation">Evaluation</h1>
-
 <p>The most basic fireplace command is <code>:Eval</code>. <code>:Eval</code> takes an arbitrary
 clojure expression, sends it off to the REPL, and prints the result
 for you. For example, we could run <code>:Eval (+ 1 1)</code>, and we would, as
 expected, see <code>2</code> printed out. This emulates typing at REPL prompt
-directly, but there&rsquo;s much more we can do with our REPL-connected vim
+directly, but there's much more we can do with our REPL-connected vim
 session.</p>
-
-<p>Let&rsquo;s stay with <code>:Eval</code> for a bit longer. <code>:Eval</code> without any arguments
+<p>Let's stay with <code>:Eval</code> for a bit longer. <code>:Eval</code> without any arguments
 will send eval and print the outermost form on the current line. For
-example, let&rsquo;s look at a simple expression.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">])</span></code></pre></div>
-<p>When we have our cursor on this line and type <code>:Eval</code> with no arguments,
-we&rsquo;ll see <code>(2 3 4)</code> printed back.</p>
-
+example, let's look at a simple expression.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
+</code></pre></div><p>When we have our cursor on this line and type <code>:Eval</code> with no arguments,
+we'll see <code>(2 3 4)</code> printed back.</p>
 <p><code>:Eval</code>, as with many vim commands, can also take a range. So,
 <code>:1,3Eval</code> would evaluate all of lines 1 through 3. All of the normal
 special ranges work here, such as <code>%</code> for the entire file, and <code>'&lt;,'&gt;</code>
 for the current selection in visual mode.</p>
-
-<p><code>:Eval</code> works well, but there&rsquo;s a quicker way to get feedback. <code>cp</code> is
+<p><code>:Eval</code> works well, but there's a quicker way to get feedback. <code>cp</code> is
 the normal mode mapping for doing a simple eval and print. By default,
 <code>cp</code> expects a motion. The form that I use most though is <code>cpp</code>, which
-will eval and print the innermost form from the cursor&rsquo;s current
+will eval and print the innermost form from the cursor's current
 position.</p>
-
-<p>To demonstrate what this means, let&rsquo;s look at that expression again.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">])</span></code></pre></div>
-<p>When our cursor is on the <code>m</code> of <code>map</code>, and we type <code>cpp</code>, we&rsquo;ll see
+<p>To demonstrate what this means, let's look at that expression again.</p>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
+</code></pre></div><p>When our cursor is on the <code>m</code> of <code>map</code>, and we type <code>cpp</code>, we'll see
 <code>(2 3 4)</code>, just as when we did the plain <code>:Eval</code>. But if we move our
-cursor inside the vector and type <code>cpp</code> again, we&rsquo;ll see that inner form
+cursor inside the vector and type <code>cpp</code> again, we'll see that inner form
 evaluated.</p>
-
 <p>Something unique to fireplace is its concept of a quasi-REPL. This is a
 cousin of the <code>cp</code> mappings, but with an intermediate editing window. To
-demonstrate this, let&rsquo;s consider the following example.</p>
+demonstrate this, let's consider the following example.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span>
      <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">str</span><span style="color:#111">)</span>
      <span style="color:#111">reverse</span>
-     <span style="color:#111">(</span><span style="color:#75af00">mapv</span> <span style="color:#111">dec</span><span style="color:#111">))</span></code></pre></div>
-<p>In this trivial example, we want to reverse a sequence and decrement
-each number. There&rsquo;s a bug in here, but it&rsquo;s in the middle of the
-thread-through macro. We could just edit the line directly and
-eval/print using <code>cpp</code>, but there&rsquo;s another way to do one-off iterative
-development like this.</p>
+     <span style="color:#111">(</span><span style="color:#75af00">mapv</span> <span style="color:#111">dec</span><span style="color:#111">)</span><span style="color:#111">)</span>
 
+</code></pre></div><p>In this trivial example, we want to reverse a sequence and decrement
+each number. There's a bug in here, but it's in the middle of the
+thread-through macro. We could just edit the line directly and
+eval/print using <code>cpp</code>, but there's another way to do one-off iterative
+development like this.</p>
 <p>Type <code>cqc</code> in normal mode. A commandline window will open. This is very
 much like a normal vim buffer, with a few notable exceptions:</p>
-
 <ol>
 <li>It cannot be modified or saved</li>
 <li>Pressing <code>Enter</code> in normal mode sends the current line to the REPL
 for eval-ing.</li>
 <li>As you run commands, they are added to this buffer.</li>
 </ol>
-
 <p>tpope calls this the &ldquo;quasi-repl&rdquo;, and indeed that is the mnemonic for
 the mapping itself: <code>cq</code> is the &ldquo;Clojure Quasi-REPL&rdquo;.</p>
-
-<p>While we&rsquo;re in this special window, let&rsquo;s type the following, and hit
+<p>While we're in this special window, let's type the following, and hit
 enter:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map str </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">])</span></code></pre></div>
-<p>Immediately, we can see the issue. Converting each number to a string
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">str </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
+</code></pre></div><p>Immediately, we can see the issue. Converting each number to a string
 prevents <code>dec</code> from working later on.</p>
-
-<p>Having to type the whole line again isn&rsquo;t always convenient. For those
-cases, there&rsquo;s <code>cqq</code>, which is like <code>cqc</code> except that it pre-populates
+<p>Having to type the whole line again isn't always convenient. For those
+cases, there's <code>cqq</code>, which is like <code>cqc</code> except that it pre-populates
 the command window with the innermost form under the cursor. We can
 see this in action by putting our cursor near the beginning of the
 thread-through macro, and typing <code>cqq</code>.</p>
-
 <p>You can think of <code>cqq</code> as being very similar to <code>cpp</code>, but with a chance
 to edit the line or lines before sending it off to the REPL.</p>
-
 <h1 id="documentation">Documentation</h1>
-
 <p>One of the great things about Clojure is that documentation is a
 first-class citizen, and builtin functions have documentation attached
 to them. With a standard REPL, we can use the <code>doc</code> function to get the
 signature and documentation for a given function.</p>
-
 <p>With fireplace, we get this with the <code>:Doc</code> command, and it works just
-like <code>doc</code>. To see the documentation for <code>map</code>, for example, type <code>:Doc
-map</code>. We immediately see the documentation for the map command printed.</p>
-
-<p>There&rsquo;s an even shorter way to look up documentation for a function.
+like <code>doc</code>. To see the documentation for <code>map</code>, for example, type <code>:Doc map</code>. We immediately see the documentation for the map command printed.</p>
+<p>There's an even shorter way to look up documentation for a function.
 When your cursor is on a word, you can press <code>K</code>, that is <code>Shift</code> and
 <code>K</code>. We can try this again with the <code>map</code> function by placing our cursor
 on the function itself, and pressing <code>K</code>.</p>
-
 <p>We can also use the <code>:Source</code> command to show the source for a function.
 When we do this with <code>map</code>, we see the source code for <code>map</code> from
 <code>clojure.core</code>.</p>
