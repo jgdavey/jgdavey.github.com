@@ -25,7 +25,7 @@ Database constraints are essential to ensuring data integrity, and you should us
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -88,7 +88,7 @@ domain as an example.</p>
 items that can be reordered with a drag-and-drop interaction. This can
 be modelled in a fairly straightforward manner.</p>
 <p>Each list <code>has_many</code> list items, which are ordered by the <code>position</code>
-column. Each list's items have a position beginning with 1 and
+column. Each list&rsquo;s items have a position beginning with 1 and
 incrementing with each subsequent item.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/list.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">List</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -126,8 +126,8 @@ as such:</p>
     <span style="color:#111">head</span> <span style="color:#d88200">:ok</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Secondly, new items don't necessarily know what position they should
-have, so we put list items that don't have <code>position</code> at the end of
+</code></pre></div><p>Secondly, new items don&rsquo;t necessarily know what position they should
+have, so we put list items that don&rsquo;t have <code>position</code> at the end of
 their respective list, just before validating that the position is
 present.</p>
 <p>Here are the migrations that we used to create the models&rsquo; database
@@ -151,13 +151,13 @@ tables:</p>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Notice anything missing? If you said database constraints, you're
+</code></pre></div><p>Notice anything missing? If you said database constraints, you&rsquo;re
 correct! Our application is enforcing presence for most attributes, but
 our corresponding columns are missing <code>NOT NULL</code> constraints. Also, the
 <code>list_id</code> column on <code>list_items</code> is missing a foreign key constraint.</p>
-<p>But I'd like to focus on another missing constraint. Our domain model has
-an implicit requirement that we haven't enforced with either validations
-or database constraints: each list item's position should be <em>unique per
+<p>But I&rsquo;d like to focus on another missing constraint. Our domain model has
+an implicit requirement that we haven&rsquo;t enforced with either validations
+or database constraints: each list item&rsquo;s position should be <em>unique per
 list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
@@ -167,7 +167,7 @@ fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
 <h1 id="adding-constraints">Adding constraints</h1>
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
-in PostgreSQL. We'll just create a new migration with the following:</p>
+in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
@@ -183,7 +183,7 @@ in PostgreSQL. We'll just create a new migration with the following:</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Let's wrap our <code>UPDATE</code> statements in a transaction so that any failed
+</code></pre></div><p>Let&rsquo;s wrap our <code>UPDATE</code> statements in a transaction so that any failed
 <code>UPDATE</code> of the position column will result in none of them being
 updated:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">ListItem</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -199,7 +199,7 @@ updated:</p>
 </code></pre></div><p>This ensures at the database level that positions of items are unique
 per list; no two items in the same list can occupy the &ldquo;1&rdquo; position.
 With regard to data integrity, this is a huge improvement over our
-initial implementation. But it has one drawback: <strong>it doesn't work</strong>.</p>
+initial implementation. But it has one drawback: <strong>it doesn&rsquo;t work</strong>.</p>
 <p>To illustrate why, imagine a list with the following items:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">id | position | name
 13 | 1        | Eggs
@@ -221,7 +221,7 @@ the moment that the <code>UPDATE</code> happens, the data would be:</p>
 </code></pre></div><p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
 Of course, we know that we want to change the position of Eggs as well,
 so that its position would be &ldquo;2&rdquo;, and that collision would not happen.
-But at the time that the constraint-check happens, the database doesn't
+But at the time that the constraint-check happens, the database doesn&rsquo;t
 know this.</p>
 <p>Even within a transaction, database uniqueness constraints are enforced
 immediately <strong>per row</strong>. It seems our dreams of data integrity are
@@ -243,7 +243,7 @@ checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
 call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
-<p>With that information, let's change the definition of the constraint we
+<p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
@@ -261,7 +261,7 @@ defined before:</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>The only thing we've changed from before is the <code>DEFERRABLE INITIALLY IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY IMMEDIATE</code> option. This will ensure that other parts of our app, and
+</code></pre></div><p>The only thing we&rsquo;ve changed from before is the <code>DEFERRABLE INITIALLY IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY IMMEDIATE</code> option. This will ensure that other parts of our app, and
 other consumers of the database will not be surprised by the behavior of
 the constraint; it will continue to act a like a normal, non-deferrable
 constraint, until we explicitly opt in to the deferral.</p>
@@ -281,13 +281,13 @@ statement:</p>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Having now opted in to deferring our uniqueness constraint, reordering
 the items now works as expected. The constraint still ensures that we
-don't have two items that occupy the same position, but waits until the
+don&rsquo;t have two items that occupy the same position, but waits until the
 end of the transaction to do that check. We can have our data integrity
 cake and eat it too.</p>
 <h1 id="bonus-deferrable-introspection">Bonus: deferrable introspection</h1>
 <p>Having to name the constraint in two places is a bit of a bummer, and
 introduces a coupling that could bite us if the constraint name ever
-changed. Knowing that, we leverage PostgreSQL's introspective abilities
+changed. Knowing that, we leverage PostgreSQL&rsquo;s introspective abilities
 to query the constraint names instead.</p>
 <p>For example, we can add the following module to our codebase:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># lib/deferrable.rb</span>
@@ -327,7 +327,7 @@ to query the constraint names instead.</p>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>And, boom! Less coupling.</p>
-<p><strong>NOTE</strong> That's a lot of Arel! Use at your own risk. ;-)</p>
+<p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
 <h1 id="example-application">Example application</h1>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example">sample Rails app</a> to iterate
 quickly. I used TDD to write the initial approach, and reused the specs
@@ -351,7 +351,7 @@ sections above.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2019</section>
+  <section class="container"> © 2020</section>
 </footer>
 
     </main>

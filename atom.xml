@@ -25,16 +25,16 @@ the transform step happened in Clojure. After all of the data
 had been shaped the way we wanted, we imported the data into a
 Postgresql database. As with our typical pattern, we used the
 <code>clojure.java.jdbc/insert-multi!</code> function to insert rows in batches.
-But the performance for the database insertion wasn't quite what we
+But the performance for the database insertion wasn&rsquo;t quite what we
 were hoping for.</p>
 <p>Although the overhead from <code>org.clojure.jdbc</code> is negligible in most
 scenarios, and certainly in virtually all CRUD-like workflows, it can
 become significant with batch insertions at scale: all of the work of
 converting data types to String-y parameters adds up.</p>
 <p>Having previously used the <code>COPY</code> syntax for importing textual
-data like CSVs, I found that Postgresql's <code>COPY</code> also has a binary
+data like CSVs, I found that Postgresql&rsquo;s <code>COPY</code> also has a binary
 variant that allows direct insertion into tables. Because the binary
-on-the-wire representation of Postgresql's data types is virtually
+on-the-wire representation of Postgresql&rsquo;s data types is virtually
 the same as the storage representation, there is significantly less
 overhead for importing using <code>COPY ... FROM STDIN WITH BINARY</code>.</p>
 <p>So, there are immediately two benefits to using the binary <code>COPY</code> approach:</p>
@@ -46,15 +46,15 @@ binary <code>COPY</code> than it does with <code>INSERT</code> statement because
 binary representation so closely mirrors the internal storage
 representation.</li>
 </ol>
-<p>There may be other benefits I'm unaware of, but those two things alone
+<p>There may be other benefits I&rsquo;m unaware of, but those two things alone
 made me curious if there was a way to get the <code>COPY</code> goodness with
 idiomatic Clojure.</p>
 <p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/">https://jdbc.postgresql.org/</a> and
-<a href="https://impossibl.github.io/pgjdbc-ng/">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
+<a href="https://impossibl.github.io/pgjdbc-ng/,">https://impossibl.github.io/pgjdbc-ng/,</a> support putting a connection
 into COPY mode, after which data can be streamed into or out of
-postgresql. However, both drivers don't do anything to help you get
+postgresql. However, both drivers don&rsquo;t do anything to help you get
 the data into the raw format that postgresql expects. For the text
-(default) format, that's basically a tab-delimited or CSV payload.</p>
+(default) format, that&rsquo;s basically a tab-delimited or CSV payload.</p>
 <p>The binary COPY format, however, is a different beast entirely. Each
 postgresql data type has a very specific binary representation. Again,
 while the postgresql jdbc drivers provide a way to stream in or stream
@@ -62,14 +62,14 @@ out COPY data, the data within those streams is left entirely up to
 you. The best library I found to do this kind of serialization was
 <a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
 API.</p>
-<p>That's where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
+<p>That&rsquo;s where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
 their binary represenation, with the hope that using the binary COPY
 style of importing data is as easy to use as clojure.java.jdbc
 methods. The primary API of clj-pgcopy is
 <code>clj-pgcopy.core/copy-into!</code>, which aims to be drop-in compatible with
 most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
 <h2 id="example-usage">Example usage</h2>
-<p>For example, let's say that we have a table of product listings,
+<p>For example, let&rsquo;s say that we have a table of product listings,
 looking like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">create</span> <span style="color:#00a8c8">table</span> <span style="color:#111">inventory</span> <span style="color:#111">(</span>
   <span style="color:#111">guid</span> <span style="color:#111">uuid</span> <span style="color:#00a8c8">primary</span> <span style="color:#00a8c8">key</span><span style="color:#111">,</span>
@@ -78,7 +78,7 @@ looking like this:</p>
   <span style="color:#111">price</span> <span style="color:#111">decimal</span><span style="color:#111">(</span><span style="color:#ae81ff">8</span><span style="color:#111">,</span><span style="color:#ae81ff">2</span><span style="color:#111">)</span><span style="color:#111">,</span>
   <span style="color:#111">average_rating</span> <span style="color:#111">float4</span>
 <span style="color:#111">)</span><span style="color:#111">;</span>
-</code></pre></div><p>And some data we'd like to import that looks like this:</p>
+</code></pre></div><p>And some data we&rsquo;d like to import that looks like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">data</span>
   <span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;d44c2977-0a9f-4d12-88d2-7d85e07ce1e2&#34;</span>,
     <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T23:37:33.701-00:00&#34;</span>,
@@ -202,7 +202,7 @@ consider reasonable default mappings.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="daterelated-mappings">Date-related mappings</h3>
+<h3 id="date-related-mappings">Date-related mappings</h3>
 <table>
 <thead>
 <tr>
@@ -348,7 +348,7 @@ guidance on doing so.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"><![CDATA[<p>Single-use tokens have a variety of security applications. Whether it's
+    <content type="html" xml:base="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"><![CDATA[<p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
 a password-reset token, or capturing a financial transaction, there are
 times when something should happen exactly once, atomically. Once a
 token is used, it is invalidated.</p>
@@ -357,12 +357,12 @@ traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
 finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1">1</a><!-- raw HTML omitted --></p>
 <p>But how can we accomplish some like this in Datomic?</p>
-<h2 id="the-worlds-worst-singles-network">The World's Worst Singles Network</h2>
+<h2 id="the-worlds-worst-singles-network">The World&rsquo;s Worst Singles Network</h2>
 <blockquote>
-<p>Welcome to WWSN! We're so excited you're here! On WWSN, you can sign up,
-sign in, and reset your password. It's so simple!</p>
+<p>Welcome to WWSN! We&rsquo;re so excited you&rsquo;re here! On WWSN, you can sign up,
+sign in, and reset your password. It&rsquo;s so simple!</p>
 </blockquote>
-<p>Let's say we have a really simple schema. A user has an email address
+<p>Let&rsquo;s say we have a really simple schema. A user has an email address
 and a bcrypted password:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
   <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/email</span>
@@ -406,18 +406,18 @@ look up the user by that token and update them accordingly:</p>
   <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
     <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
                       <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
-</code></pre></div><p>But there's a problem with this solution. Even though the new password
+</code></pre></div><p>But there&rsquo;s a problem with this solution. Even though the new password
 is asserted in the same transaction that the token is invalidated, the
 opportunity for concurrency problems between threads and/or peers still
 exists.</p>
-<p>Here's why. In between the time that <code>e</code> is first found by its token
+<p>Here&rsquo;s why. In between the time that <code>e</code> is first found by its token
 and its new facts are transacted, somebody else could have already used
 (and deleted) the token. In other words, even though all writes are
 transactional, the reads are not. In practice this is rarely, if ever,
 a problem. <code>(d/db conn)</code> will return the most recent version of the
 database that the peer can get.</p>
 <h2 id="croutons-are-just-stale-bread">Croutons are just stale bread</h2>
-<p>Let's illustrate this possibility of a stale database introducing a bug:</p>
+<p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">stale-db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">)</span><span style="color:#111">)</span>
 
 <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">}</span> <span style="color:#111">params</span>
@@ -442,9 +442,9 @@ database that the peer can get.</p>
 </code></pre></div><p>The user entity <code>e</code> is found both times because the database value is
 immutable. So, the transactions will both succeed.</p>
 <p>The astute reader may have noticed something. I said all writes are
-transactional, but in the second block of code, we're retracting a value
-that's already been retracted. Something must be broken!</p>
-<p>Nothing's broken. This tripped me up at first, but it turns out that
+transactional, but in the second block of code, we&rsquo;re retracting a value
+that&rsquo;s already been retracted. Something must be broken!</p>
+<p>Nothing&rsquo;s broken. This tripped me up at first, but it turns out that
 retractions work just like assertions with regard to <em>redundancy
 elimination</em>.</p>
 <h2 id="the-department-of-redundancy-department">The Department of Redundancy Department</h2>
@@ -457,14 +457,14 @@ transaction would produce redundant datoms, those datoms are filtered
 out, and do not appear a second time in either the indexes or the
 transaction log.</p>
 </blockquote>
-<p>In other words, Datomic is eliminating the redundant retraction: we've
+<p>In other words, Datomic is eliminating the redundant retraction: we&rsquo;ve
 already retracted the token, so the effective datoms of the transaction
 only include the <code>[:db/add ...]</code> of the new password. In this particular
 use case, retractions cannot be used to safeguard us from using a token
 more than once.</p>
 <h2 id="transaction-functions-to-the-rescue">Transaction functions to the rescue</h2>
-<p>Datomic's got us covered. I mentioned before that all writes are
-transactional, and reads are not. That's actually only true on the
+<p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
+transactional, and reads are not. That&rsquo;s actually only true on the
 peers. The transactor itself is guaranteed to always have access to the
 most recent database value at any time. Among other things, this is what
 enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
@@ -472,10 +472,10 @@ enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction
 <code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
 function, it invokes it and splices the result into the rest of the
 transaction. Also, a database function always receives the most recent
-<code>db</code> value as it's first argument. Because you have access to the whole
+<code>db</code> value as it&rsquo;s first argument. Because you have access to the whole
 of the Datomic API, you can leverage this <code>db</code> value to do all sorts of
 things.</p>
-<p>Let's transact the following new schema info into our database:</p>
+<p>Let&rsquo;s transact the following new schema info into our database:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
   <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:db.fn/set-with-token</span>
   <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;Look up entity by token, set attr and value, and retract token&#34;</span>
@@ -494,18 +494,18 @@ things.</p>
 </code></pre></div><p>This function is more generic than our immediate use-case, but I prefer
 to parameterize attributes as well as values in database functions. It
 allows us to re-use the database function for other token fields, and
-won't have to be updated in the schema if we ever change the name our
+won&rsquo;t have to be updated in the schema if we ever change the name our
 token attribute.</p>
-<p>Here's how we use this shiny new function:</p>
+<p>Here&rsquo;s how we use this shiny new function:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">}</span> <span style="color:#111">params</span><span style="color:#111">]</span>
   <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db.fn/set-with-token</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span>
                                            <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span>
 </code></pre></div><p>When we transact this data, the transactor invokes our function using
 the most recent database value. In other words, we are making the lookup
 portion serializable with the rest of the operations.</p>
-<p>If we run this transaction a second time, we'll get the error message.</p>
+<p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
 <h2 id="in-summary">In Summary</h2>
-<p>This kind of transaction atomicity is made possible by Datomic's
+<p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
 single-writer design. Other database systems (e.g. SQL) have to employ
 very complicated isolation patterns like MVVC to allow multiple writers
 while keeping data integrity guarantees. Datomic side-steps those problems by
@@ -525,7 +525,7 @@ used to build up the code examples here.</p>
 pitfalls. Because of the potential for multiple writers, care must be
 taken to satisfy the &ldquo;exactly once&rdquo; requirement. Where possible, a SQL
 client should use a single statement to find, update, and nullify a
-token. When a single statement isn't possible, the use of row-level
+token. When a single statement isn&rsquo;t possible, the use of row-level
 locks can be used. Or, better yet, wrap everything in a transaction with
 serializable isolation level.</p>
 ]]></content>
@@ -541,30 +541,30 @@ serializable isolation level.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
-<p>I've been really happy with Datomic, but doing an initial bulk import
-wasn't as familiar as SQL dump/restore. Here are some things that I've
+<p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
+wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve
 learned from doing several imports.</p>
 <h2 id="use-coreasync">Use core.async</h2>
 <p>The Datomic transactor handles concurrency by transacting datoms
-serially, but that doesn't mean it isn't fast! In my experience, the bottleneck is actually in the
+serially, but that doesn&rsquo;t mean it isn&rsquo;t fast! In my experience, the bottleneck is actually in the
 reshaping of data and formatting transactions. I
 use <code>core.async</code> to parallelize just about everything in the import
 pipeline.</p>
-<p>One example of how I've leveraged <code>core.async</code> for
+<p>One example of how I&rsquo;ve leveraged <code>core.async</code> for
 import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/master/src/kevin/loader.clj">Kevin Bacon project
 repository</a>.</p>
 <h2 id="run-the-import-locally">Run the import locally</h2>
 <p>I use DynamoDB as my storage backend in production. I used to try to
 run my import tasks directly to the production transactor/storage.
-Lately, though, I've found it really helpful to run my import tasks to
+Lately, though, I&rsquo;ve found it really helpful to run my import tasks to
 a locally-running transactor and the <code>dev</code> storage backend.</p>
-<p>Running an import locally means I don't have to worry about networking, which speeds the whole process up quite a bit; also, it give me a much more freedom to iterate on the database
+<p>Running an import locally means I don&rsquo;t have to worry about networking, which speeds the whole process up quite a bit; also, it give me a much more freedom to iterate on the database
 design itself. (I rarely get an import correct the first time.) And
-in the case of DynamoDB, I save some money, as I don't have to have my
+in the case of DynamoDB, I save some money, as I don&rsquo;t have to have my
 &ldquo;write throughput&rdquo; cranked way up for as long.</p>
 <h2 id="clean-up-the-local-database">Clean up the local database</h2>
 <p>Bulk imports create some garbage, so manually reindexing before backing
-up is advantageous. Here's what a REPL session looks like:</p>
+up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#d88200">&#34;datomic:dev://localhost:4334/database-name&#34;</span><span style="color:#111">)</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#75af00">d/request-index</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">conn</span> <span style="color:#111">d/db</span> <span style="color:#111">d/basis-t</span> <span style="color:#111">(</span><span style="color:#75af00">d/sync-index</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#111">deref</span><span style="color:#111">)</span>
@@ -575,8 +575,8 @@ is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4">the r
 documentation</a>.</p>
 <h2 id="use-backuprestore">Use backup/restore</h2>
 <p>Once everything looks good on the local production database, I use
-Datomic's builtin backup/restore facilities to send the database
-up to production. Assuming you've already deployed a production transactor and provisioned DynamoDB storage, here's the process I follow:</p>
+Datomic&rsquo;s builtin backup/restore facilities to send the database
+up to production. Assuming you&rsquo;ve already deployed a production transactor and provisioned DynamoDB storage, here&rsquo;s the process I follow:</p>
 <ol>
 <li>Run the <code>datomic backup-db</code> command against the local import.</li>
 <li>Crank my &ldquo;write throughput&rdquo; on DynamoDB <em>way</em> up (on the order of 1000).</li>
@@ -606,7 +606,7 @@ is half the battle.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2015/06/04/boot-middleman/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot + Middleman: The ClojureScript development environment of my dreams">here</a></em></p>
-<p>I'm getting closer to the frontend development environment of my dreams. The
+<p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
 combination of editor integration, live browser reload, and not having to
 manually run commands over and over is time-saving and a pleasure to
 work with.</p>
@@ -614,29 +614,29 @@ work with.</p>
 together. Visual design and markup is handled by our
 designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
 directory</a>.
-It's a process that works very well for us, and
+It&rsquo;s a process that works very well for us, and
 allows us to iteratively add features to an application.</p>
 <p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
 controller</a>,
 available only in development mode.</p>
-<p>I've been using ClojureScript a lot lately, particularly with Om, and
+<p>I&rsquo;ve been using ClojureScript a lot lately, particularly with Om, and
 have missed that directory of collaboration. After all, the designers
 at Hashrocket have a proclivity for HAML and SASS.</p>
-<p>In the past, I've set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
+<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
 handle markup and styles, using <code>middleman build</code>, copying the generated
 CSS files, and eyeballing the generated markup to ensure it matched the
-Om component's markup. Aside from being tedious, it's really easy to
+Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
 get out of sync with a manual process like this. The static resource
 generation should be a part of our build process.</p>
 <p>Enter <a href="https://boot-clj.com">boot</a>.</p>
 <h3 id="using-boot-for-clojurescript-development">Using Boot for ClojureScript development</h3>
-<p>If you're new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
 which is the de facto dependency management and build tool for
 Clojure/Script. Boot is similar to Leiningen, but adds the ability to
 compose tasks to create build pipelines. This composability, along with
 some really smart architectural decisions, is what makes boot a great
 choice for the problem at hand.</p>
-<p>Adzerk's <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
+<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
 is a great way to get started with ClojureScript and boot. Of particular
 note is the <code>build.boot</code> file. It demonstrates how one can build
 up a <code>dev</code> task that watches a directory for changes, rebuilding
@@ -645,7 +645,7 @@ includes the setup necessary for source maps, a development server,
 and the browser-connected REPL. But what I want to add to that pot
 of awesome is the ability to compile HAML and SASS as a part of the
 pipeline.</p>
-<h3 id="bootmiddleman-gluing-everything-together">boot-middleman: Gluing Everything Together</h3>
+<h3 id="boot-middleman-gluing-everything-together">boot-middleman: Gluing Everything Together</h3>
 <p>I had an epiphany one night after working on this problem for a while: I
 can just use Middleman. After all, boot and the ClojureScript compiler
 run on the JVM, and JRuby is easily embeddable. After a short bit, I
@@ -677,17 +677,17 @@ refresh to see the effects.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/"><![CDATA[<p>In this screencast I cover how to do basic evaluation and get Clojure
-documentation from within vim. I'm also including the transcript below.</p>
+documentation from within vim. I&rsquo;m also including the transcript below.</p>
 <!-- raw HTML omitted -->
 <p>Vim is a powerful text editor. Clojure is a powerful programming
 language. While its been possible to edit Clojure code in vim for years,
-the toolchain has improved greatly over the past year. Today we're going
+the toolchain has improved greatly over the past year. Today we&rsquo;re going
 to see how we can integrate vim with our Clojure REPL environment.</p>
 <h1 id="life-without-integration">Life without integration</h1>
-<p>In a shell session, let's fire up a Clojure REPL. I'm going to use <code>lein repl</code> to do this. In another shell session, let's start vim and edit a
+<p>In a shell session, let&rsquo;s fire up a Clojure REPL. I&rsquo;m going to use <code>lein repl</code> to do this. In another shell session, let&rsquo;s start vim and edit a
 clojure file.</p>
 <p>As I edit my file, I can copy code from the editor, switch to the window
-with the REPL in it, and paste that code in. This works, but it's an
+with the REPL in it, and paste that code in. This works, but it&rsquo;s an
 awkward, slow process. REPLs are supposed to be all about fast feedback.
 We can do better than copy and paste.</p>
 <h1 id="plugins">Plugins</h1>
@@ -697,7 +697,7 @@ development. Using your preferred vim plugin manager, add these plugins:</p>
 tpope/fireplace.vim
 </code></pre>
 <h1 id="setup">Setup</h1>
-<p>After you've installed the necessary Vim plugins, enter a project
+<p>After you&rsquo;ve installed the necessary Vim plugins, enter a project
 directory. For example, if you have a leiningen project, cd into the
 directory. In one shell session, fire up a REPL with <code>lein repl</code>. In
 another shell session, cd that that folder once again, and then open
@@ -711,41 +711,41 @@ a command to the connected REPL.</p>
 clojure expression, sends it off to the REPL, and prints the result
 for you. For example, we could run <code>:Eval (+ 1 1)</code>, and we would, as
 expected, see <code>2</code> printed out. This emulates typing at REPL prompt
-directly, but there's much more we can do with our REPL-connected vim
+directly, but there&rsquo;s much more we can do with our REPL-connected vim
 session.</p>
-<p>Let's stay with <code>:Eval</code> for a bit longer. <code>:Eval</code> without any arguments
+<p>Let&rsquo;s stay with <code>:Eval</code> for a bit longer. <code>:Eval</code> without any arguments
 will send eval and print the outermost form on the current line. For
-example, let's look at a simple expression.</p>
+example, let&rsquo;s look at a simple expression.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
 </code></pre></div><p>When we have our cursor on this line and type <code>:Eval</code> with no arguments,
-we'll see <code>(2 3 4)</code> printed back.</p>
+we&rsquo;ll see <code>(2 3 4)</code> printed back.</p>
 <p><code>:Eval</code>, as with many vim commands, can also take a range. So,
 <code>:1,3Eval</code> would evaluate all of lines 1 through 3. All of the normal
 special ranges work here, such as <code>%</code> for the entire file, and <code>'&lt;,'&gt;</code>
 for the current selection in visual mode.</p>
-<p><code>:Eval</code> works well, but there's a quicker way to get feedback. <code>cp</code> is
+<p><code>:Eval</code> works well, but there&rsquo;s a quicker way to get feedback. <code>cp</code> is
 the normal mode mapping for doing a simple eval and print. By default,
 <code>cp</code> expects a motion. The form that I use most though is <code>cpp</code>, which
-will eval and print the innermost form from the cursor's current
+will eval and print the innermost form from the cursor&rsquo;s current
 position.</p>
-<p>To demonstrate what this means, let's look at that expression again.</p>
+<p>To demonstrate what this means, let&rsquo;s look at that expression again.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
-</code></pre></div><p>When our cursor is on the <code>m</code> of <code>map</code>, and we type <code>cpp</code>, we'll see
+</code></pre></div><p>When our cursor is on the <code>m</code> of <code>map</code>, and we type <code>cpp</code>, we&rsquo;ll see
 <code>(2 3 4)</code>, just as when we did the plain <code>:Eval</code>. But if we move our
-cursor inside the vector and type <code>cpp</code> again, we'll see that inner form
+cursor inside the vector and type <code>cpp</code> again, we&rsquo;ll see that inner form
 evaluated.</p>
 <p>Something unique to fireplace is its concept of a quasi-REPL. This is a
 cousin of the <code>cp</code> mappings, but with an intermediate editing window. To
-demonstrate this, let's consider the following example.</p>
+demonstrate this, let&rsquo;s consider the following example.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span>
      <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">str</span><span style="color:#111">)</span>
      <span style="color:#111">reverse</span>
      <span style="color:#111">(</span><span style="color:#75af00">mapv</span> <span style="color:#111">dec</span><span style="color:#111">)</span><span style="color:#111">)</span>
 
 </code></pre></div><p>In this trivial example, we want to reverse a sequence and decrement
-each number. There's a bug in here, but it's in the middle of the
+each number. There&rsquo;s a bug in here, but it&rsquo;s in the middle of the
 thread-through macro. We could just edit the line directly and
-eval/print using <code>cpp</code>, but there's another way to do one-off iterative
+eval/print using <code>cpp</code>, but there&rsquo;s another way to do one-off iterative
 development like this.</p>
 <p>Type <code>cqc</code> in normal mode. A commandline window will open. This is very
 much like a normal vim buffer, with a few notable exceptions:</p>
@@ -757,13 +757,13 @@ for eval-ing.</li>
 </ol>
 <p>tpope calls this the &ldquo;quasi-repl&rdquo;, and indeed that is the mnemonic for
 the mapping itself: <code>cq</code> is the &ldquo;Clojure Quasi-REPL&rdquo;.</p>
-<p>While we're in this special window, let's type the following, and hit
+<p>While we&rsquo;re in this special window, let&rsquo;s type the following, and hit
 enter:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">str </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
 </code></pre></div><p>Immediately, we can see the issue. Converting each number to a string
 prevents <code>dec</code> from working later on.</p>
-<p>Having to type the whole line again isn't always convenient. For those
-cases, there's <code>cqq</code>, which is like <code>cqc</code> except that it pre-populates
+<p>Having to type the whole line again isn&rsquo;t always convenient. For those
+cases, there&rsquo;s <code>cqq</code>, which is like <code>cqc</code> except that it pre-populates
 the command window with the innermost form under the cursor. We can
 see this in action by putting our cursor near the beginning of the
 thread-through macro, and typing <code>cqq</code>.</p>
@@ -776,7 +776,7 @@ to them. With a standard REPL, we can use the <code>doc</code> function to get t
 signature and documentation for a given function.</p>
 <p>With fireplace, we get this with the <code>:Doc</code> command, and it works just
 like <code>doc</code>. To see the documentation for <code>map</code>, for example, type <code>:Doc map</code>. We immediately see the documentation for the map command printed.</p>
-<p>There's an even shorter way to look up documentation for a function.
+<p>There&rsquo;s an even shorter way to look up documentation for a function.
 When your cursor is on a word, you can press <code>K</code>, that is <code>Shift</code> and
 <code>K</code>. We can try this again with the <code>map</code> function by placing our cursor
 on the function itself, and pressing <code>K</code>.</p>
@@ -809,7 +809,7 @@ executed. I wanted more.</p>
 graph database. Its ability to arbitrarily traverse datoms, when paired with
 the appropriate graph searching algorithm, solved my problem elegantly. This
 technique ended up being fast as well.</p>
-<p>Quick aside: this post assumes a cursory understanding of Datomic. I won't cover
+<p>Quick aside: this post assumes a cursory understanding of Datomic. I won&rsquo;t cover
 the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
 <h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold</h2>
 <p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
@@ -856,14 +856,14 @@ schema:</p>
  <span style="color:#111">]</span>
 
 </code></pre></div><p>In a nutshell, movies have titles and years. Actors have names and movies.
-The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I've declared the
+The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I&rsquo;ve declared the
 <code>:actor/movies</code> attribute as having a cardinality of many.</p>
 <h2 id="using-datalog-queries">Using datalog queries</h2>
 <p>Using datalog and <code>datomic.api/q</code>, we can make graph-like queries fairly easily.
 Because the <code>:where</code> clauses of a datalog query form an implicit join, we can
 join from our starting point to our ending point with relative ease.</p>
 <p>As an example, what if we wanted to know the shortest path or paths from Kevin
-Bacon to Jon Belushi? Let's use a query to find out:</p>
+Bacon to Jon Belushi? Let&rsquo;s use a query to find out:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">datomic.api</span> <span style="color:#d88200">:as</span> <span style="color:#111">d</span> <span style="color:#d88200">:refer</span> <span style="color:#111">[</span><span style="color:#111">q</span> <span style="color:#111">db</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#111">...</span><span style="color:#111">)</span><span style="color:#111">)</span>
 
@@ -881,10 +881,10 @@ Bacon to Jon Belushi? Let's use a query to find out:</p>
 
 <span style="color:#75715e">;=&gt; #{[&#34;Bacon, Kevin (I)&#34; &#34;Animal House (1978)&#34; &#34;Belushi, John&#34;]}</span>
 </code></pre></div><p>That is fine when actors have worked together in a movie (a Bacon Number of 1),
-but doesn't help us solve Bacon numbers when there are 2 or more movies between
+but doesn&rsquo;t help us solve Bacon numbers when there are 2 or more movies between
 the actors. We could add more where clauses to join over two movies, but that
-isn't sustainable. The queries would quickly become too long to reason about.
-This is a prime opportunity to use Datomic's rules.</p>
+isn&rsquo;t sustainable. The queries would quickly become too long to reason about.
+This is a prime opportunity to use Datomic&rsquo;s rules.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">acted-with-rules</span>
   <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
      <span style="color:#111">[</span><span style="color:#111">?e1</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
@@ -930,12 +930,12 @@ using a function like the following:</p>
 structures: it would be trivial to generate those rules to an arbitrary
 depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj">Datomic mbrainz
 sample</a>.</p>
-<h2 id="lowlevel-traversal-for-better-performance">Low-level traversal for better performance</h2>
+<h2 id="low-level-traversal-for-better-performance">Low-level traversal for better performance</h2>
 <p>Having to know the depth at which to traverse the graph is cumbersome. Datomic
 has a distinct advantage of being able to treat your data as local, even if its
 permanent storage lives somewhere else. That means that we can bring our own
 functions to the problem and execute locally, rather than on a database server.
-We can leverage Datomic's <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
+We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
 our own graph-searching algorithm, rather than relying on the query engine.</p>
 <p>Our IMDb actor data is essentially a dense unweighted graph. Because of its
 density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
@@ -992,10 +992,10 @@ generic bidirectional BFS returning all shortest paths might look like this.</p>
             <span style="color:#111">(</span><span style="color:#111">if-let </span><span style="color:#111">[</span><span style="color:#111">all</span> <span style="color:#111">(</span><span style="color:#75af00">overlaps</span> <span style="color:#111">preds</span> <span style="color:#111">q2</span><span style="color:#111">)</span><span style="color:#111">]</span>
               <span style="color:#111">(</span><span style="color:#75af00">find-paths</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#111">set </span><span style="color:#111">all</span><span style="color:#111">)</span><span style="color:#111">)</span>
               <span style="color:#111">(</span><span style="color:#75af00">recur</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span> <span style="color:#111">q2</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
-</code></pre></div><p>There's a lot of code here, including some optimizations and helper functions.
-The important function here is <code>bidirectional-bfs</code>. I won't explain the details
+</code></pre></div><p>There&rsquo;s a lot of code here, including some optimizations and helper functions.
+The important function here is <code>bidirectional-bfs</code>. I won&rsquo;t explain the details
 of the algorithm, but at a high level, it takes in a start and end node and a
-function to be called on any node to get it's &ldquo;neighbors&rdquo;.</p>
+function to be called on any node to get it&rsquo;s &ldquo;neighbors&rdquo;.</p>
 <p>This is a generic, pure function, agnostic of Datomic or our data. In fact, I used
 a simple map as the &ldquo;graph&rdquo; while developing this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">graph</span>
@@ -1052,13 +1052,13 @@ problems and domains could use other algorithms. The idea, though, is that
 generic graph searching functions can be used directly, since the data is
 effectively local to the peer machine.</p>
 <p>For more Clojure implementations of generic graph searching algorithms,
-<a href="https://github.com/aysylu/loom">loom's</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
+<a href="https://github.com/aysylu/loom">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
 <h2 id="performance">Performance</h2>
-<p>I'm using the above ideas and functions on IMDB's dataset to power
-the project. Once the peer's index caches are warmed, the performance
-is quite good: most searches I've performed between well-known actors complete
+<p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
+the project. Once the peer&rsquo;s index caches are warmed, the performance
+is quite good: most searches I&rsquo;ve performed between well-known actors complete
 in under a second, and in many cases, under 100 ms. I never got results that
-good with Neo4j's cypher query language.</p>
+good with Neo4j&rsquo;s cypher query language.</p>
 <h2 id="source">Source</h2>
 <p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
 ]]></content>
@@ -1085,7 +1085,7 @@ domain as an example.</p>
 items that can be reordered with a drag-and-drop interaction. This can
 be modelled in a fairly straightforward manner.</p>
 <p>Each list <code>has_many</code> list items, which are ordered by the <code>position</code>
-column. Each list's items have a position beginning with 1 and
+column. Each list&rsquo;s items have a position beginning with 1 and
 incrementing with each subsequent item.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/list.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">List</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -1123,8 +1123,8 @@ as such:</p>
     <span style="color:#111">head</span> <span style="color:#d88200">:ok</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Secondly, new items don't necessarily know what position they should
-have, so we put list items that don't have <code>position</code> at the end of
+</code></pre></div><p>Secondly, new items don&rsquo;t necessarily know what position they should
+have, so we put list items that don&rsquo;t have <code>position</code> at the end of
 their respective list, just before validating that the position is
 present.</p>
 <p>Here are the migrations that we used to create the models&rsquo; database
@@ -1148,13 +1148,13 @@ tables:</p>
     <span style="color:#00a8c8">end</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Notice anything missing? If you said database constraints, you're
+</code></pre></div><p>Notice anything missing? If you said database constraints, you&rsquo;re
 correct! Our application is enforcing presence for most attributes, but
 our corresponding columns are missing <code>NOT NULL</code> constraints. Also, the
 <code>list_id</code> column on <code>list_items</code> is missing a foreign key constraint.</p>
-<p>But I'd like to focus on another missing constraint. Our domain model has
-an implicit requirement that we haven't enforced with either validations
-or database constraints: each list item's position should be <em>unique per
+<p>But I&rsquo;d like to focus on another missing constraint. Our domain model has
+an implicit requirement that we haven&rsquo;t enforced with either validations
+or database constraints: each list item&rsquo;s position should be <em>unique per
 list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
@@ -1164,7 +1164,7 @@ fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
 <h1 id="adding-constraints">Adding constraints</h1>
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
-in PostgreSQL. We'll just create a new migration with the following:</p>
+in PostgreSQL. We&rsquo;ll just create a new migration with the following:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
@@ -1180,7 +1180,7 @@ in PostgreSQL. We'll just create a new migration with the following:</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Let's wrap our <code>UPDATE</code> statements in a transaction so that any failed
+</code></pre></div><p>Let&rsquo;s wrap our <code>UPDATE</code> statements in a transaction so that any failed
 <code>UPDATE</code> of the position column will result in none of them being
 updated:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">ListItem</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -1196,7 +1196,7 @@ updated:</p>
 </code></pre></div><p>This ensures at the database level that positions of items are unique
 per list; no two items in the same list can occupy the &ldquo;1&rdquo; position.
 With regard to data integrity, this is a huge improvement over our
-initial implementation. But it has one drawback: <strong>it doesn't work</strong>.</p>
+initial implementation. But it has one drawback: <strong>it doesn&rsquo;t work</strong>.</p>
 <p>To illustrate why, imagine a list with the following items:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">id | position | name
 13 | 1        | Eggs
@@ -1218,7 +1218,7 @@ the moment that the <code>UPDATE</code> happens, the data would be:</p>
 </code></pre></div><p>With both Eggs and Bread occupying the same position, the <code>UPDATE</code> fails.
 Of course, we know that we want to change the position of Eggs as well,
 so that its position would be &ldquo;2&rdquo;, and that collision would not happen.
-But at the time that the constraint-check happens, the database doesn't
+But at the time that the constraint-check happens, the database doesn&rsquo;t
 know this.</p>
 <p>Even within a transaction, database uniqueness constraints are enforced
 immediately <strong>per row</strong>. It seems our dreams of data integrity are
@@ -1240,7 +1240,7 @@ checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
 call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
-<p>With that information, let's change the definition of the constraint we
+<p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
@@ -1258,7 +1258,7 @@ defined before:</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>The only thing we've changed from before is the <code>DEFERRABLE INITIALLY IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY IMMEDIATE</code> option. This will ensure that other parts of our app, and
+</code></pre></div><p>The only thing we&rsquo;ve changed from before is the <code>DEFERRABLE INITIALLY IMMEDIATE</code> bit. I think it is a good idea to use the <code>INITIALLY IMMEDIATE</code> option. This will ensure that other parts of our app, and
 other consumers of the database will not be surprised by the behavior of
 the constraint; it will continue to act a like a normal, non-deferrable
 constraint, until we explicitly opt in to the deferral.</p>
@@ -1278,13 +1278,13 @@ statement:</p>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Having now opted in to deferring our uniqueness constraint, reordering
 the items now works as expected. The constraint still ensures that we
-don't have two items that occupy the same position, but waits until the
+don&rsquo;t have two items that occupy the same position, but waits until the
 end of the transaction to do that check. We can have our data integrity
 cake and eat it too.</p>
 <h1 id="bonus-deferrable-introspection">Bonus: deferrable introspection</h1>
 <p>Having to name the constraint in two places is a bit of a bummer, and
 introduces a coupling that could bite us if the constraint name ever
-changed. Knowing that, we leverage PostgreSQL's introspective abilities
+changed. Knowing that, we leverage PostgreSQL&rsquo;s introspective abilities
 to query the constraint names instead.</p>
 <p>For example, we can add the following module to our codebase:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># lib/deferrable.rb</span>
@@ -1324,7 +1324,7 @@ to query the constraint names instead.</p>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>And, boom! Less coupling.</p>
-<p><strong>NOTE</strong> That's a lot of Arel! Use at your own risk. ;-)</p>
+<p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
 <h1 id="example-application">Example application</h1>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example">sample Rails app</a> to iterate
 quickly. I used TDD to write the initial approach, and reused the specs
@@ -1349,9 +1349,9 @@ ActiveRecord model. Because Rails works well with SQL views, we can
 create associations to SQL views that aggregate data for us, simplifying
 our models and potentially speeding up queries.</p>
 <h2 id="modeling-an-inbox">Modeling an inbox</h2>
-<p>I've got an inbox. A cat inbox. For real.</p>
+<p>I&rsquo;ve got an inbox. A cat inbox. For real.</p>
 <p><img src="https://s3.amazonaws.com/hashrocket-blog-production/inbox.png" alt=""></p>
-<p>There are many possible implementations for modeling an inbox. I've
+<p>There are many possible implementations for modeling an inbox. I&rsquo;ve
 gone with a relatively simple approach. Two users participate in a
 conversation, sending messages back and forth to each other. The
 Conversation model has a subject, but the body of the initial message is
@@ -1375,7 +1375,7 @@ messages back and forth. A user may have any number of conversations
 with other users. As such, the main inbox view must list the
 conversations a user is a participant on, as well as some summary
 information about that conversation.</p>
-<p>For our purposes, we've decided on an HTML table view with the following
+<p>For our purposes, we&rsquo;ve decided on an HTML table view with the following
 columns:</p>
 <ul>
 <li>From - Who the original message was sent from</li>
@@ -1389,7 +1389,7 @@ first message)</li>
 <p>Although the subject is part of the conversation itself, everything else
 comes from its various associations. This is the view, which reveals the
 expected interface each conversation object should have:</p>
-<pre><code class="language-haml" data-lang="haml">%table#inbox
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fallback" data-lang="fallback">%table#inbox
   %thead
     %tr
       %th From
@@ -1410,7 +1410,7 @@ expected interface each conversation object should have:</p>
           = time_ago_in_words(conversation.most_recent_message_sent_at)
           ago
         %td= conversation.reply_count
-</code></pre><p>Let's explore a typical way to model this in our model directly.</p>
+</code></pre></div><p>Let&rsquo;s explore a typical way to model this in our model directly.</p>
 <h2 id="a-typical-ruby-implementation">A typical Ruby implementation</h2>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/conversation.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Converation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -1452,14 +1452,14 @@ expected interface each conversation object should have:</p>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>This approach is fairly straightforward. We obtain the
 <code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code> from the
-most recent message, which is trivial after we've ordered the <code>messages</code>
+most recent message, which is trivial after we&rsquo;ve ordered the <code>messages</code>
 association by date. The <code>to_name</code> and <code>from_name</code> methods are delegated
 to their respective associations. And <code>reply_count</code> is simple the total
-number of messages, minus one (the initial message doesn't count as a
+number of messages, minus one (the initial message doesn&rsquo;t count as a
 &ldquo;reply&rdquo;).</p>
 <p>This approach offers a number of advantages. For one, it is familiar.
 I believe most Rails developers would be able to understand exactly
-what's going on above. It also locates all of the domain logic within
+what&rsquo;s going on above. It also locates all of the domain logic within
 the <code>Conversation</code> model, making it easy to find.</p>
 <p>Having everything in the <code>Conversation</code> model is actually a blessing
 and a curse. Although everything is easy to find, the model is also
@@ -1487,7 +1487,7 @@ Processing by InboxesController#show as HTML
    (0.4ms)  SELECT COUNT(*) FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 9
   Rendered inboxes/show.html.haml within layouts/application (683.9ms)
 Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)
-</code></pre></div><h2 id="eagerloading">Eager-loading</h2>
+</code></pre></div><h2 id="eager-loading">Eager-loading</h2>
 <p>We can definitely cut down on the N+1 query problem by introducing eager
 loading. In our controller, the <code>conversations</code> exposure is currently
 defined thusly:</p>
@@ -1496,7 +1496,7 @@ defined thusly:</p>
   <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:user</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#00a8c8">User</span><span style="color:#f92672">.</span><span style="color:#111">first</span> <span style="color:#111">}</span>
   <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span> <span style="color:#111">}</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Let's change that to eagerly load its associations:</p>
+</code></pre></div><p>Let&rsquo;s change that to eagerly load its associations:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby">  <span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">:from</span><span style="color:#111">)</span> <span style="color:#111">}</span>
 </code></pre></div><p>With eager-loading in place, the log now looks slightly more reasonable:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Started GET &#34;/&#34; for 127.0.0.1 at 2013-02-11 09:55:24 -0600
@@ -1528,7 +1528,7 @@ SQL view a normal table, and all associations and querying methods work
 like they would with a normal table, with one exception: the records are
 read-only.</p>
 <h2 id="add-a-migration-for-the-view">Add a migration for the view</h2>
-<p>Let's create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
+<p>Let&rsquo;s create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
 conversation. We can do this in a normal migration, but it needs to be
 created with raw SQL:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateConversationSummaries</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
@@ -1544,7 +1544,7 @@ created with raw SQL:</p>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>This is the basic syntax for adding a view with ActiveRecord migrations.
-Our view needs to incorporate <code>to_name</code> and <code>from_name</code>, so let's add
+Our view needs to incorporate <code>to_name</code> and <code>from_name</code>, so let&rsquo;s add
 those fields:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">CREATE</span> <span style="color:#00a8c8">VIEW</span> <span style="color:#111">conversation_summaries</span> <span style="color:#00a8c8">AS</span>
   <span style="color:#00a8c8">SELECT</span> <span style="color:#00a8c8">c</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
@@ -1563,7 +1563,7 @@ that we see what we expect:</p>
   9 | Cat Stevens     | Felionel Richie
 (3 rows)
 </code></pre></div><p>Cool. The <code>id</code> corresponds to the conversation, and <code>to_name</code> and
-<code>from_name</code> columns come from the users table, but it's all displayed to
+<code>from_name</code> columns come from the users table, but it&rsquo;s all displayed to
 us as one table.</p>
 <h2 id="activerecord-associations-for-views">ActiveRecord associations for views</h2>
 <p>Now that our view exists, we can integrate it into our application:</p>
@@ -1576,17 +1576,17 @@ us as one table.</p>
 
   <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
 <span style="color:#00a8c8">end</span>
-</code></pre></div><p>Let's break down what's going on here.</p>
-<p>I've chosen to nest the Summary model within the Conversation
-namespace, mostly to call out the fact that we're doing something
+</code></pre></div><p>Let&rsquo;s break down what&rsquo;s going on here.</p>
+<p>I&rsquo;ve chosen to nest the Summary model within the Conversation
+namespace, mostly to call out the fact that we&rsquo;re doing something
 non-standard. Also, the Summary class only makes sense in the context of
 a Conversation. For that reason, we need to manually set the name of the
 table.</p>
 <p>We must also choose a primary key, because Rails cannot infer it for SQL
 views. The association itself should be familiar. It works like a normal
-<code>has_one`/</code>belongs_to` relationship, except that we override the foreign
+<code>has_one</code>/<code>belongs_to</code> relationship, except that we override the foreign
 key.</p>
-<p>Now that the relationships are set up, let's actually take advantage
+<p>Now that the relationships are set up, let&rsquo;s actually take advantage
 of our new view by changing the implementation of the <code>to_name</code> and
 <code>from_name</code> methods.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -1605,7 +1605,7 @@ of our new view by changing the implementation of the <code>to_name</code> and
 </code></pre></div><p>One the biggest benefits about this approach is that we can <em>eager-load
 a view assocation</em>. We no longer need the <code>to</code> or <code>from</code> associations
 eager-loaded, since we are no longer using any attributes from them in
-the view. Let's update our controller's exposure to only eager-load the
+the view. Let&rsquo;s update our controller&rsquo;s exposure to only eager-load the
 necessary parts:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#111">expose</span><span style="color:#111">(</span><span style="color:#d88200">:conversations</span><span style="color:#111">)</span> <span style="color:#111">{</span> <span style="color:#111">user</span><span style="color:#f92672">.</span><span style="color:#111">conversations</span><span style="color:#f92672">.</span><span style="color:#111">includes</span><span style="color:#111">(</span><span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">:messages</span><span style="color:#111">)</span> <span style="color:#111">}</span>
 </code></pre></div><p>And when we visit the inbox again, the log looks like this:</p>
@@ -1620,10 +1620,10 @@ Processing by InboxesController#show as HTML
   Message Load (0.4ms)  SELECT &#34;messages&#34;.* FROM &#34;messages&#34; WHERE &#34;messages&#34;.&#34;conversation_id&#34; = 9 ORDER BY created_at DESC LIMIT 1
   Rendered inboxes/show.html.haml within layouts/application (10.4ms)
 Completed 200 OK in 13ms (Views: 9.5ms | ActiveRecord: 2.9ms)
-</code></pre></div><p>That's definitely an improvement, albeit a small one. We've pushed data
-from the user model into our SQL view, but we don't need to stop there.</p>
+</code></pre></div><p>That&rsquo;s definitely an improvement, albeit a small one. We&rsquo;ve pushed data
+from the user model into our SQL view, but we don&rsquo;t need to stop there.</p>
 <h2 id="push-it-down">Push it down!</h2>
-<p>Let's update our view migration to include more aggregated information
+<p>Let&rsquo;s update our view migration to include more aggregated information
 about each conversation.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateConversationSummaries</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
@@ -1659,10 +1659,10 @@ still working as expect in the database console:</p>
   8 | Nelly Purrtado  | Cat Stevens     | Except that I&#39;m a cat                  | 2013-02-05 16:45:27.088292  |           0
   9 | Cat Stevens     | Felionel Richie | I&#39;m sorry that you&#39;re feeling that way | 2013-01-30 16:45:27.092443  |           1
 (3 rows)
-</code></pre></div><p>That's a lot of SQL! But actually, all I've added are one join to a
-subquery, and a subselect. Let's review both of these changes.</p>
+</code></pre></div><p>That&rsquo;s a lot of SQL! But actually, all I&rsquo;ve added are one join to a
+subquery, and a subselect. Let&rsquo;s review both of these changes.</p>
 <p>There are many ways to grab the most recent message for a conversation
-in SQL, including using <a href="https://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I've opted for
+in SQL, including using <a href="https://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I&rsquo;ve opted for
 here is a <a href="https://www.postgresql.org/docs/9.2/static/queries-table-expressions.html#QUERIES-SUBQUERIES" title="Postgresql documentation">subquery in the table expression</a>. The subquery
 alone would return rows for only the most recent messages for each
 conversation:</p>
@@ -1677,10 +1677,10 @@ the most recent message. Then, joining against this subquery, we can
 add the <code>body</code> and <code>created_at</code> to the list of projections, naming
 them <code>most_recent_message_body</code> and <code>most_recent_message_sent_at</code>,
 respectively.</p>
-<p>The other thing we've added to the view this iteration is the
+<p>The other thing we&rsquo;ve added to the view this iteration is the
 <code>reply_count</code> column, which is a subselect to get the count. We also
 subtract 1, just as before.</p>
-<p>Let's take a look at our Conversation model now:</p>
+<p>Let&rsquo;s take a look at our Conversation model now:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># before</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
@@ -1750,7 +1750,7 @@ instead with the eager-loading of the the Conversation::Summary model.</p>
 <p>I used this technique in a real-world application. It helped abstract
 some of the mundane details of the inbox and allowed us to think about
 each conversation at a higher level with a summary.</p>
-<p>In fact the app included even more business rules than I've included
+<p>In fact the app included even more business rules than I&rsquo;ve included
 here. Each conversation had to include a read/unread status that updated
 with each sent message. Although it was easily implemented in pure Ruby,
 it cluttered the model and created yet more N+1 queries in the app view.</p>
@@ -1766,14 +1766,14 @@ changing the scope from <code>user.conversations.include(:summary)</code> to
 In this case, when we move data transformation into the SQL view, we
 sacrifice the co-location of the conversation model and the definition
 of its summary. With the summary definition located in the database,
-there's one extra layer of indirection.</p>
-<p>The other tradeoff is that any time we'd like to make a non-trivial
+there&rsquo;s one extra layer of indirection.</p>
+<p>The other tradeoff is that any time we&rsquo;d like to make a non-trivial
 change the view, we actually have to create an entirely new view,
 replacing the old one. If for example, we knew that our inbox was likely
 to change or add fields, the SQL view approach might be too brittle.</p>
 <p>On the other hand, we effectively removed N+1 queries from our
 application and simplified our model considerably. By abstracting the
-conversation's summary into a model backed by a SQL view, we're able
+conversation&rsquo;s summary into a model backed by a SQL view, we&rsquo;re able
 to think of the Summary as an object in its own right. This provides
 a cognitive simplification, but also yields performance gains as the
 dataset grows.</p>
@@ -1814,9 +1814,9 @@ How can we create a homepage that includes all cat pictures for a given category
 all cat pictures for any category below <em>Cat Pictures</em>. Navigating to
 the <em>Funny</em> category would display all of its pictures, as well as the
 pictures for <em>LOLCats</em> and <em>Animated</em>. This is the kind of interaction
-seen on Amazon, for example. The store's categories become like an
+seen on Amazon, for example. The store&rsquo;s categories become like an
 ad-hoc filtering system.</p>
-<p>Here's what the Category class looks like:</p>
+<p>Here&rsquo;s what the Category class looks like:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:parent</span>
 
@@ -1835,11 +1835,11 @@ category. In database speak, modeling a tree like this is known as
 an <em>Adjacency List</em>; each node of the tree can only see a children
 immediately adjacent to it. For this reason, crawling an Adjacency List
 requires recursion. This is actually the database setup common for use
-with the <code>acts_as_tree</code> plugin. Let's see how we can implement the
+with the <code>acts_as_tree</code> plugin. Let&rsquo;s see how we can implement the
 <code>descendents</code> method to get all descendent categories.</p>
 <h2 id="a-simple-ruby-approach">A Simple Ruby Approach</h2>
-<p>As you've probably already guessed, we need to recursively collect
-children for each of our category's children.</p>
+<p>As you&rsquo;ve probably already guessed, we need to recursively collect
+children for each of our category&rsquo;s children.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># ...</span>
 
@@ -1851,7 +1851,7 @@ children for each of our category's children.</p>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>This does the job quite nicely. However, our requirements above state
 that we want all cat pictures for each descendent category, <em>and our
-categories</em>. Right now, we've omitted the root category, self. Let's add
+categories</em>. Right now, we&rsquo;ve omitted the root category, self. Let&rsquo;s add
 a new method to include it into the equation:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># ...</span>
@@ -1875,18 +1875,18 @@ them for each category:</p>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>For a tree like we have above, this is probably good enough. Our tree is
-only 3 levels deep. We've introduced plenty of N+1 queries, but given
-our small dataset, that shouldn't be a huge concern.</p>
+only 3 levels deep. We&rsquo;ve introduced plenty of N+1 queries, but given
+our small dataset, that shouldn&rsquo;t be a huge concern.</p>
 <p>That said, as our store grows, and the tree gets deeper and more
 detailed, this kind of implementation could become a bottleneck. Also,
-because we're doing Array operations on the <code>children</code> collection,
+because we&rsquo;re doing Array operations on the <code>children</code> collection,
 we lose the ability to take advantage of ActiveRelation outside of the
 <code>descendents</code> method itself. Among other things, this means that we
-can't eager-load cat pictures unless we always eager-load them within
+can&rsquo;t eager-load cat pictures unless we always eager-load them within
 the <code>descendents</code> method.</p>
 <p>Surely we can do better.</p>
 <h2 id="sql-with-queries">SQL WITH queries</h2>
-<p>Since we're using PostgreSQL, we can take advantage of its special
+<p>Since we&rsquo;re using PostgreSQL, we can take advantage of its special
 features. In this case, we can use a WITH query. From the <a href="https://www.postgresql.org/docs/9.1/static/queries-with.html" title="WITH queries">PostgreSQL
 documentation</a>:</p>
 <blockquote>
@@ -1907,15 +1907,15 @@ from 1 through 100:</p>
 <!-- raw HTML omitted -->
 <p>The general form of a recursive WITH query is always a non-recursive
 term, then UNION (or UNION ALL), then a recursive term, where only the
-recursive term can contain a reference to the query's own output.</p>
+recursive term can contain a reference to the query&rsquo;s own output.</p>
 </blockquote>
 <p>In other words, the expression contained in the AS statement has two
 parts. The first part is executed just once. The second part, after the
 UNION ALL, is executed until it returns an empty result set.</p>
 <p>Taking advantage of WITH RECURSIVE, we can reduce our tree crawling
-technique from <em>n</em> queries to just 1! Let's how we can use this to crawl
+technique from <em>n</em> queries to just 1! Let&rsquo;s how we can use this to crawl
 our category tree.</p>
-<p>As a reminder, here's what our categories table looks like:</p>
+<p>As a reminder, here&rsquo;s what our categories table looks like:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, parent_id FROM categories;
 
  id |     name     | parent_id 
@@ -1947,21 +1947,21 @@ our category tree.</p>
   4 | Animated     | {1,2,4}
   5 | Classic      | {1,5}
   6 | Renaissance  | {1,5,6}
-</code></pre></div><p>Whoa! That's a lot of SQL. Let's break it down a bit.</p>
+</code></pre></div><p>Whoa! That&rsquo;s a lot of SQL. Let&rsquo;s break it down a bit.</p>
 <h3 id="declare-the-table-expression">Declare the Table Expression</h3>
-<p>First, we declare our &ldquo;temporary table&rdquo; using the WITH syntax. We're
+<p>First, we declare our &ldquo;temporary table&rdquo; using the WITH syntax. We&rsquo;re
 going to call it <code>category_tree</code>. This &ldquo;table&rdquo; has 3 &ldquo;columns&rdquo;: <code>id</code>,
 <code>name</code>, and <code>path</code>. The <code>id</code> and <code>name</code> columns are fairly obvious; they
 refer to corresponding columns on the categories table. The <code>path</code> is an
 array of ids that each row will have. More on this in a bit.</p>
-<h3 id="define-the-nonrecursive-term">Define the Non-recursive Term</h3>
+<h3 id="define-the-non-recursive-term">Define the Non-recursive Term</h3>
 <p>The non-recursive term is next:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">ARRAY</span><span style="color:#111">[</span><span style="color:#111">id</span><span style="color:#111">]</span>
 <span style="color:#00a8c8">FROM</span> <span style="color:#111">categories</span>
 <span style="color:#00a8c8">WHERE</span> <span style="color:#111">parent_id</span> <span style="color:#00a8c8">IS</span> <span style="color:#00a8c8">NULL</span>
 </code></pre></div><p>It grabs the <code>id</code> and <code>name</code> for each top-level category, that is, each
 category that has no parent. It also initializes an array containing just
-its <code>id</code>. On its own, this isn't very interesting, but this array will
+its <code>id</code>. On its own, this isn&rsquo;t very interesting, but this array will
 become helpful during the recursive step of the query.</p>
 <h3 id="define-the-recursive-term">Define the Recursive Term</h3>
 <p>The recursive term is the juiciest bit of the query:</p>
@@ -1969,31 +1969,31 @@ become helpful during the recursive step of the query.</p>
 <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span>
 <span style="color:#00a8c8">JOIN</span> <span style="color:#111">categories</span> <span style="color:#00a8c8">ON</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">parent_id</span><span style="color:#f92672">=</span><span style="color:#111">category_tree</span><span style="color:#111">.</span><span style="color:#111">id</span>
 <span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">ANY</span><span style="color:#111">(</span><span style="color:#111">path</span><span style="color:#111">)</span>
-</code></pre></div><p>Notice that we're selecting from <code>category_tree</code>. By doing this, we're
+</code></pre></div><p>Notice that we&rsquo;re selecting from <code>category_tree</code>. By doing this, we&rsquo;re
 able to use each result set in the subsequent iteration. The first time
 we recurse, the result set will be what we selected in the non-recursive
 term above.</p>
 <p>Given that we have a root result set, we join with <code>categories</code> to find
 its children. From our new result set, we select <code>id</code> and <code>name</code>, as
 before. But this time, we concatenate the child id onto the <code>path</code> array
-using SQL's <code>||</code> operator. Having this materialized path allows us to
+using SQL&rsquo;s <code>||</code> operator. Having this materialized path allows us to
 guard against infinite loops; the WHERE clause makes sure that the row
-we're selecting has not appeared in the path before.</p>
+we&rsquo;re selecting has not appeared in the path before.</p>
 <p>This infinite loop check is important. If two categories pointed at each
 other as parents, the query would never return. Including this check
 prevents such a mistake from killing our server.</p>
 <h3 id="query-the-common-table-expression">Query the Common Table Expression</h3>
 <p>Finally, a WITH query is only useful if you select from it outside of
-its declaration, so we'll do just that:</p>
+its declaration, so we&rsquo;ll do just that:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span><span style="color:#111">;</span>
 </code></pre></div><p>In addition to the infinite loop guard, the path column answers the
 question &ldquo;How did I get here?&rdquo; Like a directory structure on a file
 system, the path demonstrates the ids necessary to get from grandparent
 to parent to child, etc.</p>
-<p>You may have noticed that we're also ordering by the path column.
+<p>You may have noticed that we&rsquo;re also ordering by the path column.
 We do this because the default sort from a recursive query is
 nondeterministic. Normal array sorting works well for us here, and
-groups the categories just like we'd expect, with parents listed before
+groups the categories just like we&rsquo;d expect, with parents listed before
 their children.</p>
 <h2 id="using-with-queries-in-activerecord">Using WITH queries in ActiveRecord</h2>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -2036,13 +2036,13 @@ their children.</p>
 <code>tree_sql_for</code> class method returns a SQL string that can be used with
 other queries. Compared to the WITH query we looked at before, there a
 few differences worth mentioning.</p>
-<p>First, and probably most importantly for our original problem, we've
+<p>First, and probably most importantly for our original problem, we&rsquo;ve
 changed our starting place. The non-recursive term is our &ldquo;start here&rdquo;
-result set. Rather than starting with all top-level categories, we're
+result set. Rather than starting with all top-level categories, we&rsquo;re
 using the id of whichever instance is passed in to scope our tree.</p>
-<p>Another change we've made is to remove the <code>name</code> column from the query.
-It isn't necessary for what we're doing, but made the example easier to
-demonstrate. We're also interpolating the table name. This makes the
+<p>Another change we&rsquo;ve made is to remove the <code>name</code> column from the query.
+It isn&rsquo;t necessary for what we&rsquo;re doing, but made the example easier to
+demonstrate. We&rsquo;re also interpolating the table name. This makes the
 method much more reusable. In fact, we could extract the method to a
 <code>RecursiveTree</code> module to tidy up our class.</p>
 <p>One big advantage of the SQL approach here is that we can create scopes
@@ -2055,7 +2055,7 @@ subcategories. In other words, what used to take 2 database round trips
 for each category in the tree (one to grab children, one to get its
 pictures) will now only take 1 for the entire set.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>Taking advantage of PostgreSQL's advanced features can provide large
+<p>Taking advantage of PostgreSQL&rsquo;s advanced features can provide large
 performance boons, especially when a tree get several levels deep.</p>
 <p>Although using database recursion is an efficient way of improving
 performance with our existing schema, other methods of handling tree
@@ -2084,8 +2084,8 @@ dels/category.rb), which mirrors the code above.</p>
 <p>Suppose you have a storefront application that sells pictures of cats.
 These cat pictures are categorized in meaningful ways. For example,
 there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the
-landing page of the store, you'd like to feature one picture from each
-category. It can't be a random picture from each. You need to feature
+landing page of the store, you&rsquo;d like to feature one picture from each
+category. It can&rsquo;t be a random picture from each. You need to feature
 the cheapest picture from each category, displaying its name and price.</p>
 <p>Also, it turns out that some &ldquo;low&rdquo; prices are very common. For example,
 $9.99 is a common sale price for LOLcats pictures. However, we should
@@ -2096,7 +2096,7 @@ remaining performant?</p>
 <p>As an aside, adding a cat to a Rennaisance painting amplifies its appeal
 ninefold.</p>
 <p><img src="https://s3.amazonaws.com/hashrocket-blog-production/catpictures.com.jpg" alt="catpictures.biz"></p>
-<p>Let's look at some of the ways that we can approach this problem,
+<p>Let&rsquo;s look at some of the ways that we can approach this problem,
 displaying a list of cat pictures that are the cheapest for their
 respective category.</p>
 <h2 id="approach-1-ruby">Approach 1: Ruby</h2>
@@ -2122,7 +2122,7 @@ Category model instead. Although it would be possible to go through
 the Category model to find its cheapest picture, that would lead to an
 &ldquo;n+1&rdquo;, as each category would subsequently need fetch its cat pictures.
 Alternatively, eager-loading all categories with their cat pictures
-would be expensive, and would essentially duplicate what we've done
+would be expensive, and would essentially duplicate what we&rsquo;ve done
 above with the <code>group_by</code>.</p>
 <p>Either way, as you can probably imagine, the above method would become
 more expensive as the data set continued to grow. Additionally, we lose
@@ -2138,7 +2138,7 @@ filtering has to be done in Ruby.</p>
 <ul>
 <li>Expensive (all objects loaded into memory)</li>
 <li>No scope chaining</li>
-<li>Once you go Ruby, you don't go back</li>
+<li>Once you go Ruby, you don&rsquo;t go back</li>
 </ul>
 <h2 id="approach-2-sql-subselects">Approach 2: SQL subselects</h2>
 <p>We can improve performance by doing the filtering at the database level,
@@ -2170,7 +2170,7 @@ that there could be more than one that have that low price for a given
 category. So, depending on the database vendor, we can here find
 &ldquo;distinct&rdquo; rows, according the columns of interest. In Postgresql,
 the syntax for this is <code>DISTINCT ON([column,...])</code>, which will omit
-duplicates of the listed columns. For our purposes, we don't want more
+duplicates of the listed columns. For our purposes, we don&rsquo;t want more
 than one per category, so we distinct on <code>category_id</code>.</p>
 <p>It is worth noting that without an <code>ORDER BY</code> clause, <code>DISTINCT ON</code> is
 nondeterministic: we are not guaranteed to get the same result each
@@ -2193,9 +2193,9 @@ refactor this to return an ActiveRelation instead.</p>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Functionally, this generates the exact same query as before, but allows
-further chaining. Using ActiveRelation's <code>to_sql</code> method, we're able
+further chaining. Using ActiveRelation&rsquo;s <code>to_sql</code> method, we&rsquo;re able
 to build up our inner query without actually executing it. We then
-interpolate that query into what was the outer query, which we've
+interpolate that query into what was the outer query, which we&rsquo;ve
 reduced to calls to <code>where</code>, <code>select</code> and <code>order</code>.</p>
 <p>Pros:</p>
 <ul>
@@ -2210,8 +2210,8 @@ reduced to calls to <code>where</code>, <code>select</code> and <code>order</cod
 </ul>
 <h2 id="approach-3-window-functions">Approach 3: Window functions</h2>
 <p>But there is still another option. The SQL standard defines a concept
-called window functions, which act a lot like aggregates, but don't
-change the result set. From the Postgresql documentation's <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">excellent
+called window functions, which act a lot like aggregates, but don&rsquo;t
+change the result set. From the Postgresql documentation&rsquo;s <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">excellent
 introduction to window functions</a>:</p>
 <blockquote>
 <p>A window function performs a calculation across a set of table rows that
@@ -2221,7 +2221,7 @@ regular aggregate functions, use of a window function does not cause
 rows to become grouped into a single output row - the rows retain their
 separate identities.</p>
 </blockquote>
-<p>Let's see how this would work with our dataset. First of all, let's assume the following cat pictures:</p>
+<p>Let&rsquo;s see how this would work with our dataset. First of all, let&rsquo;s assume the following cat pictures:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
 
  id |         name         | category_id | price 
@@ -2234,10 +2234,10 @@ separate identities.</p>
   4 | Turkleton&#39;s Folly    |           2 | 11.99
   1 | Meowna Lisa          |           2 | 19.99
   8 | Lady Caterly&#39;s Lover |           2 | 22.99
-</code></pre></div><p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton's
+</code></pre></div><p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s
 Folly&rdquo;, which are the cheapest pictures from their categories.</p>
 <p>Whereas a normal aggregate function with <code>GROUP BY</code> would collapse the
-results, a window function retains the original row. Let's consider how
+results, a window function retains the original row. Let&rsquo;s consider how
 this would affect the inner query from the subselect approach above:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
 
@@ -2258,7 +2258,7 @@ this would affect the inner query from the subselect approach above:</p>
            2 | 11.99
            2 | 11.99
            2 | 11.99
-</code></pre></div><p>Above, we've replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
+</code></pre></div><p>Above, we&rsquo;ve replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
 have the original rows with an additional column for this aggregate
 data. This is useful in its own right, but the real power of window
 functions comes from this concept of window framing. The use of
@@ -2281,9 +2281,9 @@ options are possible. For example, consider the following:</p>
   4 | Turkleton&#39;s Folly    |           2 | 11.99 |    1
   1 | Meowna Lisa          |           2 | 19.99 |    2
   8 | Lady Caterly&#39;s Lover |           2 | 22.99 |    3
-</code></pre></div><p>Look familiar? This is essentially the original , except we've added a
+</code></pre></div><p>Look familiar? This is essentially the original , except we&rsquo;ve added a
 new column: its price rank within a window partitioned by <code>category_id</code>.
-It's a mouthful to describe, but we're very close to our original goal
+It&rsquo;s a mouthful to describe, but we&rsquo;re very close to our original goal
 of finding the cheapest cat picture per category. All we need to do now
 is select rows that have a rank of 1.</p>
 <p>Not so fast. Can you spot the issue with the above? The <code>rank()</code> window
@@ -2304,7 +2304,7 @@ numbers.</p>
   1 | Meowna Lisa          |           2 | 19.99 |          2
   8 | Lady Caterly&#39;s Lover |           2 | 22.99 |          3
 </code></pre></div><p>Perfect! Looking at the rows with &ldquo;1&rdquo; as their &ldquo;row_number&rdquo;, we see
-what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton's Folly&rdquo;, which are the
+what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s Folly&rdquo;, which are the
 cheapest pictures from their categories. We can use an <code>IN</code> clause for
 filtering, similar to the previous approach:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
@@ -2320,7 +2320,7 @@ filtering, similar to the previous approach:</p>
 
 </code></pre></div><p>The where clause above filters records that both have an id that appears
 in the subquery next to a rank of 1. Now that we have the SQL down,
-let's convert our Ruby model to take advantage of this window function
+let&rsquo;s convert our Ruby model to take advantage of this window function
 technique:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
@@ -2337,7 +2337,7 @@ technique:</p>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Groovy. Just like before, we can use to the power of ActiveRelation
 to build up our subselect, which then gets interpolated into the
-<code>where</code> clause. I've also prepended <code>id</code> in the <code>where</code> clause with
+<code>where</code> clause. I&rsquo;ve also prepended <code>id</code> in the <code>where</code> clause with
 <code>table_name</code>, to avoid potential ambiguous column problems.</p>
 <p>There is one potential issue with using window functions: limited vendor
 support. While most of the big boys implement window functions (Oracle,
@@ -2356,7 +2356,7 @@ out of luck.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>While they may not be appropriate for every situation, window functions
 are a great tool for your toolbelt. They excel at filtering down rows
-based on aggregate data, or adding aggregate data to the rows you'd
+based on aggregate data, or adding aggregate data to the rows you&rsquo;d
 already like to select.</p>
 <p>For more information about window functions, the Postgres documentation
 is an excellent resource, both for its <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">introduction</a>,
@@ -2380,7 +2380,7 @@ model</a>, which mirrors the code above.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/05/16/easier-atomic-commits/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits">here</a></em></p>
-<p>How do you keep your commits atomic easily? Let's explore one possible approach.</p>
+<p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
 <h2 id="problem">Problem</h2>
 <p>As a practitioner of good source control, you and your team have decided
 to make all of your git commits <a href="http://goo.gl/P95KkZ">atomic</a> within your projects. That is,
@@ -2391,11 +2391,11 @@ to better team cohesion (have you ever gotten upset with another team
 member for committing red?). But in practice, keeping all of your commits
 atomic can present some challenges.</p>
 <p>After doing a bunch of work, making incremental, atomic commits along
-the way, it's time to push your work up. However, when you run <code>git pull --rebase</code>, you find that another team member has made changes since you
+the way, it&rsquo;s time to push your work up. However, when you run <code>git pull --rebase</code>, you find that another team member has made changes since you
 last pushed. Your commits are now sitting on top of a different git
 history. Are all of your commits still atomic? Short of checking out
 every single commit and running the suite, how can you be certain that
-every commit is atomic? What a pain! I don't want to check out every
+every commit is atomic? What a pain! I don&rsquo;t want to check out every
 commit by hand.</p>
 <h2 id="solution">Solution</h2>
 <p>Enter <code>atomically</code>, a simple shell script designed to take the pain out
@@ -2403,7 +2403,7 @@ of checking every commit between your upstream and you. Before pushing,
 you can ensure every commit is atomic by running the script.</p>
 <p>To use, just pass atomically the command as arguments:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rake
-</code></pre></div><p>The above command will start at the current branch's HEAD and run rake.
+</code></pre></div><p>The above command will start at the current branch&rsquo;s HEAD and run rake.
 After that, it will check out the previous commit and run the command
 again. It will do so for all commits between you and origin.</p>
 <p>If you are confident that nothing in your spec suite changed, you can
@@ -2413,7 +2413,7 @@ run only your cucumber features the same way:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">$ atomically rspec
 </code></pre></div><p>Regardless, keeping atomic commits is a vital part of good source
 control, and this tool makes it slightly easier to do so.</p>
-<p>Here's the source of <code>atomically</code>:</p>
+<p>Here&rsquo;s the source of <code>atomically</code>:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
 </span><span style="color:#75715e"></span>
 <span style="color:#00a8c8">if</span> <span style="color:#f92672">[</span> -n <span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git status --porcelain<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span> <span style="color:#f92672">]</span><span style="color:#111">;</span> <span style="color:#00a8c8">then</span>
@@ -2456,10 +2456,10 @@ dotfiles</a>.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"><![CDATA[<p>Sometimes it's useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
-<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller's post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
+    <content type="html" xml:base="https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"><![CDATA[<p>Sometimes it&rsquo;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
+<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller&rsquo;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
 <!-- raw HTML omitted -->
-<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &ldquo;hinder&rdquo;. After that, it's simply a matter of using it:</p>
+<p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &ldquo;hinder&rdquo;. After that, it&rsquo;s simply a matter of using it:</p>
 <pre><code>$ hinder www.google.com
 </code></pre>
 <p>Now when you visit google.com, you should see some marked slowness. To reset, just run:</p>
@@ -2479,7 +2479,7 @@ dotfiles</a>.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2012/03/30/add-untracked-files-in-git/"><![CDATA[<p>I've often been annoyed that there's no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
+    <content type="html" xml:base="https://joshuadavey.com/2012/03/30/add-untracked-files-in-git/"><![CDATA[<p>I&rsquo;ve often been annoyed that there&rsquo;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
 <!-- raw HTML omitted -->
 <p>Just add it to your global git config file at <code>~/.gitconfig</code> and enjoy.</p>
 ]]></content>
@@ -2497,27 +2497,27 @@ dotfiles</a>.</p>
     <content type="html" xml:base="https://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/"><![CDATA[<p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
-context of what I'm working on to see the test result.</p>
-<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay's excellent intro to tmux</a>, I've
+context of what I&rsquo;m working on to see the test result.</p>
+<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
 been using tmux lately as my primary workspace. There are excellent
-<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I've really
+<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I&rsquo;ve really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
-development. But rather than sing tmux's praises, I'd like to talk about
+development. But rather than sing tmux&rsquo;s praises, I&rsquo;d like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
 better.</p>
-<h2 id="other-testrunning-solutions">Other test-running solutions</h2>
+<h2 id="other-test-running-solutions">Other test-running solutions</h2>
 <p>Autotesting gives you immediate feedback, but runs everytime you save a
-file. Even though this often is desired behavior, I can't tell you how
-many times I've saved a feature file, only to immediately notice a typo.
+file. Even though this often is desired behavior, I can&rsquo;t tell you how
+many times I&rsquo;ve saved a feature file, only to immediately notice a typo.
 Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
-<p>I've also tried more editor-embedding techniques of running tests. Both
+<p>I&rsquo;ve also tried more editor-embedding techniques of running tests. Both
 <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
 for the command to finish before I can type, or even navigate again. And
-I can't look at a failure message and my code at the same time.</p>
+I can&rsquo;t look at a failure message and my code at the same time.</p>
 <h2 id="a-faster-feedback-loop">A faster feedback loop</h2>
 <p>A practice that is quickly gaining popularity in the Ruby community is
 isolating your business logic from your persistance logic and framework.
@@ -2527,10 +2527,10 @@ test that class or module in isolation. This has a ton of benefits for
 the longevity of your code, but one of the side benefits is the speed
 increase for running individual specs or tests. This technique is being
 championed by Gary Bernhardt and Corey Haines, among others.</p>
-<p>Because tmux is so scriptable, it isn't hard to send commands to other
+<p>Because tmux is so scriptable, it isn&rsquo;t hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I've created a vim plugin that shortens
-the feedback loop when practicing TDD in a tmux session. It's called
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
+the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 <h2 id="using-tslimevim">Using tslime.vim</h2>
 <p>My typical workflow now involves setting up a tmux session for my
@@ -2545,27 +2545,27 @@ the configured tmux pane. For example, you can use it in the following way:</p>
 </code></pre>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
-open is so common that I've packaged up some useful defaults in
+open is so common that I&rsquo;ve packaged up some useful defaults in
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
 <h2 id="using-turbuxvim">Using turbux.vim</h2>
 <p>Turbux.vim tries to intelligently choose the right spec, test or feature
-to run when you invoke it. If you're in a spec, invoking the plugin
+to run when you invoke it. If you&rsquo;re in a spec, invoking the plugin
 (by default with <code>&lt;leader&gt;t</code>) will run <code>rspec path/to/my_spec.rb</code> in
 the corresponding pane. In a test-unit file, it will run <code>ruby -Itest path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber path/to/my.feature</code>.</p>
-<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&lsquo;s awesomeness, I've also provided some mappings for
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&lsquo;s awesomeness, I&rsquo;ve also provided some mappings for
 when the current file has a corresponding test or spec. For example,
-When I'm in a file that has a corresponding spec, such as a model or
+When I&rsquo;m in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
 <p>Finally, if the plugin is invoked outside the context of any feature
 or spec-related file, it will simply run the most recent test command
 again.</p>
-<p>Also, I've added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
-cucumber scenario. It works by adding the vim cursor's line number to
+<p>Also, I&rsquo;ve added a mapping for <code>&lt;leader&gt;T</code> to run a more focused spec or
+cucumber scenario. It works by adding the vim cursor&rsquo;s line number to
 the rspec or cucumber command.</p>
 <h2 id="conclusion">Conclusion</h2>
-<p>This setup has been really rewarding so far. There's far less context
+<p>This setup has been really rewarding so far. There&rsquo;s far less context
 switching, as I never have to leave my editor. There are also fewer
-surprises. As far as I'm concerned, the faster my feedback, the better.</p>
+surprises. As far as I&rsquo;m concerned, the faster my feedback, the better.</p>
 <p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
@@ -2585,7 +2585,7 @@ merged in.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/"><![CDATA[<p>At <a href="https://www.hashrocket.com">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
-<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author's github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev+jgdavey+therubymug@hashrocket.com">dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
+<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev+jgdavey+therubymug@hashrocket.com">dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
 <p>So I quickly whipped up a zsh completion script, and <em>boom</em>, pairing nirvana.</p>
 <p>To use the completion script, save the following script as <code>_hitch</code> and add it to your <code>fpath</code>:</p>
@@ -2603,10 +2603,10 @@ merged in.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/"><![CDATA[<p>QR codes seem to be everywhere these days. I've seen them in
+    <content type="html" xml:base="https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/"><![CDATA[<p>QR codes seem to be everywhere these days. I&rsquo;ve seen them in
 advertisements on the train, on the back of magazines, and, most
-recently, on someone's wedding invitation. A lot of folks are using
-QR codes as a quick way to share URLs. But that's not all that they
+recently, on someone&rsquo;s wedding invitation. A lot of folks are using
+QR codes as a quick way to share URLs. But that&rsquo;s not all that they
 are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
 <h2 id="qr-code-generation-in-ruby">QR Code Generation in Ruby</h2>
@@ -2615,14 +2615,14 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 <li><a href="http://whomwah.github.com/rqrcode/">rQRCode</a> Pure ruby QR code generator</li>
 <li><a href="https://github.com/harrisj/qrencoder">qrencoder</a> A Ruby wrapper around libqrencode</li>
 </ul>
-<h3 id="rqrcode">rQRCode</h3>
+<h3 id="rqrcode-">rQRCode</h3>
 <ul>
 <li>Pure ruby</li>
 <li>Portable: will run on many Ruby platforms</li>
 <li>Few dependencies</li>
 <li>Relatively slow</li>
 </ul>
-<h3 id="qrencoder">QREncoder</h3>
+<h3 id="qrencoder-">QREncoder</h3>
 <ul>
 <li>Very, very fast</li>
 <li>Uses a C library (libqrencode) that works wherever <code>make</code> does</li>
@@ -2632,13 +2632,13 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 <p>The QR Decoding landscape varies even more than its QR encoding
 counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
-libraries that I've found are:</p>
+libraries that I&rsquo;ve found are:</p>
 <ul>
 <li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
 <li><a href="https://github.com/ecin/zxing.rb">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
 <li><a href="https://github.com/jgdavey/qrdecoder">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
 </ul>
-<h3 id="qrio">Qrio</h3>
+<h3 id="qrio-">Qrio</h3>
 <ul>
 <li>Pure ruby</li>
 <li>Source is readable for ruby developers</li>
@@ -2646,13 +2646,13 @@ libraries that I've found are:</p>
 <li>Only reads in PNG formatted images</li>
 <li>Slower than the other options</li>
 </ul>
-<h3 id="zxingrb">Zxing.rb</h3>
+<h3 id="zxingrb-">Zxing.rb</h3>
 <ul>
 <li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
 <li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
 <li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
 </ul>
-<h3 id="qrdecoder">QRDecoder</h3>
+<h3 id="qrdecoder-">QRDecoder</h3>
 <ul>
 <li>Wrapper for libzxing, a C++ port of the ZXing Java library</li>
 <li>By far the fastest option for MRI</li>
@@ -2660,13 +2660,13 @@ libraries that I've found are:</p>
 <li>You must build <a href="https://github.com/jgdavey/zxing-cpp">libzxing</a> from source (a homebrew package is pending)</li>
 </ul>
 <h2 id="the-bottom-line">The Bottom Line</h2>
-<p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you're on a stack that can install
-libraries and you're using an MRI ruby (1.8 or 1.9), use qrencoder and
+<p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you&rsquo;re on a stack that can install
+libraries and you&rsquo;re using an MRI ruby (1.8 or 1.9), use qrencoder and
 qrdecoder. They are both very fast and awesome. Additionally, their
-APIs complement each other. If you're on Heroku, use rQRCode and qrio.
-They're both pure ruby and play nice with an environment where you can't
-install you're own libraries. If you're on JRuby, use Zxing.rb for
-decoding, and try both rQRCode and qrencoder. I haven't tried qrencoder
+APIs complement each other. If you&rsquo;re on Heroku, use rQRCode and qrio.
+They&rsquo;re both pure ruby and play nice with an environment where you can&rsquo;t
+install you&rsquo;re own libraries. If you&rsquo;re on JRuby, use Zxing.rb for
+decoding, and try both rQRCode and qrencoder. I haven&rsquo;t tried qrencoder
 with JRuby&ndash;or any compiled gems for that matter&ndash;so your mileage may
 vary.</p>
 <p><strong>N.B.</strong> In the interest of full disclosure, I have contributed to both
@@ -2686,8 +2686,8 @@ fits your needs best will largely depend on your stack.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"><![CDATA[<p><!-- raw HTML omitted -->This is still rough, but I'm finding it quite useful:<!-- raw HTML omitted --></p>
-<p>I've converted this to a full-blown VIM plugin: <a href="https://github.com/jgdavey/vim-blockle">https://github.com/jgdavey/vim-blockle</a></p>
+    <content type="html" xml:base="https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"><![CDATA[<p><!-- raw HTML omitted -->This is still rough, but I&rsquo;m finding it quite useful:<!-- raw HTML omitted --></p>
+<p>I&rsquo;ve converted this to a full-blown VIM plugin: <a href="https://github.com/jgdavey/vim-blockle">https://github.com/jgdavey/vim-blockle</a></p>
 ]]></content>
   </entry>
   

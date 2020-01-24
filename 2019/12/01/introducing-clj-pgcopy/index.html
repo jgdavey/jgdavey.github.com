@@ -6,10 +6,10 @@
     <meta name="description" content="Joshua Davey&#39;s Website">
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Introducting clj-pgcopy"/>
-<meta name="twitter:description" content="On a recent project, I was working on an ETL process, where the transform step happened in Clojure. After all of the data had been shaped the way we wanted, we imported the data into a Postgresql database. As with our typical pattern, we used the clojure.java.jdbc/insert-multi! function to insert rows in batches. But the performance for the database insertion wasn&#39;t quite what we were hoping for.
+<meta name="twitter:description" content="On a recent project, I was working on an ETL process, where the transform step happened in Clojure. After all of the data had been shaped the way we wanted, we imported the data into a Postgresql database. As with our typical pattern, we used the clojure.java.jdbc/insert-multi! function to insert rows in batches. But the performance for the database insertion wasn&rsquo;t quite what we were hoping for.
 Although the overhead from org."/>
 <meta property="og:title" content="Introducting clj-pgcopy" />
-<meta property="og:description" content="On a recent project, I was working on an ETL process, where the transform step happened in Clojure. After all of the data had been shaped the way we wanted, we imported the data into a Postgresql database. As with our typical pattern, we used the clojure.java.jdbc/insert-multi! function to insert rows in batches. But the performance for the database insertion wasn&#39;t quite what we were hoping for.
+<meta property="og:description" content="On a recent project, I was working on an ETL process, where the transform step happened in Clojure. After all of the data had been shaped the way we wanted, we imported the data into a Postgresql database. As with our typical pattern, we used the clojure.java.jdbc/insert-multi! function to insert rows in batches. But the performance for the database insertion wasn&rsquo;t quite what we were hoping for.
 Although the overhead from org." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/" />
@@ -25,7 +25,7 @@ Although the overhead from org." />
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -81,16 +81,16 @@ the transform step happened in Clojure. After all of the data
 had been shaped the way we wanted, we imported the data into a
 Postgresql database. As with our typical pattern, we used the
 <code>clojure.java.jdbc/insert-multi!</code> function to insert rows in batches.
-But the performance for the database insertion wasn't quite what we
+But the performance for the database insertion wasn&rsquo;t quite what we
 were hoping for.</p>
 <p>Although the overhead from <code>org.clojure.jdbc</code> is negligible in most
 scenarios, and certainly in virtually all CRUD-like workflows, it can
 become significant with batch insertions at scale: all of the work of
 converting data types to String-y parameters adds up.</p>
 <p>Having previously used the <code>COPY</code> syntax for importing textual
-data like CSVs, I found that Postgresql's <code>COPY</code> also has a binary
+data like CSVs, I found that Postgresql&rsquo;s <code>COPY</code> also has a binary
 variant that allows direct insertion into tables. Because the binary
-on-the-wire representation of Postgresql's data types is virtually
+on-the-wire representation of Postgresql&rsquo;s data types is virtually
 the same as the storage representation, there is significantly less
 overhead for importing using <code>COPY ... FROM STDIN WITH BINARY</code>.</p>
 <p>So, there are immediately two benefits to using the binary <code>COPY</code> approach:</p>
@@ -102,15 +102,15 @@ binary <code>COPY</code> than it does with <code>INSERT</code> statement because
 binary representation so closely mirrors the internal storage
 representation.</li>
 </ol>
-<p>There may be other benefits I'm unaware of, but those two things alone
+<p>There may be other benefits I&rsquo;m unaware of, but those two things alone
 made me curious if there was a way to get the <code>COPY</code> goodness with
 idiomatic Clojure.</p>
 <p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/">https://jdbc.postgresql.org/</a> and
-<a href="https://impossibl.github.io/pgjdbc-ng/">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
+<a href="https://impossibl.github.io/pgjdbc-ng/,">https://impossibl.github.io/pgjdbc-ng/,</a> support putting a connection
 into COPY mode, after which data can be streamed into or out of
-postgresql. However, both drivers don't do anything to help you get
+postgresql. However, both drivers don&rsquo;t do anything to help you get
 the data into the raw format that postgresql expects. For the text
-(default) format, that's basically a tab-delimited or CSV payload.</p>
+(default) format, that&rsquo;s basically a tab-delimited or CSV payload.</p>
 <p>The binary COPY format, however, is a different beast entirely. Each
 postgresql data type has a very specific binary representation. Again,
 while the postgresql jdbc drivers provide a way to stream in or stream
@@ -118,14 +118,14 @@ out COPY data, the data within those streams is left entirely up to
 you. The best library I found to do this kind of serialization was
 <a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
 API.</p>
-<p>That's where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
+<p>That&rsquo;s where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
 their binary represenation, with the hope that using the binary COPY
 style of importing data is as easy to use as clojure.java.jdbc
 methods. The primary API of clj-pgcopy is
 <code>clj-pgcopy.core/copy-into!</code>, which aims to be drop-in compatible with
 most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
 <h2 id="example-usage">Example usage</h2>
-<p>For example, let's say that we have a table of product listings,
+<p>For example, let&rsquo;s say that we have a table of product listings,
 looking like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">create</span> <span style="color:#00a8c8">table</span> <span style="color:#111">inventory</span> <span style="color:#111">(</span>
   <span style="color:#111">guid</span> <span style="color:#111">uuid</span> <span style="color:#00a8c8">primary</span> <span style="color:#00a8c8">key</span><span style="color:#111">,</span>
@@ -134,7 +134,7 @@ looking like this:</p>
   <span style="color:#111">price</span> <span style="color:#111">decimal</span><span style="color:#111">(</span><span style="color:#ae81ff">8</span><span style="color:#111">,</span><span style="color:#ae81ff">2</span><span style="color:#111">)</span><span style="color:#111">,</span>
   <span style="color:#111">average_rating</span> <span style="color:#111">float4</span>
 <span style="color:#111">)</span><span style="color:#111">;</span>
-</code></pre></div><p>And some data we'd like to import that looks like this:</p>
+</code></pre></div><p>And some data we&rsquo;d like to import that looks like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">data</span>
   <span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;d44c2977-0a9f-4d12-88d2-7d85e07ce1e2&#34;</span>,
     <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T23:37:33.701-00:00&#34;</span>,
@@ -258,7 +258,7 @@ consider reasonable default mappings.</p>
 </tr>
 </tbody>
 </table>
-<h3 id="daterelated-mappings">Date-related mappings</h3>
+<h3 id="date-related-mappings">Date-related mappings</h3>
 <table>
 <thead>
 <tr>
@@ -409,7 +409,7 @@ guidance on doing so.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2019</section>
+  <section class="container"> © 2020</section>
 </footer>
 
     </main>

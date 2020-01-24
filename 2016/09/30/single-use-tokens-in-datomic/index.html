@@ -6,10 +6,10 @@
     <meta name="description" content="Joshua Davey&#39;s Website">
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Single-Use Tokens in Datomic"/>
-<meta name="twitter:description" content="Single-use tokens have a variety of security applications. Whether it&#39;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
+<meta name="twitter:description" content="Single-use tokens have a variety of security applications. Whether it&rsquo;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
 Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it)."/>
 <meta property="og:title" content="Single-Use Tokens in Datomic" />
-<meta property="og:description" content="Single-use tokens have a variety of security applications. Whether it&#39;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
+<meta property="og:description" content="Single-use tokens have a variety of security applications. Whether it&rsquo;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
 Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it)." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/" />
@@ -25,7 +25,7 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -76,7 +76,7 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
       </header>
 
       <div>
-        <p>Single-use tokens have a variety of security applications. Whether it's
+        <p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
 a password-reset token, or capturing a financial transaction, there are
 times when something should happen exactly once, atomically. Once a
 token is used, it is invalidated.</p>
@@ -85,12 +85,12 @@ traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
 finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1">1</a><!-- raw HTML omitted --></p>
 <p>But how can we accomplish some like this in Datomic?</p>
-<h2 id="the-worlds-worst-singles-network">The World's Worst Singles Network</h2>
+<h2 id="the-worlds-worst-singles-network">The World&rsquo;s Worst Singles Network</h2>
 <blockquote>
-<p>Welcome to WWSN! We're so excited you're here! On WWSN, you can sign up,
-sign in, and reset your password. It's so simple!</p>
+<p>Welcome to WWSN! We&rsquo;re so excited you&rsquo;re here! On WWSN, you can sign up,
+sign in, and reset your password. It&rsquo;s so simple!</p>
 </blockquote>
-<p>Let's say we have a really simple schema. A user has an email address
+<p>Let&rsquo;s say we have a really simple schema. A user has an email address
 and a bcrypted password:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
   <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/email</span>
@@ -134,18 +134,18 @@ look up the user by that token and update them accordingly:</p>
   <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
     <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
                       <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
-</code></pre></div><p>But there's a problem with this solution. Even though the new password
+</code></pre></div><p>But there&rsquo;s a problem with this solution. Even though the new password
 is asserted in the same transaction that the token is invalidated, the
 opportunity for concurrency problems between threads and/or peers still
 exists.</p>
-<p>Here's why. In between the time that <code>e</code> is first found by its token
+<p>Here&rsquo;s why. In between the time that <code>e</code> is first found by its token
 and its new facts are transacted, somebody else could have already used
 (and deleted) the token. In other words, even though all writes are
 transactional, the reads are not. In practice this is rarely, if ever,
 a problem. <code>(d/db conn)</code> will return the most recent version of the
 database that the peer can get.</p>
 <h2 id="croutons-are-just-stale-bread">Croutons are just stale bread</h2>
-<p>Let's illustrate this possibility of a stale database introducing a bug:</p>
+<p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">stale-db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">)</span><span style="color:#111">)</span>
 
 <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">}</span> <span style="color:#111">params</span>
@@ -170,9 +170,9 @@ database that the peer can get.</p>
 </code></pre></div><p>The user entity <code>e</code> is found both times because the database value is
 immutable. So, the transactions will both succeed.</p>
 <p>The astute reader may have noticed something. I said all writes are
-transactional, but in the second block of code, we're retracting a value
-that's already been retracted. Something must be broken!</p>
-<p>Nothing's broken. This tripped me up at first, but it turns out that
+transactional, but in the second block of code, we&rsquo;re retracting a value
+that&rsquo;s already been retracted. Something must be broken!</p>
+<p>Nothing&rsquo;s broken. This tripped me up at first, but it turns out that
 retractions work just like assertions with regard to <em>redundancy
 elimination</em>.</p>
 <h2 id="the-department-of-redundancy-department">The Department of Redundancy Department</h2>
@@ -185,14 +185,14 @@ transaction would produce redundant datoms, those datoms are filtered
 out, and do not appear a second time in either the indexes or the
 transaction log.</p>
 </blockquote>
-<p>In other words, Datomic is eliminating the redundant retraction: we've
+<p>In other words, Datomic is eliminating the redundant retraction: we&rsquo;ve
 already retracted the token, so the effective datoms of the transaction
 only include the <code>[:db/add ...]</code> of the new password. In this particular
 use case, retractions cannot be used to safeguard us from using a token
 more than once.</p>
 <h2 id="transaction-functions-to-the-rescue">Transaction functions to the rescue</h2>
-<p>Datomic's got us covered. I mentioned before that all writes are
-transactional, and reads are not. That's actually only true on the
+<p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
+transactional, and reads are not. That&rsquo;s actually only true on the
 peers. The transactor itself is guaranteed to always have access to the
 most recent database value at any time. Among other things, this is what
 enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
@@ -200,10 +200,10 @@ enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction
 <code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
 function, it invokes it and splices the result into the rest of the
 transaction. Also, a database function always receives the most recent
-<code>db</code> value as it's first argument. Because you have access to the whole
+<code>db</code> value as it&rsquo;s first argument. Because you have access to the whole
 of the Datomic API, you can leverage this <code>db</code> value to do all sorts of
 things.</p>
-<p>Let's transact the following new schema info into our database:</p>
+<p>Let&rsquo;s transact the following new schema info into our database:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
   <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:db.fn/set-with-token</span>
   <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;Look up entity by token, set attr and value, and retract token&#34;</span>
@@ -222,18 +222,18 @@ things.</p>
 </code></pre></div><p>This function is more generic than our immediate use-case, but I prefer
 to parameterize attributes as well as values in database functions. It
 allows us to re-use the database function for other token fields, and
-won't have to be updated in the schema if we ever change the name our
+won&rsquo;t have to be updated in the schema if we ever change the name our
 token attribute.</p>
-<p>Here's how we use this shiny new function:</p>
+<p>Here&rsquo;s how we use this shiny new function:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">}</span> <span style="color:#111">params</span><span style="color:#111">]</span>
   <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db.fn/set-with-token</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span>
                                            <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span>
 </code></pre></div><p>When we transact this data, the transactor invokes our function using
 the most recent database value. In other words, we are making the lookup
 portion serializable with the rest of the operations.</p>
-<p>If we run this transaction a second time, we'll get the error message.</p>
+<p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
 <h2 id="in-summary">In Summary</h2>
-<p>This kind of transaction atomicity is made possible by Datomic's
+<p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
 single-writer design. Other database systems (e.g. SQL) have to employ
 very complicated isolation patterns like MVVC to allow multiple writers
 while keeping data integrity guarantees. Datomic side-steps those problems by
@@ -253,7 +253,7 @@ used to build up the code examples here.</p>
 pitfalls. Because of the potential for multiple writers, care must be
 taken to satisfy the &ldquo;exactly once&rdquo; requirement. Where possible, a SQL
 client should use a single statement to find, update, and nullify a
-token. When a single statement isn't possible, the use of row-level
+token. When a single statement isn&rsquo;t possible, the use of row-level
 locks can be used. Or, better yet, wrap everything in a transaction with
 serializable isolation level.</p>
 
@@ -273,7 +273,7 @@ serializable isolation level.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2019</section>
+  <section class="container"> © 2020</section>
 </footer>
 
     </main>

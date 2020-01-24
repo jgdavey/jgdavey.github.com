@@ -27,7 +27,7 @@ I started out building a six degress of Kevin Bacon project using Neo4j, a popul
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -92,7 +92,7 @@ executed. I wanted more.</p>
 graph database. Its ability to arbitrarily traverse datoms, when paired with
 the appropriate graph searching algorithm, solved my problem elegantly. This
 technique ended up being fast as well.</p>
-<p>Quick aside: this post assumes a cursory understanding of Datomic. I won't cover
+<p>Quick aside: this post assumes a cursory understanding of Datomic. I won&rsquo;t cover
 the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
 <h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold</h2>
 <p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
@@ -139,14 +139,14 @@ schema:</p>
  <span style="color:#111">]</span>
 
 </code></pre></div><p>In a nutshell, movies have titles and years. Actors have names and movies.
-The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I've declared the
+The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I&rsquo;ve declared the
 <code>:actor/movies</code> attribute as having a cardinality of many.</p>
 <h2 id="using-datalog-queries">Using datalog queries</h2>
 <p>Using datalog and <code>datomic.api/q</code>, we can make graph-like queries fairly easily.
 Because the <code>:where</code> clauses of a datalog query form an implicit join, we can
 join from our starting point to our ending point with relative ease.</p>
 <p>As an example, what if we wanted to know the shortest path or paths from Kevin
-Bacon to Jon Belushi? Let's use a query to find out:</p>
+Bacon to Jon Belushi? Let&rsquo;s use a query to find out:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">datomic.api</span> <span style="color:#d88200">:as</span> <span style="color:#111">d</span> <span style="color:#d88200">:refer</span> <span style="color:#111">[</span><span style="color:#111">q</span> <span style="color:#111">db</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#111">...</span><span style="color:#111">)</span><span style="color:#111">)</span>
 
@@ -164,10 +164,10 @@ Bacon to Jon Belushi? Let's use a query to find out:</p>
 
 <span style="color:#75715e">;=&gt; #{[&#34;Bacon, Kevin (I)&#34; &#34;Animal House (1978)&#34; &#34;Belushi, John&#34;]}</span>
 </code></pre></div><p>That is fine when actors have worked together in a movie (a Bacon Number of 1),
-but doesn't help us solve Bacon numbers when there are 2 or more movies between
+but doesn&rsquo;t help us solve Bacon numbers when there are 2 or more movies between
 the actors. We could add more where clauses to join over two movies, but that
-isn't sustainable. The queries would quickly become too long to reason about.
-This is a prime opportunity to use Datomic's rules.</p>
+isn&rsquo;t sustainable. The queries would quickly become too long to reason about.
+This is a prime opportunity to use Datomic&rsquo;s rules.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">acted-with-rules</span>
   <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
      <span style="color:#111">[</span><span style="color:#111">?e1</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
@@ -213,12 +213,12 @@ using a function like the following:</p>
 structures: it would be trivial to generate those rules to an arbitrary
 depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj">Datomic mbrainz
 sample</a>.</p>
-<h2 id="lowlevel-traversal-for-better-performance">Low-level traversal for better performance</h2>
+<h2 id="low-level-traversal-for-better-performance">Low-level traversal for better performance</h2>
 <p>Having to know the depth at which to traverse the graph is cumbersome. Datomic
 has a distinct advantage of being able to treat your data as local, even if its
 permanent storage lives somewhere else. That means that we can bring our own
 functions to the problem and execute locally, rather than on a database server.
-We can leverage Datomic's <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
+We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
 our own graph-searching algorithm, rather than relying on the query engine.</p>
 <p>Our IMDb actor data is essentially a dense unweighted graph. Because of its
 density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
@@ -275,10 +275,10 @@ generic bidirectional BFS returning all shortest paths might look like this.</p>
             <span style="color:#111">(</span><span style="color:#111">if-let </span><span style="color:#111">[</span><span style="color:#111">all</span> <span style="color:#111">(</span><span style="color:#75af00">overlaps</span> <span style="color:#111">preds</span> <span style="color:#111">q2</span><span style="color:#111">)</span><span style="color:#111">]</span>
               <span style="color:#111">(</span><span style="color:#75af00">find-paths</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#111">set </span><span style="color:#111">all</span><span style="color:#111">)</span><span style="color:#111">)</span>
               <span style="color:#111">(</span><span style="color:#75af00">recur</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span> <span style="color:#111">q2</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
-</code></pre></div><p>There's a lot of code here, including some optimizations and helper functions.
-The important function here is <code>bidirectional-bfs</code>. I won't explain the details
+</code></pre></div><p>There&rsquo;s a lot of code here, including some optimizations and helper functions.
+The important function here is <code>bidirectional-bfs</code>. I won&rsquo;t explain the details
 of the algorithm, but at a high level, it takes in a start and end node and a
-function to be called on any node to get it's &ldquo;neighbors&rdquo;.</p>
+function to be called on any node to get it&rsquo;s &ldquo;neighbors&rdquo;.</p>
 <p>This is a generic, pure function, agnostic of Datomic or our data. In fact, I used
 a simple map as the &ldquo;graph&rdquo; while developing this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">graph</span>
@@ -335,13 +335,13 @@ problems and domains could use other algorithms. The idea, though, is that
 generic graph searching functions can be used directly, since the data is
 effectively local to the peer machine.</p>
 <p>For more Clojure implementations of generic graph searching algorithms,
-<a href="https://github.com/aysylu/loom">loom's</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
+<a href="https://github.com/aysylu/loom">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
 <h2 id="performance">Performance</h2>
-<p>I'm using the above ideas and functions on IMDB's dataset to power
-the project. Once the peer's index caches are warmed, the performance
-is quite good: most searches I've performed between well-known actors complete
+<p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
+the project. Once the peer&rsquo;s index caches are warmed, the performance
+is quite good: most searches I&rsquo;ve performed between well-known actors complete
 in under a second, and in many cases, under 100 ms. I never got results that
-good with Neo4j's cypher query language.</p>
+good with Neo4j&rsquo;s cypher query language.</p>
 <h2 id="source">Source</h2>
 <p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
 
@@ -361,7 +361,7 @@ good with Neo4j's cypher query language.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2019</section>
+  <section class="container"> © 2020</section>
 </footer>
 
     </main>

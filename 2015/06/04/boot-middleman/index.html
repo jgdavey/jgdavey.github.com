@@ -7,11 +7,11 @@
     <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Boot &#43; Middleman: The ClojureScript development environment of my dreams"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
-I&#39;m getting closer to the frontend development environment of my dreams. The combination of editor integration, live browser reload, and not having to manually run commands over and over is time-saving and a pleasure to work with.
+I&rsquo;m getting closer to the frontend development environment of my dreams. The combination of editor integration, live browser reload, and not having to manually run commands over and over is time-saving and a pleasure to work with.
 At Hashrocket, designers and developers work very closely together. Visual design and markup is handled by our designers, who create &ldquo;stubbed out&rdquo; templates in the UI directory."/>
 <meta property="og:title" content="Boot &#43; Middleman: The ClojureScript development environment of my dreams" />
 <meta property="og:description" content="This is a repost. You can find the original here
-I&#39;m getting closer to the frontend development environment of my dreams. The combination of editor integration, live browser reload, and not having to manually run commands over and over is time-saving and a pleasure to work with.
+I&rsquo;m getting closer to the frontend development environment of my dreams. The combination of editor integration, live browser reload, and not having to manually run commands over and over is time-saving and a pleasure to work with.
 At Hashrocket, designers and developers work very closely together. Visual design and markup is handled by our designers, who create &ldquo;stubbed out&rdquo; templates in the UI directory." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2015/06/04/boot-middleman/" />
@@ -27,7 +27,7 @@ At Hashrocket, designers and developers work very closely together. Visual desig
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.60.0" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -79,7 +79,7 @@ At Hashrocket, designers and developers work very closely together. Visual desig
 
       <div>
         <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot + Middleman: The ClojureScript development environment of my dreams">here</a></em></p>
-<p>I'm getting closer to the frontend development environment of my dreams. The
+<p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
 combination of editor integration, live browser reload, and not having to
 manually run commands over and over is time-saving and a pleasure to
 work with.</p>
@@ -87,29 +87,29 @@ work with.</p>
 together. Visual design and markup is handled by our
 designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
 directory</a>.
-It's a process that works very well for us, and
+It&rsquo;s a process that works very well for us, and
 allows us to iteratively add features to an application.</p>
 <p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
 controller</a>,
 available only in development mode.</p>
-<p>I've been using ClojureScript a lot lately, particularly with Om, and
+<p>I&rsquo;ve been using ClojureScript a lot lately, particularly with Om, and
 have missed that directory of collaboration. After all, the designers
 at Hashrocket have a proclivity for HAML and SASS.</p>
-<p>In the past, I've set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
+<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
 handle markup and styles, using <code>middleman build</code>, copying the generated
 CSS files, and eyeballing the generated markup to ensure it matched the
-Om component's markup. Aside from being tedious, it's really easy to
+Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
 get out of sync with a manual process like this. The static resource
 generation should be a part of our build process.</p>
 <p>Enter <a href="https://boot-clj.com">boot</a>.</p>
 <h3 id="using-boot-for-clojurescript-development">Using Boot for ClojureScript development</h3>
-<p>If you're new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
 which is the de facto dependency management and build tool for
 Clojure/Script. Boot is similar to Leiningen, but adds the ability to
 compose tasks to create build pipelines. This composability, along with
 some really smart architectural decisions, is what makes boot a great
 choice for the problem at hand.</p>
-<p>Adzerk's <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
+<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
 is a great way to get started with ClojureScript and boot. Of particular
 note is the <code>build.boot</code> file. It demonstrates how one can build
 up a <code>dev</code> task that watches a directory for changes, rebuilding
@@ -118,7 +118,7 @@ includes the setup necessary for source maps, a development server,
 and the browser-connected REPL. But what I want to add to that pot
 of awesome is the ability to compile HAML and SASS as a part of the
 pipeline.</p>
-<h3 id="bootmiddleman-gluing-everything-together">boot-middleman: Gluing Everything Together</h3>
+<h3 id="boot-middleman-gluing-everything-together">boot-middleman: Gluing Everything Together</h3>
 <p>I had an epiphany one night after working on this problem for a while: I
 can just use Middleman. After all, boot and the ClojureScript compiler
 run on the JVM, and JRuby is easily embeddable. After a short bit, I
@@ -154,7 +154,7 @@ refresh to see the effects.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2019</section>
+  <section class="container"> © 2020</section>
 </footer>
 
     </main>
