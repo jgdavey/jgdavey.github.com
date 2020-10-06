@@ -25,7 +25,7 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -92,7 +92,7 @@ sign in, and reset your password. It&rsquo;s so simple!</p>
 </blockquote>
 <p>Let&rsquo;s say we have a really simple schema. A user has an email address
 and a bcrypted password:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
   <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/email</span>
   <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
   <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
@@ -108,19 +108,19 @@ and a bcrypted password:</p>
   <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
   <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/value</span>
   <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span><span style="color:#111">]</span>
+  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}]</span>
 </code></pre></div><p>Some initial data might be added like this:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
                    <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;jim@example.com&#34;</span>
-                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;jello4stapler&#34;</span><span style="color:#111">)</span><span style="color:#111">}</span>
+                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;jello4stapler&#34;</span><span style="color:#111">)}</span>
                   <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
                    <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;pam@example.com&#34;</span>
-                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;art4evah&#34;</span><span style="color:#111">)</span><span style="color:#111">}</span><span style="color:#111">]</span><span style="color:#111">)</span>
+                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;art4evah&#34;</span><span style="color:#111">)}])</span>
 </code></pre></div><p>Later, one of the users wants to reset their password, so we generate a
 password reset token and persist it:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
                    <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;jim@example.com&#34;</span>
-                   <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">(</span><span style="color:#75af00">generate-secure-random</span><span style="color:#111">)</span><span style="color:#111">}</span><span style="color:#111">]</span><span style="color:#111">)</span>
+                   <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">(</span><span style="color:#75af00">generate-secure-random</span><span style="color:#111">)}])</span>
 </code></pre></div><h2 id="an-initial-approach">An initial approach</h2>
 <p>After receiving an email, they follow the link that includes the
 single-use token in the URL. When they submit their new password, we
@@ -129,11 +129,11 @@ look up the user by that token and update them accordingly:</p>
       <span style="color:#111">token</span> <span style="color:#111">(</span><span style="color:#d88200">:token</span> <span style="color:#111">params</span><span style="color:#111">)</span>
       <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
                <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
-               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]</span><span style="color:#111">]</span>
-              <span style="color:#111">db</span> <span style="color:#111">token</span><span style="color:#111">)</span><span style="color:#111">]</span>
+               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
+              <span style="color:#111">db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
   <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
-                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
+                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
 </code></pre></div><p>But there&rsquo;s a problem with this solution. Even though the new password
 is asserted in the same transaction that the token is invalidated, the
 opportunity for concurrency problems between threads and/or peers still
@@ -146,26 +146,26 @@ a problem. <code>(d/db conn)</code> will return the most recent version of the
 database that the peer can get.</p>
 <h2 id="croutons-are-just-stale-bread">Croutons are just stale bread</h2>
 <p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">stale-db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">)</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">stale-db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">))</span>
 
-<span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">}</span> <span style="color:#111">params</span>
+<span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]}</span> <span style="color:#111">params</span>
       <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
                <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
-               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]</span><span style="color:#111">]</span>
-              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)</span><span style="color:#111">]</span>
+               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
+              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
   <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
-                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
+                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
 
 <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">(</span><span style="color:#d88200">:token</span> <span style="color:#111">params</span><span style="color:#111">)</span>
       <span style="color:#75715e">;; this token still exists because we&#39;re using and &#34;old&#34; db value</span>
       <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
                <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
-               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]</span><span style="color:#111">]</span>
-              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)</span><span style="color:#111">]</span>
+               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
+              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
   <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#d88200">&#34;somethingelse&#34;</span><span style="color:#111">]</span>
-                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#d88200">&#34;somethingelse&#34;</span><span style="color:#111">]</span>
+                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
 
 </code></pre></div><p>The user entity <code>e</code> is found both times because the database value is
 immutable. So, the transactions will both succeed.</p>
@@ -204,7 +204,7 @@ transaction. Also, a database function always receives the most recent
 of the Datomic API, you can leverage this <code>db</code> value to do all sorts of
 things.</p>
 <p>Let&rsquo;s transact the following new schema info into our database:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
   <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:db.fn/set-with-token</span>
   <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;Look up entity by token, set attr and value, and retract token&#34;</span>
   <span style="color:#d88200">:db/fn</span> <span style="color:#f92672">#</span><span style="color:#111">db/fn</span> <span style="color:#111">{</span><span style="color:#d88200">:lang</span> <span style="color:#d88200">&#34;clojure&#34;</span>
@@ -212,22 +212,22 @@ things.</p>
                  <span style="color:#d88200">:code</span> <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">datomic.api/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
                                                 <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span>
                                                 <span style="color:#d88200">:where</span>
-                                                <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span><span style="color:#111">]</span><span style="color:#111">]</span>
-                                              <span style="color:#111">db</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">)</span><span style="color:#111">]</span>
+                                                <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span><span style="color:#111">]]</span>
+                                              <span style="color:#111">db</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">)]</span>
                          <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-                           <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#111">attr</span> <span style="color:#111">value</span><span style="color:#111">]</span>
-                            <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">]</span><span style="color:#111">]</span>
+                           <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#111">attr</span> <span style="color:#111">value</span><span style="color:#111">]</span>
+                            <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">]]</span>
                            <span style="color:#111">(</span><span style="color:#75af00">throw</span> <span style="color:#111">(</span><span style="color:#75af00">ex-info</span> <span style="color:#d88200">&#34;No entity with that token exists&#34;</span>
-                                           <span style="color:#111">{</span><span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">}</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">}</span><span style="color:#111">}</span><span style="color:#111">]</span>
+                                           <span style="color:#111">{</span><span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">}))))}}]</span>
 </code></pre></div><p>This function is more generic than our immediate use-case, but I prefer
 to parameterize attributes as well as values in database functions. It
 allows us to re-use the database function for other token fields, and
 won&rsquo;t have to be updated in the schema if we ever change the name our
 token attribute.</p>
 <p>Here&rsquo;s how we use this shiny new function:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">}</span> <span style="color:#111">params</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[</span><span style="color:#111">[</span><span style="color:#d88200">:db.fn/set-with-token</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span>
-                                           <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span><span style="color:#111">]</span><span style="color:#111">)</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]}</span> <span style="color:#111">params</span><span style="color:#111">]</span>
+  <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db.fn/set-with-token</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span>
+                                           <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]]))</span>
 </code></pre></div><p>When we transact this data, the transactor invokes our function using
 the most recent database value. In other words, we are making the lookup
 portion serializable with the rest of the operations.</p>

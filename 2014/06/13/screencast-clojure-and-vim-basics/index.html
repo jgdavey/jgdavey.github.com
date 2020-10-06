@@ -25,7 +25,7 @@ Vim is a powerful text editor. Clojure is a powerful programming language. While
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -116,7 +116,7 @@ session.</p>
 <p>Let&rsquo;s stay with <code>:Eval</code> for a bit longer. <code>:Eval</code> without any arguments
 will send eval and print the outermost form on the current line. For
 example, let&rsquo;s look at a simple expression.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">])</span>
 </code></pre></div><p>When we have our cursor on this line and type <code>:Eval</code> with no arguments,
 we&rsquo;ll see <code>(2 3 4)</code> printed back.</p>
 <p><code>:Eval</code>, as with many vim commands, can also take a range. So,
@@ -129,7 +129,7 @@ the normal mode mapping for doing a simple eval and print. By default,
 will eval and print the innermost form from the cursor&rsquo;s current
 position.</p>
 <p>To demonstrate what this means, let&rsquo;s look at that expression again.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map inc </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">])</span>
 </code></pre></div><p>When our cursor is on the <code>m</code> of <code>map</code>, and we type <code>cpp</code>, we&rsquo;ll see
 <code>(2 3 4)</code>, just as when we did the plain <code>:Eval</code>. But if we move our
 cursor inside the vector and type <code>cpp</code> again, we&rsquo;ll see that inner form
@@ -140,7 +140,7 @@ demonstrate this, let&rsquo;s consider the following example.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span>
      <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">str</span><span style="color:#111">)</span>
      <span style="color:#111">reverse</span>
-     <span style="color:#111">(</span><span style="color:#75af00">mapv</span> <span style="color:#111">dec</span><span style="color:#111">)</span><span style="color:#111">)</span>
+     <span style="color:#111">(</span><span style="color:#75af00">mapv</span> <span style="color:#111">dec</span><span style="color:#111">))</span>
 
 </code></pre></div><p>In this trivial example, we want to reverse a sequence and decrement
 each number. There&rsquo;s a bug in here, but it&rsquo;s in the middle of the
@@ -159,7 +159,7 @@ for eval-ing.</li>
 the mapping itself: <code>cq</code> is the &ldquo;Clojure Quasi-REPL&rdquo;.</p>
 <p>While we&rsquo;re in this special window, let&rsquo;s type the following, and hit
 enter:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">str </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">]</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#111">map str </span><span style="color:#111">[</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">3</span><span style="color:#111">])</span>
 </code></pre></div><p>Immediately, we can see the issue. Converting each number to a string
 prevents <code>dec</code> from working later on.</p>
 <p>Having to type the whole line again isn&rsquo;t always convenient. For those

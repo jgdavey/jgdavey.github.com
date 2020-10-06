@@ -27,7 +27,7 @@ Problem As a practitioner of good source control, you and your team have decided
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -121,17 +121,17 @@ control, and this tool makes it slightly easier to do so.</p>
 <span style="color:#00a8c8">fi</span>
 
 <span style="color:#111">b</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;</span><span style="color:#00a8c8">$(</span>git symbolic-ref HEAD 2&gt;/dev/null<span style="color:#00a8c8">)</span><span style="color:#d88200">&#34;</span>
-<span style="color:#111">branch</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">`basename </span><span style="color:#111">$b</span><span style="color:#d88200">`</span><span style="color:#d88200">&#34;</span>
+<span style="color:#111">branch</span><span style="color:#f92672">=</span><span style="color:#d88200">&#34;`basename </span><span style="color:#111">$b</span><span style="color:#d88200">`&#34;</span>
 <span style="color:#111">program</span><span style="color:#f92672">=</span><span style="color:#111">$*</span>
 
-reset_branch<span style="color:#f92672">(</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+reset_branch<span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
   git co <span style="color:#111">$branch</span> --quiet
 <span style="color:#f92672">}</span>
 
 git rev-list origin/<span style="color:#d88200">${</span><span style="color:#111">branch</span><span style="color:#111">-master</span><span style="color:#d88200">}</span>..<span style="color:#d88200">${</span><span style="color:#111">branch</span><span style="color:#111">-master</span><span style="color:#d88200">}</span> <span style="color:#111">|</span> <span style="color:#00a8c8">while</span> <span style="color:#111">read</span> rev<span style="color:#111">;</span> <span style="color:#00a8c8">do</span>
   <span style="color:#111">trap</span> <span style="color:#d88200">&#34;exit 1&#34;</span> SIGINT SIGTERM
   <span style="color:#111">echo</span>
-  <span style="color:#111">echo</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">Running at revision </span><span style="color:#111">$rev</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">echo</span> <span style="color:#d88200">&#34;Running at revision </span><span style="color:#111">$rev</span><span style="color:#d88200">&#34;</span>
   <span style="color:#111">echo</span>
   git co <span style="color:#111">$rev</span> --quiet <span style="color:#f92672">&amp;&amp;</span> git clean -fd <span style="color:#f92672">&amp;&amp;</span> <span style="color:#111">$program</span>
   <span style="color:#111">echo</span>
@@ -140,7 +140,7 @@ git rev-list origin/<span style="color:#d88200">${</span><span style="color:#111
 
 reset_branch
 </code></pre></div><p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
-<p>Thanks to Gary Bernhardt for the scripts&rsquo; inspiration,
+<p>Thanks to Gary Bernhardt for the scripts' inspiration,
 <code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions">his
 dotfiles</a>.</p>
 

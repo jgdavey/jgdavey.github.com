@@ -25,7 +25,7 @@ Although the overhead from org." />
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -131,12 +131,12 @@ looking like this:</p>
   <span style="color:#111">guid</span> <span style="color:#111">uuid</span> <span style="color:#00a8c8">primary</span> <span style="color:#00a8c8">key</span><span style="color:#111">,</span>
   <span style="color:#111">created_at</span> <span style="color:#111">timestamptz</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span><span style="color:#111">,</span>
   <span style="color:#111">active</span> <span style="color:#111">boolean</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span> <span style="color:#00a8c8">default</span> <span style="color:#00a8c8">false</span><span style="color:#111">,</span>
-  <span style="color:#111">price</span> <span style="color:#111">decimal</span><span style="color:#111">(</span><span style="color:#ae81ff">8</span><span style="color:#111">,</span><span style="color:#ae81ff">2</span><span style="color:#111">)</span><span style="color:#111">,</span>
+  <span style="color:#111">price</span> <span style="color:#111">decimal</span><span style="color:#111">(</span><span style="color:#ae81ff">8</span><span style="color:#111">,</span><span style="color:#ae81ff">2</span><span style="color:#111">),</span>
   <span style="color:#111">average_rating</span> <span style="color:#111">float4</span>
-<span style="color:#111">)</span><span style="color:#111">;</span>
+<span style="color:#111">);</span>
 </code></pre></div><p>And some data we&rsquo;d like to import that looks like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">data</span>
-  <span style="color:#111">[</span><span style="color:#111">{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;d44c2977-0a9f-4d12-88d2-7d85e07ce1e2&#34;</span>,
+  <span style="color:#111">[{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;d44c2977-0a9f-4d12-88d2-7d85e07ce1e2&#34;</span>,
     <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T23:37:33.701-00:00&#34;</span>,
     <span style="color:#d88200">:active</span> <span style="color:#111">true</span>,
     <span style="color:#d88200">:price</span> <span style="color:#ae81ff">998.49</span><span style="color:#111">M</span>,
@@ -145,20 +145,20 @@ looking like this:</p>
     <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T16:22:35.826-00:00&#34;</span>,
     <span style="color:#d88200">:active</span> <span style="color:#111">false</span>,
     <span style="color:#d88200">:price</span> <span style="color:#ae81ff">847.90</span><span style="color:#111">M</span>,
-    <span style="color:#d88200">:average_rating</span> <span style="color:#ae81ff">2.1</span><span style="color:#111">}</span><span style="color:#111">]</span><span style="color:#111">)</span>
+    <span style="color:#d88200">:average_rating</span> <span style="color:#ae81ff">2.1</span><span style="color:#111">}])</span>
 </code></pre></div><p>A typical way to import data with <code>clojure.java.jdbc/insert-multi!</code> would look like this:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
-      <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)</span><span style="color:#111">]</span>
+      <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)]</span>
   <span style="color:#111">(</span><span style="color:#75af00">jdbc/with-db-connection</span> <span style="color:#111">[</span><span style="color:#111">conn</span> <span style="color:#111">conn-spec</span><span style="color:#111">]</span>
-    <span style="color:#111">(</span><span style="color:#75af00">jdbc/insert-multi!</span> <span style="color:#111">conn</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+    <span style="color:#111">(</span><span style="color:#75af00">jdbc/insert-multi!</span> <span style="color:#111">conn</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">))))</span>
 </code></pre></div><p>To use <code>clj-pgcopy</code>, the only thing that needs to change is adding a
 <code>require</code>, and changing the callsite:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">clj-pgcopy.core</span> <span style="color:#d88200">:as</span> <span style="color:#111">copy</span><span style="color:#111">]</span><span style="color:#111">)</span>
+<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">clj-pgcopy.core</span> <span style="color:#d88200">:as</span> <span style="color:#111">copy</span><span style="color:#111">])</span>
 
 <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
-      <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)</span><span style="color:#111">]</span>
+      <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)]</span>
   <span style="color:#111">(</span><span style="color:#75af00">jdbc/with-db-connection</span> <span style="color:#111">[</span><span style="color:#111">conn</span> <span style="color:#111">conn-spec</span><span style="color:#111">]</span>
-    <span style="color:#111">(</span><span style="color:#75af00">copy/copy-into!</span> <span style="color:#111">(</span><span style="color:#d88200">:connection</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span><span style="color:#111">)</span>
+    <span style="color:#111">(</span><span style="color:#75af00">copy/copy-into!</span> <span style="color:#111">(</span><span style="color:#d88200">:connection</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">))))</span>
 </code></pre></div><p>Please note that <code>copy-into!</code> expects a &ldquo;raw&rdquo; JDBC connection, not a
 Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 <h2 id="performance">Performance</h2>

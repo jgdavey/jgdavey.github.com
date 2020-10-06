@@ -29,7 +29,7 @@ There are many possible implementations for modeling an inbox. I&rsquo;ve gone w
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -96,8 +96,8 @@ part of the Message object.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># app/models/conversation.rb</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># fields: to_id, from_id, subject</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
   <span style="color:#111">has_many</span> <span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">dependent</span><span style="color:#111">:</span> <span style="color:#d88200">:destroy</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:conversation</span>
 <span style="color:#00a8c8">end</span>
 
@@ -153,29 +153,29 @@ expected interface each conversation object should have:</p>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Converation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># associations, etc...</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_body</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_body</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">body</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_sent_at</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_sent_at</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">created_at</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">reply_count</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">reply_count</span>
     <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">size</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>
-  <span style="color:#f92672"></span><span style="color:#00a8c8">end</span>
+  <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">to_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">to_name</span>
     <span style="color:#111">to</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">from_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">from_name</span>
     <span style="color:#111">from</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message</span>
-    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||</span><span style="color:#f92672">=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message</span>
+    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 
@@ -184,7 +184,7 @@ expected interface each conversation object should have:</p>
   <span style="color:#75715e"># associations, etc...</span>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">by_date</span>
-    <span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">created_at DESC</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
+    <span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;created_at DESC&#34;</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>This approach is fairly straightforward. We obtain the
@@ -269,14 +269,14 @@ read-only.</p>
 conversation. We can do this in a normal migration, but it needs to be
 created with raw SQL:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateConversationSummaries</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#00a8c8">CREATE</span> <span style="color:#00a8c8">VIEW</span> <span style="color:#111">conversation_summaries</span> <span style="color:#00a8c8">AS</span>
         <span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">...</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">down</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">down</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&#39;DROP VIEW conversation_summaries&#39;</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
@@ -306,12 +306,12 @@ us as one table.</p>
 <p>Now that our view exists, we can integrate it into our application:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#00a8c8">class</span> <span style="color:#75af00">Summary</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">conversation_summaries</span><span style="color:#d88200">&#34;</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
-    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;conversation_summaries&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;id&#34;</span>
+    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Let&rsquo;s break down what&rsquo;s going on here.</p>
 <p>I&rsquo;ve chosen to nest the Summary model within the Conversation
@@ -329,12 +329,12 @@ of our new view by changing the implementation of the <code>to_name</code> and
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#75715e"># ...</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">to_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">to_name</span>
     <span style="color:#75715e"># Used to be to.name</span>
     <span style="color:#111">summary</span><span style="color:#f92672">.</span><span style="color:#111">to_name</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">from_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">from_name</span>
     <span style="color:#75715e"># Used to be from.name</span>
     <span style="color:#111">summary</span><span style="color:#f92672">.</span><span style="color:#111">from_name</span>
   <span style="color:#00a8c8">end</span>
@@ -363,7 +363,7 @@ from the user model into our SQL view, but we don&rsquo;t need to stop there.</p
 <p>Let&rsquo;s update our view migration to include more aggregated information
 about each conversation.</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CreateConversationSummaries</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">up</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">up</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#00a8c8">CREATE</span> <span style="color:#00a8c8">VIEW</span> <span style="color:#111">conversation_summaries</span> <span style="color:#00a8c8">AS</span>
         <span style="color:#00a8c8">SELECT</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">,</span>
@@ -371,7 +371,7 @@ about each conversation.</p>
         <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">name</span> <span style="color:#111">as</span> <span style="color:#111">to_name</span><span style="color:#111">,</span>
         <span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">body</span> <span style="color:#111">as</span> <span style="color:#111">most_recent_message_body</span><span style="color:#111">,</span>
         <span style="color:#111">m</span><span style="color:#f92672">.</span><span style="color:#111">created_at</span> <span style="color:#111">as</span> <span style="color:#111">most_recent_message_sent_at</span><span style="color:#111">,</span>
-        <span style="color:#111">(</span><span style="color:#111">select</span> <span style="color:#111">count</span><span style="color:#111">(</span><span style="color:#f92672">*</span><span style="color:#111">)</span> <span style="color:#111">from</span> <span style="color:#111">messages</span> <span style="color:#111">m2</span> <span style="color:#111">where</span> <span style="color:#111">m2</span><span style="color:#f92672">.</span><span style="color:#111">conversation_id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">)</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672"></span><span style="color:#111">as</span> <span style="color:#111">reply_count</span>
+        <span style="color:#111">(</span><span style="color:#111">select</span> <span style="color:#111">count</span><span style="color:#111">(</span><span style="color:#f92672">*</span><span style="color:#111">)</span> <span style="color:#111">from</span> <span style="color:#111">messages</span> <span style="color:#111">m2</span> <span style="color:#111">where</span> <span style="color:#111">m2</span><span style="color:#f92672">.</span><span style="color:#111">conversation_id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">id</span><span style="color:#111">)</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span> <span style="color:#111">as</span> <span style="color:#111">reply_count</span>
         <span style="color:#00a8c8">FROM</span> <span style="color:#111">conversations</span> <span style="color:#111">c</span>
         <span style="color:#111">inner</span> <span style="color:#111">join</span> <span style="color:#111">users</span> <span style="color:#111">t</span> <span style="color:#111">on</span> <span style="color:#111">t</span><span style="color:#f92672">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">to_id</span>
         <span style="color:#111">inner</span> <span style="color:#111">join</span> <span style="color:#111">users</span> <span style="color:#111">f</span> <span style="color:#111">on</span> <span style="color:#111">f</span><span style="color:#f92672">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#111">c</span><span style="color:#f92672">.</span><span style="color:#111">from_id</span>
@@ -383,7 +383,7 @@ about each conversation.</p>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">down</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">down</span>
     <span style="color:#111">execute</span> <span style="color:#d88200">&#39;DROP VIEW conversation_summaries&#39;</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
@@ -420,33 +420,33 @@ subtract 1, just as before.</p>
 <p>Let&rsquo;s take a look at our Conversation model now:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#75715e"># before</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
   <span style="color:#111">has_many</span> <span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">dependent</span><span style="color:#111">:</span> <span style="color:#d88200">:destroy</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:conversation</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_body</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_body</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">body</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message_sent_at</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message_sent_at</span>
     <span style="color:#111">most_recent_message</span><span style="color:#f92672">.</span><span style="color:#111">created_at</span> <span style="color:#00a8c8">if</span> <span style="color:#111">most_recent_message</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">reply_count</span>
-    <span style="color:#f92672">[</span><span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">size</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span><span style="color:#f92672"></span><span style="color:#111">,</span> <span style="color:#ae81ff">0</span><span style="color:#f92672"></span><span style="color:#f92672">]</span><span style="color:#f92672">.</span><span style="color:#111">max</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">reply_count</span>
+    <span style="color:#f92672">[</span><span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">size</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span><span style="color:#111">,</span> <span style="color:#ae81ff">0</span><span style="color:#f92672">].</span><span style="color:#111">max</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">to_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">to_name</span>
     <span style="color:#111">to</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">from_name</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">from_name</span>
     <span style="color:#111">from</span><span style="color:#f92672">.</span><span style="color:#111">name</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00"></span><span style="color:#f92672"></span><span style="color:#75af00">most_recent_message</span>
-    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||</span><span style="color:#f92672">=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
+  <span style="color:#00a8c8">def</span> <span style="color:#75af00">most_recent_message</span>
+    <span style="color:#111">@most_recent_message</span> <span style="color:#f92672">||=</span> <span style="color:#111">messages</span><span style="color:#f92672">.</span><span style="color:#111">by_date</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 
@@ -454,15 +454,15 @@ subtract 1, just as before.</p>
 <span style="color:#75715e"># after</span>
 <span style="color:#00a8c8">class</span> <span style="color:#75af00">Conversation</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#00a8c8">class</span> <span style="color:#75af00">Summary</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">conversation_summaries</span><span style="color:#d88200">&#34;</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
-    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">table_name</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;conversation_summaries&#34;</span>
+    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">primary_key</span> <span style="color:#f92672">=</span> <span style="color:#d88200">&#34;id&#34;</span>
+    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:conversation</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
   <span style="color:#00a8c8">end</span>
 
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">User</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:to</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
+  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:from</span><span style="color:#111">,</span> <span style="color:#d88200">class_name</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;User&#34;</span>
   <span style="color:#111">has_many</span> <span style="color:#d88200">:messages</span><span style="color:#111">,</span> <span style="color:#d88200">dependent</span><span style="color:#111">:</span> <span style="color:#d88200">:destroy</span><span style="color:#111">,</span> <span style="color:#d88200">inverse_of</span><span style="color:#111">:</span> <span style="color:#d88200">:conversation</span>
-  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;</span><span style="color:#d88200">id</span><span style="color:#d88200">&#34;</span>
+  <span style="color:#111">has_one</span> <span style="color:#d88200">:summary</span><span style="color:#111">,</span> <span style="color:#d88200">foreign_key</span><span style="color:#111">:</span> <span style="color:#d88200">&#34;id&#34;</span>
 
   <span style="color:#111">delegate</span> <span style="color:#d88200">:most_recent_message_sent_at</span><span style="color:#111">,</span> <span style="color:#d88200">:most_recent_message_body</span><span style="color:#111">,</span>
     <span style="color:#d88200">:reply_count</span><span style="color:#111">,</span> <span style="color:#d88200">:to_name</span><span style="color:#111">,</span> <span style="color:#d88200">:from_name</span><span style="color:#111">,</span> <span style="color:#d88200">to</span><span style="color:#111">:</span> <span style="color:#d88200">:summary</span>

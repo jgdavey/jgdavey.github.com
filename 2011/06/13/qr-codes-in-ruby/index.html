@@ -23,7 +23,7 @@
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -86,14 +86,14 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 <li><a href="http://whomwah.github.com/rqrcode/">rQRCode</a> Pure ruby QR code generator</li>
 <li><a href="https://github.com/harrisj/qrencoder">qrencoder</a> A Ruby wrapper around libqrencode</li>
 </ul>
-<h3 id="rqrcode-">rQRCode</h3>
+<h3 id="rqrcode">rQRCode</h3>
 <ul>
 <li>Pure ruby</li>
 <li>Portable: will run on many Ruby platforms</li>
 <li>Few dependencies</li>
 <li>Relatively slow</li>
 </ul>
-<h3 id="qrencoder-">QREncoder</h3>
+<h3 id="qrencoder">QREncoder</h3>
 <ul>
 <li>Very, very fast</li>
 <li>Uses a C library (libqrencode) that works wherever <code>make</code> does</li>
@@ -109,7 +109,7 @@ libraries that I&rsquo;ve found are:</p>
 <li><a href="https://github.com/ecin/zxing.rb">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
 <li><a href="https://github.com/jgdavey/qrdecoder">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
 </ul>
-<h3 id="qrio-">Qrio</h3>
+<h3 id="qrio">Qrio</h3>
 <ul>
 <li>Pure ruby</li>
 <li>Source is readable for ruby developers</li>
@@ -117,13 +117,13 @@ libraries that I&rsquo;ve found are:</p>
 <li>Only reads in PNG formatted images</li>
 <li>Slower than the other options</li>
 </ul>
-<h3 id="zxingrb-">Zxing.rb</h3>
+<h3 id="zxingrb">Zxing.rb</h3>
 <ul>
 <li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
 <li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
 <li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
 </ul>
-<h3 id="qrdecoder-">QRDecoder</h3>
+<h3 id="qrdecoder">QRDecoder</h3>
 <ul>
 <li>Wrapper for libzxing, a C++ port of the ZXing Java library</li>
 <li>By far the fastest option for MRI</li>

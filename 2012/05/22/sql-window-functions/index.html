@@ -25,7 +25,7 @@ Suppose you have a storefront application that sells pictures of cats. These cat
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.63.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -147,11 +147,11 @@ rather than loading all cat pictures into memory each time.</p>
     <span style="color:#111">find_by_sql</span> <span style="color:#d88200">&lt;&lt;-SQL
 </span><span style="color:#d88200"></span>      <span style="color:#00a8c8">SELECT</span> <span style="color:#00a8c8">DISTINCT</span> <span style="color:#00a8c8">ON</span><span style="color:#111">(</span><span style="color:#111">category_id</span><span style="color:#111">)</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">*</span>
       <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-      <span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">(</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">price</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
+      <span style="color:#00a8c8">WHERE</span> <span style="color:#111">((</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">price</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
         <span style="color:#00a8c8">SELECT</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">min</span><span style="color:#111">(</span><span style="color:#111">price</span><span style="color:#111">)</span>
         <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
         <span style="color:#00a8c8">GROUP</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span>
-      <span style="color:#111">)</span><span style="color:#111">)</span>
+      <span style="color:#111">))</span>
       <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ASC</span><span style="color:#111">,</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">name</span> <span style="color:#00a8c8">ASC</span>
     <span style="color:#00a8c8">SQL</span>
   <span style="color:#00a8c8">end</span>
@@ -180,12 +180,12 @@ refactor this to return an ActiveRelation instead.</p>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">(category_id, price) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">category_id_and_lowest_price_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">DISTINCT ON(category_id) </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.*</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">category_id ASC, </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.name ASC</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
+    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(category_id, price) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">category_id_and_lowest_price_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;DISTINCT ON(category_id) </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.*&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id ASC, </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.name ASC&#34;</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">category_id_and_lowest_price_sql</span>
-    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">category_id, min(price)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">group</span><span style="color:#111">(</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
+    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id, min(price)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">group</span><span style="color:#111">(</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Functionally, this generates the exact same query as before, but allows
@@ -202,7 +202,7 @@ reduced to calls to <code>where</code>, <code>select</code> and <code>order</cod
 <ul>
 <li>Nested subselects</li>
 <li>Very difficult to read in application code</li>
-<li>The use of <code>DISTINCT ON</code> - only some RDBMS&rsquo; have such functionality</li>
+<li>The use of <code>DISTINCT ON</code> - only some RDBMS' have such functionality</li>
 </ul>
 <h2 id="approach-3-window-functions">Approach 3: Window functions</h2>
 <p>But there is still another option. The SQL standard defines a concept
@@ -306,9 +306,9 @@ filtering, similar to the previous approach:</p>
 <div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
 <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
 <span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
-  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">(</span><span style="color:#111">)</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
+  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">()</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-<span style="color:#111">)</span><span style="color:#111">;</span>
+<span style="color:#111">);</span>
 </code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id | category_id |         name         | price 
 ----+-------------+----------------------+-------
   5 |           1 | Hugs not Drugs       |  9.99
@@ -323,12 +323,12 @@ technique:</p>
     <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">(</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id, 1) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">price_rank_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span>
+    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id, 1) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">price_rank_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">end</span>
 
   <span style="color:#00a8c8">private</span>
   <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">price_rank_sql</span>
-    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)</span><span style="color:#d88200">&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
+    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
   <span style="color:#00a8c8">end</span>
 <span style="color:#00a8c8">end</span>
 </code></pre></div><p>Groovy. Just like before, we can use to the power of ActiveRelation
