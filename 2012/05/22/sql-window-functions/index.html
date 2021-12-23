@@ -12,9 +12,10 @@ Suppose you have a storefront application that sells pictures of cats. These cat
 <meta property="og:description" content="This is a repost. You can find the original here
 Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&rsquo;d like to feature one picture from each category. It can&rsquo;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://joshuadavey.com/2012/05/22/sql-window-functions/" />
+<meta property="og:url" content="https://joshuadavey.com/2012/05/22/sql-window-functions/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2012-05-22T00:00:00+00:00" />
 <meta property="article:modified_time" content="2012-05-22T00:00:00+00:00" />
+
 
     <base href="https://joshuadavey.com/2012/05/22/sql-window-functions/">
     <title>
@@ -25,7 +26,7 @@ Suppose you have a storefront application that sells pictures of cats. These cat
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.91.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -99,7 +100,7 @@ respective category.</p>
 <p>Implementing the solution in Ruby is fairly straightforward.
 <!-- raw HTML omitted -->ActiveSupport<!-- raw HTML omitted --> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
 collections, and we can use those to help us cut down on some typing.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
@@ -139,7 +140,7 @@ filtering has to be done in Ruby.</p>
 <h2 id="approach-2-sql-subselects">Approach 2: SQL subselects</h2>
 <p>We can improve performance by doing the filtering at the database level,
 rather than loading all cat pictures into memory each time.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
@@ -175,7 +176,7 @@ cat picture alphabetically will show up.</p>
 <p>We can improve the implementation above by making it a true chainable
 scope. Whereas <code>find_by_sql</code> returns an array of objects, we can
 refactor this to return an ActiveRelation instead.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
   <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
@@ -218,7 +219,7 @@ rows to become grouped into a single output row - the rows retain their
 separate identities.</p>
 </blockquote>
 <p>Let&rsquo;s see how this would work with our dataset. First of all, let&rsquo;s assume the following cat pictures:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
 
  id |         name         | category_id | price 
 ----+----------------------+-------------+-------
@@ -235,14 +236,14 @@ Folly&rdquo;, which are the cheapest pictures from their categories.</p>
 <p>Whereas a normal aggregate function with <code>GROUP BY</code> would collapse the
 results, a window function retains the original row. Let&rsquo;s consider how
 this would affect the inner query from the subselect approach above:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
 
  category_id |  min  
 -------------+-------
            1 |  9.99
            2 | 11.99
 
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
 
  category_id |  min  
 -------------+-------
@@ -265,7 +266,7 @@ window frame effectively has its own result set, according to the
 defined partition.</p>
 <p>When a window frame is ordered, using an <code>ORDER BY</code> clause, even more
 options are possible. For example, consider the following:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
 
  id |         name         | category_id | price | rank 
 ----+----------------------+-------------+-------+------
@@ -287,7 +288,7 @@ function assigns the same rank to ties, but we need the first one
 alphabetically in the case of &ldquo;ties&rdquo;. We can remedy that by using a
 different window function, <code>row_number()</code>, which guarantees different
 numbers.</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, row_number() OVER (PARTITION BY category_id ORDER BY price, name) FROM cat_pictures;
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, row_number() OVER (PARTITION BY category_id ORDER BY price, name) FROM cat_pictures;
 
  id |         name         | category_id | price | row_number 
 ----+----------------------+-------------+-------+------------
@@ -303,13 +304,13 @@ numbers.</p>
 what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s Folly&rdquo;, which are the
 cheapest pictures from their categories. We can use an <code>IN</code> clause for
 filtering, similar to the previous approach:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
 <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
 <span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
   <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">()</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
   <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
 <span style="color:#111">);</span>
-</code></pre></div><div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id | category_id |         name         | price 
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id | category_id |         name         | price 
 ----+-------------+----------------------+-------
   5 |           1 | Hugs not Drugs       |  9.99
   4 |           2 | Turkleton&#39;s Folly    | 11.99
@@ -318,7 +319,7 @@ filtering, similar to the previous approach:</p>
 in the subquery next to a rank of 1. Now that we have the SQL down,
 let&rsquo;s convert our Ruby model to take advantage of this window function
 technique:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
   <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
     <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
 
@@ -380,7 +381,7 @@ model</a>, which mirrors the code above.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2020</section>
+  <section class="container"> © 2021</section>
 </footer>
 
     </main>
@@ -396,6 +397,5 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
   </body>
 </html>

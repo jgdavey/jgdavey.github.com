@@ -12,9 +12,10 @@ Although the overhead from org."/>
 <meta property="og:description" content="On a recent project, I was working on an ETL process, where the transform step happened in Clojure. After all of the data had been shaped the way we wanted, we imported the data into a Postgresql database. As with our typical pattern, we used the clojure.java.jdbc/insert-multi! function to insert rows in batches. But the performance for the database insertion wasn&rsquo;t quite what we were hoping for.
 Although the overhead from org." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/" />
+<meta property="og:url" content="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-12-01T00:00:00+00:00" />
 <meta property="article:modified_time" content="2019-12-01T00:00:00+00:00" />
+
 
     <base href="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/">
     <title>
@@ -25,7 +26,7 @@ Although the overhead from org." />
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.91.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -106,7 +107,7 @@ representation.</li>
 made me curious if there was a way to get the <code>COPY</code> goodness with
 idiomatic Clojure.</p>
 <p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/">https://jdbc.postgresql.org/</a> and
-<a href="https://impossibl.github.io/pgjdbc-ng/,">https://impossibl.github.io/pgjdbc-ng/,</a> support putting a connection
+<a href="https://impossibl.github.io/pgjdbc-ng/">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
 into COPY mode, after which data can be streamed into or out of
 postgresql. However, both drivers don&rsquo;t do anything to help you get
 the data into the raw format that postgresql expects. For the text
@@ -127,7 +128,7 @@ most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p
 <h2 id="example-usage">Example usage</h2>
 <p>For example, let&rsquo;s say that we have a table of product listings,
 looking like this:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">create</span> <span style="color:#00a8c8">table</span> <span style="color:#111">inventory</span> <span style="color:#111">(</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">create</span> <span style="color:#00a8c8">table</span> <span style="color:#111">inventory</span> <span style="color:#111">(</span>
   <span style="color:#111">guid</span> <span style="color:#111">uuid</span> <span style="color:#00a8c8">primary</span> <span style="color:#00a8c8">key</span><span style="color:#111">,</span>
   <span style="color:#111">created_at</span> <span style="color:#111">timestamptz</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span><span style="color:#111">,</span>
   <span style="color:#111">active</span> <span style="color:#111">boolean</span> <span style="color:#00a8c8">not</span> <span style="color:#00a8c8">null</span> <span style="color:#00a8c8">default</span> <span style="color:#00a8c8">false</span><span style="color:#111">,</span>
@@ -135,7 +136,7 @@ looking like this:</p>
   <span style="color:#111">average_rating</span> <span style="color:#111">float4</span>
 <span style="color:#111">);</span>
 </code></pre></div><p>And some data we&rsquo;d like to import that looks like this:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">data</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">data</span>
   <span style="color:#111">[{</span><span style="color:#d88200">:guid</span> <span style="color:#f92672">#</span><span style="color:#111">uuid</span> <span style="color:#d88200">&#34;d44c2977-0a9f-4d12-88d2-7d85e07ce1e2&#34;</span>,
     <span style="color:#d88200">:created_at</span> <span style="color:#f92672">#</span><span style="color:#111">inst</span> <span style="color:#d88200">&#34;2019-12-01T23:37:33.701-00:00&#34;</span>,
     <span style="color:#d88200">:active</span> <span style="color:#111">true</span>,
@@ -147,13 +148,13 @@ looking like this:</p>
     <span style="color:#d88200">:price</span> <span style="color:#ae81ff">847.90</span><span style="color:#111">M</span>,
     <span style="color:#d88200">:average_rating</span> <span style="color:#ae81ff">2.1</span><span style="color:#111">}])</span>
 </code></pre></div><p>A typical way to import data with <code>clojure.java.jdbc/insert-multi!</code> would look like this:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
       <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)]</span>
   <span style="color:#111">(</span><span style="color:#75af00">jdbc/with-db-connection</span> <span style="color:#111">[</span><span style="color:#111">conn</span> <span style="color:#111">conn-spec</span><span style="color:#111">]</span>
     <span style="color:#111">(</span><span style="color:#75af00">jdbc/insert-multi!</span> <span style="color:#111">conn</span> <span style="color:#d88200">:inventory</span> <span style="color:#111">cols</span> <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">-&gt;tuple</span> <span style="color:#111">data</span><span style="color:#111">))))</span>
 </code></pre></div><p>To use <code>clj-pgcopy</code>, the only thing that needs to change is adding a
 <code>require</code>, and changing the callsite:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">clj-pgcopy.core</span> <span style="color:#d88200">:as</span> <span style="color:#111">copy</span><span style="color:#111">])</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">clj-pgcopy.core</span> <span style="color:#d88200">:as</span> <span style="color:#111">copy</span><span style="color:#111">])</span>
 
 <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">cols</span> <span style="color:#111">[</span><span style="color:#d88200">:guid</span> <span style="color:#d88200">:created_at</span> <span style="color:#d88200">:active</span> <span style="color:#d88200">:price</span> <span style="color:#d88200">:average_rating</span><span style="color:#111">]</span>
       <span style="color:#111">-&gt;tuple</span> <span style="color:#111">(</span><span style="color:#111">apply </span><span style="color:#111">juxt</span> <span style="color:#111">cols</span><span style="color:#111">)]</span>
@@ -409,7 +410,7 @@ guidance on doing so.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2020</section>
+  <section class="container"> © 2021</section>
 </footer>
 
     </main>
@@ -425,6 +426,5 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
   </body>
 </html>

@@ -14,9 +14,10 @@ Use core.async The Datomic transactor handles concurrency by transacting datoms 
 I&rsquo;ve been really happy with Datomic, but doing an initial bulk import wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve learned from doing several imports.
 Use core.async The Datomic transactor handles concurrency by transacting datoms serially, but that doesn&rsquo;t mean it isn&rsquo;t fast! In my experience, the bottleneck is actually in the reshaping of data and formatting transactions." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/" />
+<meta property="og:url" content="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2015-09-17T00:00:00+00:00" />
 <meta property="article:modified_time" content="2015-09-17T00:00:00+00:00" />
+
 
     <base href="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/">
     <title>
@@ -27,7 +28,7 @@ Use core.async The Datomic transactor handles concurrency by transacting datoms 
       <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
     <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.75.1" />
+    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.91.0" />
   </head>
   <body class="colorscheme-light">
     <main class="wrapper">
@@ -103,7 +104,7 @@ in the case of DynamoDB, I save some money, as I don&rsquo;t have to have my
 <h2 id="clean-up-the-local-database">Clean up the local database</h2>
 <p>Bulk imports create some garbage, so manually reindexing before backing
 up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
-<div class="highlight"><pre style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#d88200">&#34;datomic:dev://localhost:4334/database-name&#34;</span><span style="color:#111">))</span>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#d88200">&#34;datomic:dev://localhost:4334/database-name&#34;</span><span style="color:#111">))</span>
 <span style="color:#111">(</span><span style="color:#75af00">d/request-index</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
 <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">conn</span> <span style="color:#111">d/db</span> <span style="color:#111">d/basis-t</span> <span style="color:#111">(</span><span style="color:#75af00">d/sync-index</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#111">deref</span><span style="color:#111">)</span>
 <span style="color:#75715e">;; blocks until done indexing</span>
@@ -148,7 +149,7 @@ is half the battle.</p>
   </section>
 
       </div><footer class="footer">
-  <section class="container"> © 2020</section>
+  <section class="container"> © 2021</section>
 </footer>
 
     </main>
@@ -164,6 +165,5 @@ if (!doNotTrack) {
 	ga('send', 'pageview');
 }
 </script>
-
   </body>
 </html>
