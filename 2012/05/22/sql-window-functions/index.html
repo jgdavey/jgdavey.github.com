@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>
+  SQL Window Functions and You · Joshua Davey
+</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Joshua Davey">
-    <meta name="description" content="Joshua Davey&#39;s Website">
-    <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="Joshua Davey">
+<meta name="description" content="This is a repost. You can find the original here
+Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&rsquo;d like to feature one picture from each category. It can&rsquo;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price.">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SQL Window Functions and You"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
 Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&rsquo;d like to feature one picture from each category. It can&rsquo;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price."/>
+
 <meta property="og:title" content="SQL Window Functions and You" />
 <meta property="og:description" content="This is a repost. You can find the original here
 Suppose you have a storefront application that sells pictures of cats. These cat pictures are categorized in meaningful ways. For example, there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the landing page of the store, you&rsquo;d like to feature one picture from each category. It can&rsquo;t be a random picture from each. You need to feature the cheapest picture from each category, displaying its name and price." />
@@ -17,66 +30,130 @@ Suppose you have a storefront application that sells pictures of cats. These cat
 <meta property="article:modified_time" content="2012-05-22T00:00:00+00:00" />
 
 
-    <base href="https://joshuadavey.com/2012/05/22/sql-window-functions/">
-    <title>
-  SQL Window Functions and You · Joshua Davey
-</title><link rel="canonical" href="https://joshuadavey.com/2012/05/22/sql-window-functions/"><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" /><link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
-      <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="canonical" href="https://joshuadavey.com/2012/05/22/sql-window-functions/">
+
+
+<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="https://joshuadavey.com/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://joshuadavey.com/images/apple-touch-icon.png">
+
+<link rel="manifest" href="https://joshuadavey.com/site.webmanifest">
+<link rel="mask-icon" href="https://joshuadavey.com/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.107.0">
+
+
+
+
+
   </head>
-  <body class="colorscheme-light">
-    <main class="wrapper">
-      <nav class="navigation">
+
+
+
+
+<body class="preload-transitions colorscheme-light">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
   <section class="container">
     <a class="navigation-title" href="https://joshuadavey.com/">
       Joshua Davey
     </a>
-    <input type="checkbox" id="menu-toggle" />
-    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
-    <ul class="navigation-list">
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
-          </li>
-    </ul>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+            </li>
+          
+        
+        
+      </ul>
+    
   </section>
 </nav>
-<div class="content">
-        
+
+
+    <div class="content">
+      
   <section class="container post">
     <article>
       <header>
         <div class="post-title">
-          <h1 class="title">SQL Window Functions and You</h1>
+          <h1 class="title">
+            <a class="title-link" href="https://joshuadavey.com/2012/05/22/sql-window-functions/">
+              SQL Window Functions and You
+            </a>
+          </h1>
         </div>
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fas fa-calendar"></i>
-              <time datetime='2012-05-22T00:00:00Z'>
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2012-05-22T00:00:00Z">
                 May 22, 2012
               </time>
             </span>
             <span class="reading-time">
-              <i class="fas fa-clock"></i>
-              10 minutes read
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              10-minute read
             </span>
           </div>
+          
           
           
         </div>
       </header>
 
       <div>
+        
         <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-window-functions" title="SQL Window Functions and You">here</a></em></p>
 <p>Suppose you have a storefront application that sells pictures of cats.
 These cat pictures are categorized in meaningful ways. For example,
@@ -96,21 +173,27 @@ ninefold.</p>
 <p>Let&rsquo;s look at some of the ways that we can approach this problem,
 displaying a list of cat pictures that are the cheapest for their
 respective category.</p>
-<h2 id="approach-1-ruby">Approach 1: Ruby</h2>
+<h2 id="approach-1-ruby">
+  Approach 1: Ruby
+  <a class="heading-link" href="#approach-1-ruby">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Implementing the solution in Ruby is fairly straightforward.
 <!-- raw HTML omitted -->ActiveSupport<!-- raw HTML omitted --> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
 collections, and we can use those to help us cut down on some typing.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">all</span><span style="color:#f92672">.</span><span style="color:#111">group_by</span><span style="color:#111">(</span><span style="color:#f92672">&amp;</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">map</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">subset</span><span style="color:#f92672">|</span>
-      <span style="color:#111">subset</span><span style="color:#f92672">.</span><span style="color:#111">sort_by</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">pic</span><span style="color:#f92672">|</span> <span style="color:#f92672">[</span><span style="color:#111">pic</span><span style="color:#f92672">.</span><span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">pic</span><span style="color:#f92672">.</span><span style="color:#111">name</span><span style="color:#f92672">]</span> <span style="color:#111">}</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
-    <span style="color:#00a8c8">end</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>First, we group all of the cat pictures by their category. Then, for
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">all</span><span style="color:#f92672">.</span><span style="color:#111">group_by</span><span style="color:#111">(</span><span style="color:#f92672">&amp;</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">map</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">subset</span><span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">subset</span><span style="color:#f92672">.</span><span style="color:#111">sort_by</span> <span style="color:#111">{</span> <span style="color:#f92672">|</span><span style="color:#111">pic</span><span style="color:#f92672">|</span> <span style="color:#f92672">[</span><span style="color:#111">pic</span><span style="color:#f92672">.</span><span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">pic</span><span style="color:#f92672">.</span><span style="color:#111">name</span><span style="color:#f92672">]</span> <span style="color:#111">}</span><span style="color:#f92672">.</span><span style="color:#111">first</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>First, we group all of the cat pictures by their category. Then, for
 each set of pictures, we sort them by their price and name, and take
 only the first one.</p>
 <p>Perhaps you are wondering if inverting the responsibility would improve
@@ -137,27 +220,33 @@ filtering has to be done in Ruby.</p>
 <li>No scope chaining</li>
 <li>Once you go Ruby, you don&rsquo;t go back</li>
 </ul>
-<h2 id="approach-2-sql-subselects">Approach 2: SQL subselects</h2>
+<h2 id="approach-2-sql-subselects">
+  Approach 2: SQL subselects
+  <a class="heading-link" href="#approach-2-sql-subselects">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>We can improve performance by doing the filtering at the database level,
 rather than loading all cat pictures into memory each time.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">find_by_sql</span> <span style="color:#d88200">&lt;&lt;-SQL
-</span><span style="color:#d88200"></span>      <span style="color:#00a8c8">SELECT</span> <span style="color:#00a8c8">DISTINCT</span> <span style="color:#00a8c8">ON</span><span style="color:#111">(</span><span style="color:#111">category_id</span><span style="color:#111">)</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">*</span>
-      <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-      <span style="color:#00a8c8">WHERE</span> <span style="color:#111">((</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">price</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
-        <span style="color:#00a8c8">SELECT</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">min</span><span style="color:#111">(</span><span style="color:#111">price</span><span style="color:#111">)</span>
-        <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-        <span style="color:#00a8c8">GROUP</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span>
-      <span style="color:#111">))</span>
-      <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ASC</span><span style="color:#111">,</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">name</span> <span style="color:#00a8c8">ASC</span>
-    <span style="color:#00a8c8">SQL</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>Here, we use a subselect to filter the initial set down to only those
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">find_by_sql</span> <span style="color:#d88200">&lt;&lt;-SQL
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200"></span>      <span style="color:#00a8c8">SELECT</span> <span style="color:#00a8c8">DISTINCT</span> <span style="color:#00a8c8">ON</span><span style="color:#111">(</span><span style="color:#111">category_id</span><span style="color:#111">)</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">*</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#00a8c8">WHERE</span> <span style="color:#111">((</span><span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">price</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">SELECT</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">min</span><span style="color:#111">(</span><span style="color:#111">price</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">GROUP</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ASC</span><span style="color:#111">,</span> <span style="color:#111">cat_pictures</span><span style="color:#f92672">.</span><span style="color:#111">name</span> <span style="color:#00a8c8">ASC</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">SQL</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>Here, we use a subselect to filter the initial set down to only those
 that have the cheapest price per category. In this inner query, each row
 will contain a <code>category_id</code> and its lowest <code>price</code>. In the outer query,
 we choose all cat pictures whose <code>price</code> and <code>category_id</code> match a row
@@ -176,20 +265,20 @@ cat picture alphabetically will show up.</p>
 <p>We can improve the implementation above by making it a true chainable
 scope. Whereas <code>find_by_sql</code> returns an array of objects, we can
 refactor this to return an ActiveRelation instead.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(category_id, price) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">category_id_and_lowest_price_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;DISTINCT ON(category_id) </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.*&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id ASC, </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.name ASC&#34;</span><span style="color:#111">)</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">category_id_and_lowest_price_sql</span>
-    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id, min(price)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">group</span><span style="color:#111">(</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>Functionally, this generates the exact same query as before, but allows
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(category_id, price) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">category_id_and_lowest_price_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;DISTINCT ON(category_id) </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.*&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id ASC, </span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.name ASC&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">private</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">category_id_and_lowest_price_sql</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id, min(price)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">group</span><span style="color:#111">(</span><span style="color:#d88200">:category_id</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>Functionally, this generates the exact same query as before, but allows
 further chaining. Using ActiveRelation&rsquo;s <code>to_sql</code> method, we&rsquo;re able
 to build up our inner query without actually executing it. We then
 interpolate that query into what was the outer query, which we&rsquo;ve
@@ -203,9 +292,15 @@ reduced to calls to <code>where</code>, <code>select</code> and <code>order</cod
 <ul>
 <li>Nested subselects</li>
 <li>Very difficult to read in application code</li>
-<li>The use of <code>DISTINCT ON</code> - only some RDBMS' have such functionality</li>
+<li>The use of <code>DISTINCT ON</code> - only some RDBMS&rsquo; have such functionality</li>
 </ul>
-<h2 id="approach-3-window-functions">Approach 3: Window functions</h2>
+<h2 id="approach-3-window-functions">
+  Approach 3: Window functions
+  <a class="heading-link" href="#approach-3-window-functions">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>But there is still another option. The SQL standard defines a concept
 called window functions, which act a lot like aggregates, but don&rsquo;t
 change the result set. From the Postgresql documentation&rsquo;s <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">excellent
@@ -219,43 +314,42 @@ rows to become grouped into a single output row - the rows retain their
 separate identities.</p>
 </blockquote>
 <p>Let&rsquo;s see how this would work with our dataset. First of all, let&rsquo;s assume the following cat pictures:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
-
- id |         name         | category_id | price 
-----+----------------------+-------------+-------
-  7 | Triple LOL           |           1 |  9.99
-  5 | Hugs not Drugs       |           1 |  9.99
-  2 | Puss in Boots        |           1 | 14.99
-  3 | Cats Gone By         |           1 | 19.99
-  6 | Cats in it for me    |           1 | 22.99
-  4 | Turkleton&#39;s Folly    |           2 | 11.99
-  1 | Meowna Lisa          |           2 | 19.99
-  8 | Lady Caterly&#39;s Lover |           2 | 22.99
-</code></pre></div><p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># SELECT id, name, category_id, price FROM cat_pictures ORDER BY category_id, price;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> id |         name         | category_id | price 
+</span></span><span style="display:flex;"><span>----+----------------------+-------------+-------
+</span></span><span style="display:flex;"><span>  7 | Triple LOL           |           1 |  9.99
+</span></span><span style="display:flex;"><span>  5 | Hugs not Drugs       |           1 |  9.99
+</span></span><span style="display:flex;"><span>  2 | Puss in Boots        |           1 | 14.99
+</span></span><span style="display:flex;"><span>  3 | Cats Gone By         |           1 | 19.99
+</span></span><span style="display:flex;"><span>  6 | Cats in it for me    |           1 | 22.99
+</span></span><span style="display:flex;"><span>  4 | Turkleton&#39;s Folly    |           2 | 11.99
+</span></span><span style="display:flex;"><span>  1 | Meowna Lisa          |           2 | 19.99
+</span></span><span style="display:flex;"><span>  8 | Lady Caterly&#39;s Lover |           2 | 22.99
+</span></span></code></pre></div><p>Given this data, our goal is to select &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s
 Folly&rdquo;, which are the cheapest pictures from their categories.</p>
 <p>Whereas a normal aggregate function with <code>GROUP BY</code> would collapse the
 results, a window function retains the original row. Let&rsquo;s consider how
 this would affect the inner query from the subselect approach above:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
-
- category_id |  min  
--------------+-------
-           1 |  9.99
-           2 | 11.99
-
-</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
-
- category_id |  min  
--------------+-------
-           1 |  9.99
-           1 |  9.99
-           1 |  9.99
-           1 |  9.99
-           1 |  9.99
-           2 | 11.99
-           2 | 11.99
-           2 | 11.99
-</code></pre></div><p>Above, we&rsquo;ve replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># SELECT category_id, min(price) FROM cat_pictures GROUP BY category_id;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> category_id |  min  
+</span></span><span style="display:flex;"><span>-------------+-------
+</span></span><span style="display:flex;"><span>           1 |  9.99
+</span></span><span style="display:flex;"><span>           2 | 11.99
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># SELECT category_id, min(price) OVER (PARTITION BY category_id) FROM cat_pictures;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> category_id |  min  
+</span></span><span style="display:flex;"><span>-------------+-------
+</span></span><span style="display:flex;"><span>           1 |  9.99
+</span></span><span style="display:flex;"><span>           1 |  9.99
+</span></span><span style="display:flex;"><span>           1 |  9.99
+</span></span><span style="display:flex;"><span>           1 |  9.99
+</span></span><span style="display:flex;"><span>           1 |  9.99
+</span></span><span style="display:flex;"><span>           2 | 11.99
+</span></span><span style="display:flex;"><span>           2 | 11.99
+</span></span><span style="display:flex;"><span>           2 | 11.99
+</span></span></code></pre></div><p>Above, we&rsquo;ve replaced the <code>GROUP BY</code> clause with an <code>OVER</code> clause. We
 have the original rows with an additional column for this aggregate
 data. This is useful in its own right, but the real power of window
 functions comes from this concept of window framing. The use of
@@ -266,19 +360,19 @@ window frame effectively has its own result set, according to the
 defined partition.</p>
 <p>When a window frame is ordered, using an <code>ORDER BY</code> clause, even more
 options are possible. For example, consider the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
-
- id |         name         | category_id | price | rank 
-----+----------------------+-------------+-------+------
-  7 | Triple LOL           |           1 |  9.99 |    1
-  5 | Hugs not Drugs       |           1 |  9.99 |    1
-  2 | Puss in Boots        |           1 | 14.99 |    3
-  3 | Cats Gone By         |           1 | 19.99 |    4
-  6 | Cats in it for me    |           1 | 22.99 |    5
-  4 | Turkleton&#39;s Folly    |           2 | 11.99 |    1
-  1 | Meowna Lisa          |           2 | 19.99 |    2
-  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |    3
-</code></pre></div><p>Look familiar? This is essentially the original , except we&rsquo;ve added a
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># SELECT id, name, category_id, price, rank() OVER (PARTITION BY category_id ORDER BY price) FROM cat_pictures;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> id |         name         | category_id | price | rank 
+</span></span><span style="display:flex;"><span>----+----------------------+-------------+-------+------
+</span></span><span style="display:flex;"><span>  7 | Triple LOL           |           1 |  9.99 |    1
+</span></span><span style="display:flex;"><span>  5 | Hugs not Drugs       |           1 |  9.99 |    1
+</span></span><span style="display:flex;"><span>  2 | Puss in Boots        |           1 | 14.99 |    3
+</span></span><span style="display:flex;"><span>  3 | Cats Gone By         |           1 | 19.99 |    4
+</span></span><span style="display:flex;"><span>  6 | Cats in it for me    |           1 | 22.99 |    5
+</span></span><span style="display:flex;"><span>  4 | Turkleton&#39;s Folly    |           2 | 11.99 |    1
+</span></span><span style="display:flex;"><span>  1 | Meowna Lisa          |           2 | 19.99 |    2
+</span></span><span style="display:flex;"><span>  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |    3
+</span></span></code></pre></div><p>Look familiar? This is essentially the original , except we&rsquo;ve added a
 new column: its price rank within a window partitioned by <code>category_id</code>.
 It&rsquo;s a mouthful to describe, but we&rsquo;re very close to our original goal
 of finding the cheapest cat picture per category. All we need to do now
@@ -288,51 +382,50 @@ function assigns the same rank to ties, but we need the first one
 alphabetically in the case of &ldquo;ties&rdquo;. We can remedy that by using a
 different window function, <code>row_number()</code>, which guarantees different
 numbers.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, category_id, price, row_number() OVER (PARTITION BY category_id ORDER BY price, name) FROM cat_pictures;
-
- id |         name         | category_id | price | row_number 
-----+----------------------+-------------+-------+------------
-  5 | Hugs not Drugs       |           1 |  9.99 |          1
-  7 | Triple LOL           |           1 |  9.99 |          2
-  2 | Puss in Boots        |           1 | 14.99 |          3
-  3 | Cats Gone By         |           1 | 19.99 |          4
-  6 | Cats in it for me    |           1 | 22.99 |          5
-  4 | Turkleton&#39;s Folly    |           2 | 11.99 |          1
-  1 | Meowna Lisa          |           2 | 19.99 |          2
-  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |          3
-</code></pre></div><p>Perfect! Looking at the rows with &ldquo;1&rdquo; as their &ldquo;row_number&rdquo;, we see
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># SELECT id, name, category_id, price, row_number() OVER (PARTITION BY category_id ORDER BY price, name) FROM cat_pictures;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> id |         name         | category_id | price | row_number 
+</span></span><span style="display:flex;"><span>----+----------------------+-------------+-------+------------
+</span></span><span style="display:flex;"><span>  5 | Hugs not Drugs       |           1 |  9.99 |          1
+</span></span><span style="display:flex;"><span>  7 | Triple LOL           |           1 |  9.99 |          2
+</span></span><span style="display:flex;"><span>  2 | Puss in Boots        |           1 | 14.99 |          3
+</span></span><span style="display:flex;"><span>  3 | Cats Gone By         |           1 | 19.99 |          4
+</span></span><span style="display:flex;"><span>  6 | Cats in it for me    |           1 | 22.99 |          5
+</span></span><span style="display:flex;"><span>  4 | Turkleton&#39;s Folly    |           2 | 11.99 |          1
+</span></span><span style="display:flex;"><span>  1 | Meowna Lisa          |           2 | 19.99 |          2
+</span></span><span style="display:flex;"><span>  8 | Lady Caterly&#39;s Lover |           2 | 22.99 |          3
+</span></span></code></pre></div><p>Perfect! Looking at the rows with &ldquo;1&rdquo; as their &ldquo;row_number&rdquo;, we see
 what we expect, &ldquo;Hugs not Drugs&rdquo; and &ldquo;Turkleton&rsquo;s Folly&rdquo;, which are the
 cheapest pictures from their categories. We can use an <code>IN</code> clause for
 filtering, similar to the previous approach:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
-<span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-<span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
-  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">()</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
-  <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
-<span style="color:#111">);</span>
-</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id | category_id |         name         | price 
-----+-------------+----------------------+-------
-  5 |           1 | Hugs not Drugs       |  9.99
-  4 |           2 | Turkleton&#39;s Folly    | 11.99
-
-</code></pre></div><p>The where clause above filters records that both have an id that appears
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">category_id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">price</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">WHERE</span> <span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#ae81ff">1</span><span style="color:#111">)</span> <span style="color:#00a8c8">IN</span> <span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">row_number</span><span style="color:#111">()</span> <span style="color:#111">OVER</span> <span style="color:#111">(</span><span style="color:#111">PARTITION</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">category_id</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">price</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">FROM</span> <span style="color:#111">cat_pictures</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">);</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span> id | category_id |         name         | price 
+</span></span><span style="display:flex;"><span>----+-------------+----------------------+-------
+</span></span><span style="display:flex;"><span>  5 |           1 | Hugs not Drugs       |  9.99
+</span></span><span style="display:flex;"><span>  4 |           2 | Turkleton&#39;s Folly    | 11.99
+</span></span></code></pre></div><p>The where clause above filters records that both have an id that appears
 in the subquery next to a rank of 1. Now that we have the SQL down,
 let&rsquo;s convert our Ruby model to take advantage of this window function
 technique:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
-    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id, 1) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">price_rank_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">private</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">price_rank_sql</span>
-    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>Groovy. Just like before, we can use to the power of ActiveRelation
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">belongs_to</span> <span style="color:#d88200">:category</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">cheapest_per_category</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;(</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id, 1) IN (</span><span style="color:#d88200">#{</span><span style="color:#111">price_rank_sql</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">private</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">price_rank_sql</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">scoped</span><span style="color:#f92672">.</span><span style="color:#111">select</span><span style="color:#111">(</span><span style="color:#d88200">&#34;id, row_number() OVER (PARTITION BY category_id ORDER BY price ASC, name ASC)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">to_sql</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>Groovy. Just like before, we can use to the power of ActiveRelation
 to build up our subselect, which then gets interpolated into the
 <code>where</code> clause. I&rsquo;ve also prepended <code>id</code> in the <code>where</code> clause with
 <code>table_name</code>, to avoid potential ambiguous column problems.</p>
@@ -350,7 +443,13 @@ out of luck.</p>
 <ul>
 <li>Not portable (window functions are not available in MySQL or SQLite)</li>
 </ul>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion">
+  Conclusion
+  <a class="heading-link" href="#conclusion">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>While they may not be appropriate for every situation, window functions
 are a great tool for your toolbelt. They excel at filtering down rows
 based on aggregate data, or adding aggregate data to the rows you&rsquo;d
@@ -358,7 +457,13 @@ already like to select.</p>
 <p>For more information about window functions, the Postgres documentation
 is an excellent resource, both for its <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">introduction</a>,
 and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.html" title="List of PostgreSQL window functions">list of window functions</a>.</p>
-<h2 id="example-app">Example app</h2>
+<h2 id="example-app">
+  Example app
+  <a class="heading-link" href="#example-app">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/windowing-example/" title="Window functions example application">sample Rails app</a> to iterate
 quickly. I used TDD to write the pure-ruby approach, and reused the
 specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
@@ -366,6 +471,7 @@ approaches. Of particular note is <a href="https://github.com/jgdavey/windowing-
 model</a>, which mirrors the code above.</p>
 
       </div>
+
 
       <footer>
         
@@ -377,25 +483,66 @@ model</a>, which mirrors the code above.</p>
       </footer>
     </article>
 
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+  
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
+    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,
+      {
+        delimiters: [
+          {left: '$$', right: '$$', display:true},
+          {left: '$', right: '$', display:false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      }
+    );"></script>
   </section>
 
-      </div><footer class="footer">
-  <section class="container"> © 2022</section>
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2022
+     Joshua Davey 
+    ·
+    
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
 </footer>
 
-    </main>
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-330362-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-  </body>
+  </main>
+
+  
+
+  
+  
+  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
 </html>

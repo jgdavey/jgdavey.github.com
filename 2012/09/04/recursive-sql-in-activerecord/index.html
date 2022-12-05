@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>
+  Using Recursive SQL with ActiveRecord trees · Joshua Davey
+</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Joshua Davey">
-    <meta name="description" content="Joshua Davey&#39;s Website">
-    <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="Joshua Davey">
+<meta name="description" content="This is a repost. You can find the original here
+tl;dr When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.
+In a previous post, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories. How can we create a homepage that includes all cat pictures for a given category and all of its subcategories?">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Using Recursive SQL with ActiveRecord trees"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
 tl;dr When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.
 In a previous post, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories. How can we create a homepage that includes all cat pictures for a given category and all of its subcategories?"/>
+
 <meta property="og:title" content="Using Recursive SQL with ActiveRecord trees" />
 <meta property="og:description" content="This is a repost. You can find the original here
 tl;dr When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.
@@ -19,142 +33,212 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
 <meta property="article:modified_time" content="2012-09-04T00:00:00+00:00" />
 
 
-    <base href="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/">
-    <title>
-  Using Recursive SQL with ActiveRecord trees · Joshua Davey
-</title><link rel="canonical" href="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/"><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" /><link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
-      <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="canonical" href="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/">
+
+
+<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="https://joshuadavey.com/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://joshuadavey.com/images/apple-touch-icon.png">
+
+<link rel="manifest" href="https://joshuadavey.com/site.webmanifest">
+<link rel="mask-icon" href="https://joshuadavey.com/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.107.0">
+
+
+
+
+
   </head>
-  <body class="colorscheme-light">
-    <main class="wrapper">
-      <nav class="navigation">
+
+
+
+
+<body class="preload-transitions colorscheme-light">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
   <section class="container">
     <a class="navigation-title" href="https://joshuadavey.com/">
       Joshua Davey
     </a>
-    <input type="checkbox" id="menu-toggle" />
-    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
-    <ul class="navigation-list">
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
-          </li>
-    </ul>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+            </li>
+          
+        
+        
+      </ul>
+    
   </section>
 </nav>
-<div class="content">
-        
+
+
+    <div class="content">
+      
   <section class="container post">
     <article>
       <header>
         <div class="post-title">
-          <h1 class="title">Using Recursive SQL with ActiveRecord trees</h1>
+          <h1 class="title">
+            <a class="title-link" href="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/">
+              Using Recursive SQL with ActiveRecord trees
+            </a>
+          </h1>
         </div>
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fas fa-calendar"></i>
-              <time datetime='2012-09-04T00:00:00Z'>
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2012-09-04T00:00:00Z">
                 September 4, 2012
               </time>
             </span>
             <span class="reading-time">
-              <i class="fas fa-clock"></i>
-              9 minutes read
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              9-minute read
             </span>
           </div>
+          
           
           
         </div>
       </header>
 
       <div>
+        
         <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/recursive-sql-in-activerecord" title="Using Recursive SQL with ActiveRecord trees">here</a></em></p>
 <p><strong>tl;dr</strong> When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.</p>
 <p>In a <a href="https://blog.hashrocket.com/posts/sql-window-functions" title="SQL Window Functions and You">previous post</a>, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories.
 How can we create a homepage that includes all cat pictures for a given category <em>and</em> all of its subcategories?</p>
 <p>Pictorally, the category tree might look like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Cat Pictures
-|-- Funny
-|   |-- LOLCats
-|   `-- Animated
-`-- Classic
-    `-- Renaissance
-</code></pre></div><p>On the landing page for the <em>Cat Pictures</em> category, we want to display
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Cat Pictures
+</span></span><span style="display:flex;"><span>|-- Funny
+</span></span><span style="display:flex;"><span>|   |-- LOLCats
+</span></span><span style="display:flex;"><span>|   `-- Animated
+</span></span><span style="display:flex;"><span>`-- Classic
+</span></span><span style="display:flex;"><span>    `-- Renaissance
+</span></span></code></pre></div><p>On the landing page for the <em>Cat Pictures</em> category, we want to display
 all cat pictures for any category below <em>Cat Pictures</em>. Navigating to
 the <em>Funny</em> category would display all of its pictures, as well as the
 pictures for <em>LOLCats</em> and <em>Animated</em>. This is the kind of interaction
 seen on Amazon, for example. The store&rsquo;s categories become like an
 ad-hoc filtering system.</p>
 <p>Here&rsquo;s what the Category class looks like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:parent</span>
-
-  <span style="color:#111">has_many</span> <span style="color:#d88200">:cat_pictures</span>
-  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:parent</span><span style="color:#111">,</span> <span style="color:#d88200">:class_name</span> <span style="color:#f92672">=&gt;</span> <span style="color:#d88200">&#34;Category&#34;</span>
-  <span style="color:#111">has_many</span> <span style="color:#d88200">:children</span><span style="color:#111">,</span> <span style="color:#d88200">:class_name</span> <span style="color:#f92672">=&gt;</span> <span style="color:#d88200">&#34;Category&#34;</span><span style="color:#111">,</span> <span style="color:#d88200">:foreign_key</span> <span style="color:#f92672">=&gt;</span> <span style="color:#d88200">&#39;parent_id&#39;</span>
-
-  <span style="color:#111">scope</span> <span style="color:#d88200">:top_level</span><span style="color:#111">,</span> <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">:parent_id</span> <span style="color:#f92672">=&gt;</span> <span style="color:#00a8c8">nil</span><span style="color:#111">)</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
-    <span style="color:#75715e"># implement me!</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>Each category has a <code>parent_id</code> column that points at its parent
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:parent</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">has_many</span> <span style="color:#d88200">:cat_pictures</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">belongs_to</span> <span style="color:#d88200">:parent</span><span style="color:#111">,</span> <span style="color:#d88200">:class_name</span> <span style="color:#f92672">=&gt;</span> <span style="color:#d88200">&#34;Category&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">has_many</span> <span style="color:#d88200">:children</span><span style="color:#111">,</span> <span style="color:#d88200">:class_name</span> <span style="color:#f92672">=&gt;</span> <span style="color:#d88200">&#34;Category&#34;</span><span style="color:#111">,</span> <span style="color:#d88200">:foreign_key</span> <span style="color:#f92672">=&gt;</span> <span style="color:#d88200">&#39;parent_id&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">scope</span> <span style="color:#d88200">:top_level</span><span style="color:#111">,</span> <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">:parent_id</span> <span style="color:#f92672">=&gt;</span> <span style="color:#00a8c8">nil</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># implement me!</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>Each category has a <code>parent_id</code> column that points at its parent
 category. In database speak, modeling a tree like this is known as
 an <em>Adjacency List</em>; each node of the tree can only see a children
 immediately adjacent to it. For this reason, crawling an Adjacency List
 requires recursion. This is actually the database setup common for use
 with the <code>acts_as_tree</code> plugin. Let&rsquo;s see how we can implement the
 <code>descendents</code> method to get all descendent categories.</p>
-<h2 id="a-simple-ruby-approach">A Simple Ruby Approach</h2>
+<h2 id="a-simple-ruby-approach">
+  A Simple Ruby Approach
+  <a class="heading-link" href="#a-simple-ruby-approach">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>As you&rsquo;ve probably already guessed, we need to recursively collect
 children for each of our category&rsquo;s children.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#75715e"># ...</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
-    <span style="color:#111">children</span><span style="color:#f92672">.</span><span style="color:#111">map</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">child</span><span style="color:#f92672">|</span>
-      <span style="color:#f92672">[</span><span style="color:#111">child</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#111">child</span><span style="color:#f92672">.</span><span style="color:#111">descendents</span>
-    <span style="color:#00a8c8">end</span><span style="color:#f92672">.</span><span style="color:#111">flatten</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>This does the job quite nicely. However, our requirements above state
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">children</span><span style="color:#f92672">.</span><span style="color:#111">map</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">child</span><span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">[</span><span style="color:#111">child</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#111">child</span><span style="color:#f92672">.</span><span style="color:#111">descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">end</span><span style="color:#f92672">.</span><span style="color:#111">flatten</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>This does the job quite nicely. However, our requirements above state
 that we want all cat pictures for each descendent category, <em>and our
 categories</em>. Right now, we&rsquo;ve omitted the root category, self. Let&rsquo;s add
 a new method to include it into the equation:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#75715e"># ...</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
-    <span style="color:#111">children</span><span style="color:#f92672">.</span><span style="color:#111">map</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">child</span><span style="color:#f92672">|</span>
-      <span style="color:#f92672">[</span><span style="color:#111">child</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#111">child</span><span style="color:#f92672">.</span><span style="color:#111">descendents</span>
-    <span style="color:#00a8c8">end</span><span style="color:#f92672">.</span><span style="color:#111">flatten</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self_and_descendents</span>
-    <span style="color:#f92672">[</span><span style="color:#111">self</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#111">descendents</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>Good deal. Now gathering all cat pictures is just a matter of collecting
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">children</span><span style="color:#f92672">.</span><span style="color:#111">map</span> <span style="color:#00a8c8">do</span> <span style="color:#f92672">|</span><span style="color:#111">child</span><span style="color:#f92672">|</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">[</span><span style="color:#111">child</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#111">child</span><span style="color:#f92672">.</span><span style="color:#111">descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">end</span><span style="color:#f92672">.</span><span style="color:#111">flatten</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self_and_descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">[</span><span style="color:#111">self</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#111">descendents</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>Good deal. Now gathering all cat pictures is just a matter of collecting
 them for each category:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#75715e"># ...</span>
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendent_pictures</span>
-    <span style="color:#111">self_and_descendents</span><span style="color:#f92672">.</span><span style="color:#111">map</span><span style="color:#111">(</span><span style="color:#f92672">&amp;</span><span style="color:#d88200">:cat_pictures</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">flatten</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>For a tree like we have above, this is probably good enough. Our tree is
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendent_pictures</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">self_and_descendents</span><span style="color:#f92672">.</span><span style="color:#111">map</span><span style="color:#111">(</span><span style="color:#f92672">&amp;</span><span style="color:#d88200">:cat_pictures</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">flatten</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>For a tree like we have above, this is probably good enough. Our tree is
 only 3 levels deep. We&rsquo;ve introduced plenty of N+1 queries, but given
 our small dataset, that shouldn&rsquo;t be a huge concern.</p>
 <p>That said, as our store grows, and the tree gets deeper and more
@@ -165,7 +249,13 @@ we lose the ability to take advantage of ActiveRelation outside of the
 can&rsquo;t eager-load cat pictures unless we always eager-load them within
 the <code>descendents</code> method.</p>
 <p>Surely we can do better.</p>
-<h2 id="sql-with-queries">SQL WITH queries</h2>
+<h2 id="sql-with-queries">
+  SQL WITH queries
+  <a class="heading-link" href="#sql-with-queries">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Since we&rsquo;re using PostgreSQL, we can take advantage of its special
 features. In this case, we can use a WITH query. From the <a href="https://www.postgresql.org/docs/9.1/static/queries-with.html" title="WITH queries">PostgreSQL
 documentation</a>:</p>
@@ -196,60 +286,78 @@ UNION ALL, is executed until it returns an empty result set.</p>
 technique from <em>n</em> queries to just 1! Let&rsquo;s how we can use this to crawl
 our category tree.</p>
 <p>As a reminder, here&rsquo;s what our categories table looks like:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"># SELECT id, name, parent_id FROM categories;
-
- id |     name     | parent_id 
-----+--------------+-----------
-  1 | Cat Pictures |          
-  2 | Funny        |         1
-  3 | LOLCats      |         2
-  4 | Animated     |         2
-  5 | Classic      |         1
-  6 | Renaissance  |         5
-</code></pre></div><p>And this is the query:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">WITH</span> <span style="color:#00a8c8">RECURSIVE</span> <span style="color:#111">category_tree</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">path</span><span style="color:#111">)</span> <span style="color:#00a8c8">AS</span> <span style="color:#111">(</span>
-  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">ARRAY</span><span style="color:#111">[</span><span style="color:#111">id</span><span style="color:#111">]</span>
-  <span style="color:#00a8c8">FROM</span> <span style="color:#111">categories</span>
-  <span style="color:#00a8c8">WHERE</span> <span style="color:#111">parent_id</span> <span style="color:#00a8c8">IS</span> <span style="color:#00a8c8">NULL</span>
-<span style="color:#00a8c8">UNION</span> <span style="color:#00a8c8">ALL</span>
-  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">path</span> <span style="color:#f92672">||</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span>
-  <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span>
-  <span style="color:#00a8c8">JOIN</span> <span style="color:#111">categories</span> <span style="color:#00a8c8">ON</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">parent_id</span><span style="color:#f92672">=</span><span style="color:#111">category_tree</span><span style="color:#111">.</span><span style="color:#111">id</span>
-  <span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">ANY</span><span style="color:#111">(</span><span style="color:#111">path</span><span style="color:#111">)</span>
-<span style="color:#111">)</span>
-<span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span><span style="color:#111">;</span>
-</code></pre></div><p>Running the query above returns the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text"> id |     name     |  path   
-----+--------------+---------
-  1 | Cat Pictures | {1}
-  2 | Funny        | {1,2}
-  3 | LOLCats      | {1,2,3}
-  4 | Animated     | {1,2,4}
-  5 | Classic      | {1,5}
-  6 | Renaissance  | {1,5,6}
-</code></pre></div><p>Whoa! That&rsquo;s a lot of SQL. Let&rsquo;s break it down a bit.</p>
-<h3 id="declare-the-table-expression">Declare the Table Expression</h3>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span># SELECT id, name, parent_id FROM categories;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> id |     name     | parent_id 
+</span></span><span style="display:flex;"><span>----+--------------+-----------
+</span></span><span style="display:flex;"><span>  1 | Cat Pictures |          
+</span></span><span style="display:flex;"><span>  2 | Funny        |         1
+</span></span><span style="display:flex;"><span>  3 | LOLCats      |         2
+</span></span><span style="display:flex;"><span>  4 | Animated     |         2
+</span></span><span style="display:flex;"><span>  5 | Classic      |         1
+</span></span><span style="display:flex;"><span>  6 | Renaissance  |         5
+</span></span></code></pre></div><p>And this is the query:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#00a8c8">WITH</span> <span style="color:#00a8c8">RECURSIVE</span> <span style="color:#111">category_tree</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">path</span><span style="color:#111">)</span> <span style="color:#00a8c8">AS</span> <span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">ARRAY</span><span style="color:#111">[</span><span style="color:#111">id</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">FROM</span> <span style="color:#111">categories</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">WHERE</span> <span style="color:#111">parent_id</span> <span style="color:#00a8c8">IS</span> <span style="color:#00a8c8">NULL</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">UNION</span> <span style="color:#00a8c8">ALL</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">SELECT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">path</span> <span style="color:#f92672">||</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">JOIN</span> <span style="color:#111">categories</span> <span style="color:#00a8c8">ON</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">parent_id</span><span style="color:#f92672">=</span><span style="color:#111">category_tree</span><span style="color:#111">.</span><span style="color:#111">id</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">ANY</span><span style="color:#111">(</span><span style="color:#111">path</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span><span style="color:#111">;</span>
+</span></span></code></pre></div><p>Running the query above returns the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span> id |     name     |  path   
+</span></span><span style="display:flex;"><span>----+--------------+---------
+</span></span><span style="display:flex;"><span>  1 | Cat Pictures | {1}
+</span></span><span style="display:flex;"><span>  2 | Funny        | {1,2}
+</span></span><span style="display:flex;"><span>  3 | LOLCats      | {1,2,3}
+</span></span><span style="display:flex;"><span>  4 | Animated     | {1,2,4}
+</span></span><span style="display:flex;"><span>  5 | Classic      | {1,5}
+</span></span><span style="display:flex;"><span>  6 | Renaissance  | {1,5,6}
+</span></span></code></pre></div><p>Whoa! That&rsquo;s a lot of SQL. Let&rsquo;s break it down a bit.</p>
+<h3 id="declare-the-table-expression">
+  Declare the Table Expression
+  <a class="heading-link" href="#declare-the-table-expression">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
 <p>First, we declare our &ldquo;temporary table&rdquo; using the WITH syntax. We&rsquo;re
 going to call it <code>category_tree</code>. This &ldquo;table&rdquo; has 3 &ldquo;columns&rdquo;: <code>id</code>,
 <code>name</code>, and <code>path</code>. The <code>id</code> and <code>name</code> columns are fairly obvious; they
 refer to corresponding columns on the categories table. The <code>path</code> is an
 array of ids that each row will have. More on this in a bit.</p>
-<h3 id="define-the-non-recursive-term">Define the Non-recursive Term</h3>
+<h3 id="define-the-non-recursive-term">
+  Define the Non-recursive Term
+  <a class="heading-link" href="#define-the-non-recursive-term">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
 <p>The non-recursive term is next:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">ARRAY</span><span style="color:#111">[</span><span style="color:#111">id</span><span style="color:#111">]</span>
-<span style="color:#00a8c8">FROM</span> <span style="color:#111">categories</span>
-<span style="color:#00a8c8">WHERE</span> <span style="color:#111">parent_id</span> <span style="color:#00a8c8">IS</span> <span style="color:#00a8c8">NULL</span>
-</code></pre></div><p>It grabs the <code>id</code> and <code>name</code> for each top-level category, that is, each
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">ARRAY</span><span style="color:#111">[</span><span style="color:#111">id</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">FROM</span> <span style="color:#111">categories</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">WHERE</span> <span style="color:#111">parent_id</span> <span style="color:#00a8c8">IS</span> <span style="color:#00a8c8">NULL</span>
+</span></span></code></pre></div><p>It grabs the <code>id</code> and <code>name</code> for each top-level category, that is, each
 category that has no parent. It also initializes an array containing just
 its <code>id</code>. On its own, this isn&rsquo;t very interesting, but this array will
 become helpful during the recursive step of the query.</p>
-<h3 id="define-the-recursive-term">Define the Recursive Term</h3>
+<h3 id="define-the-recursive-term">
+  Define the Recursive Term
+  <a class="heading-link" href="#define-the-recursive-term">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
 <p>The recursive term is the juiciest bit of the query:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">path</span> <span style="color:#f92672">||</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span>
-<span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span>
-<span style="color:#00a8c8">JOIN</span> <span style="color:#111">categories</span> <span style="color:#00a8c8">ON</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">parent_id</span><span style="color:#f92672">=</span><span style="color:#111">category_tree</span><span style="color:#111">.</span><span style="color:#111">id</span>
-<span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">ANY</span><span style="color:#111">(</span><span style="color:#111">path</span><span style="color:#111">)</span>
-</code></pre></div><p>Notice that we&rsquo;re selecting from <code>category_tree</code>. By doing this, we&rsquo;re
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#00a8c8">SELECT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">name</span><span style="color:#111">,</span> <span style="color:#111">path</span> <span style="color:#f92672">||</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">JOIN</span> <span style="color:#111">categories</span> <span style="color:#00a8c8">ON</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">parent_id</span><span style="color:#f92672">=</span><span style="color:#111">category_tree</span><span style="color:#111">.</span><span style="color:#111">id</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#111">categories</span><span style="color:#111">.</span><span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#00a8c8">ANY</span><span style="color:#111">(</span><span style="color:#111">path</span><span style="color:#111">)</span>
+</span></span></code></pre></div><p>Notice that we&rsquo;re selecting from <code>category_tree</code>. By doing this, we&rsquo;re
 able to use each result set in the subsequent iteration. The first time
 we recurse, the result set will be what we selected in the non-recursive
 term above.</p>
@@ -262,11 +370,17 @@ we&rsquo;re selecting has not appeared in the path before.</p>
 <p>This infinite loop check is important. If two categories pointed at each
 other as parents, the query would never return. Including this check
 prevents such a mistake from killing our server.</p>
-<h3 id="query-the-common-table-expression">Query the Common Table Expression</h3>
+<h3 id="query-the-common-table-expression">
+  Query the Common Table Expression
+  <a class="heading-link" href="#query-the-common-table-expression">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h3>
 <p>Finally, a WITH query is only useful if you select from it outside of
 its declaration, so we&rsquo;ll do just that:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sql" data-lang="sql"><span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span><span style="color:#111">;</span>
-</code></pre></div><p>In addition to the infinite loop guard, the path column answers the
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#00a8c8">SELECT</span> <span style="color:#f92672">*</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">category_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span><span style="color:#111">;</span>
+</span></span></code></pre></div><p>In addition to the infinite loop guard, the path column answers the
 question &ldquo;How did I get here?&rdquo; Like a directory structure on a file
 system, the path demonstrates the ids necessary to get from grandparent
 to parent to child, etc.</p>
@@ -275,44 +389,50 @@ We do this because the default sort from a recursive query is
 nondeterministic. Normal array sorting works well for us here, and
 groups the categories just like we&rsquo;d expect, with parents listed before
 their children.</p>
-<h2 id="using-with-queries-in-activerecord">Using WITH queries in ActiveRecord</h2>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ruby" data-lang="ruby"><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
-  <span style="color:#75715e"># ...</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
-    <span style="color:#111">self_and_descendents</span> <span style="color:#f92672">-</span> <span style="color:#f92672">[</span><span style="color:#111">self</span><span style="color:#f92672">]</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self_and_descendents</span>
-    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">class</span><span style="color:#f92672">.</span><span style="color:#111">tree_for</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">)</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendent_pictures</span>
-    <span style="color:#111">subtree</span> <span style="color:#f92672">=</span> <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">class</span><span style="color:#f92672">.</span><span style="color:#111">tree_sql_for</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">)</span>
-    <span style="color:#00a8c8">CatPicture</span><span style="color:#f92672">.</span><span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id IN (</span><span style="color:#d88200">#{</span><span style="color:#111">subtree</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">tree_for</span><span style="color:#111">(</span><span style="color:#111">instance</span><span style="color:#111">)</span>
-    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id IN (</span><span style="color:#d88200">#{</span><span style="color:#111">tree_sql_for</span><span style="color:#111">(</span><span style="color:#111">instance</span><span style="color:#111">)</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id&#34;</span><span style="color:#111">)</span>
-  <span style="color:#00a8c8">end</span>
-
-  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">tree_sql_for</span><span style="color:#111">(</span><span style="color:#111">instance</span><span style="color:#111">)</span>
-    <span style="color:#111">tree_sql</span> <span style="color:#f92672">=</span>  <span style="color:#d88200">&lt;&lt;-SQL
-</span><span style="color:#d88200"></span>      <span style="color:#00a8c8">WITH</span> <span style="color:#00a8c8">RECURSIVE</span> <span style="color:#111">search_tree</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">path</span><span style="color:#111">)</span> <span style="color:#00a8c8">AS</span> <span style="color:#111">(</span>
-          <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#00a8c8">ARRAY</span><span style="color:#f92672">[</span><span style="color:#111">id</span><span style="color:#f92672">]</span>
-          <span style="color:#00a8c8">FROM</span> <span style="color:#75715e">#{table_name}</span>
-          <span style="color:#00a8c8">WHERE</span> <span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#75715e">#{instance.id}</span>
-        <span style="color:#00a8c8">UNION</span> <span style="color:#00a8c8">ALL</span>
-          <span style="color:#00a8c8">SELECT</span> <span style="color:#75715e">#{table_name}.id, path || #{table_name}.id</span>
-          <span style="color:#00a8c8">FROM</span> <span style="color:#111">search_tree</span>
-          <span style="color:#00a8c8">JOIN</span> <span style="color:#75715e">#{table_name} ON #{table_name}.parent_id = search_tree.id</span>
-          <span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#75715e">#{table_name}.id = ANY(path)</span>
-      <span style="color:#111">)</span>
-      <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">search_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span>
-    <span style="color:#00a8c8">SQL</span>
-  <span style="color:#00a8c8">end</span>
-<span style="color:#00a8c8">end</span>
-</code></pre></div><p>You should notice right away where our recursive query is. The
+<h2 id="using-with-queries-in-activerecord">
+  Using WITH queries in ActiveRecord
+  <a class="heading-link" href="#using-with-queries-in-activerecord">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#75715e"># ...</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">self_and_descendents</span> <span style="color:#f92672">-</span> <span style="color:#f92672">[</span><span style="color:#111">self</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self_and_descendents</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">class</span><span style="color:#f92672">.</span><span style="color:#111">tree_for</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">descendent_pictures</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">subtree</span> <span style="color:#f92672">=</span> <span style="color:#111">self</span><span style="color:#f92672">.</span><span style="color:#111">class</span><span style="color:#f92672">.</span><span style="color:#111">tree_sql_for</span><span style="color:#111">(</span><span style="color:#111">self</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">CatPicture</span><span style="color:#f92672">.</span><span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;category_id IN (</span><span style="color:#d88200">#{</span><span style="color:#111">subtree</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">tree_for</span><span style="color:#111">(</span><span style="color:#111">instance</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">where</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id IN (</span><span style="color:#d88200">#{</span><span style="color:#111">tree_sql_for</span><span style="color:#111">(</span><span style="color:#111">instance</span><span style="color:#111">)</span><span style="color:#d88200">}</span><span style="color:#d88200">)&#34;</span><span style="color:#111">)</span><span style="color:#f92672">.</span><span style="color:#111">order</span><span style="color:#111">(</span><span style="color:#d88200">&#34;</span><span style="color:#d88200">#{</span><span style="color:#111">table_name</span><span style="color:#d88200">}</span><span style="color:#d88200">.id&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">def</span> <span style="color:#75af00">self</span><span style="color:#f92672">.</span><span style="color:#75af00">tree_sql_for</span><span style="color:#111">(</span><span style="color:#111">instance</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">tree_sql</span> <span style="color:#f92672">=</span>  <span style="color:#d88200">&lt;&lt;-SQL
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200"></span>      <span style="color:#00a8c8">WITH</span> <span style="color:#00a8c8">RECURSIVE</span> <span style="color:#111">search_tree</span><span style="color:#111">(</span><span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#111">path</span><span style="color:#111">)</span> <span style="color:#00a8c8">AS</span> <span style="color:#111">(</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span><span style="color:#111">,</span> <span style="color:#00a8c8">ARRAY</span><span style="color:#f92672">[</span><span style="color:#111">id</span><span style="color:#f92672">]</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">FROM</span> <span style="color:#75715e">#{table_name}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">WHERE</span> <span style="color:#111">id</span> <span style="color:#f92672">=</span> <span style="color:#75715e">#{instance.id}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#00a8c8">UNION</span> <span style="color:#00a8c8">ALL</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">SELECT</span> <span style="color:#75715e">#{table_name}.id, path || #{table_name}.id</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">FROM</span> <span style="color:#111">search_tree</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">JOIN</span> <span style="color:#75715e">#{table_name} ON #{table_name}.parent_id = search_tree.id</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#00a8c8">WHERE</span> <span style="color:#00a8c8">NOT</span> <span style="color:#75715e">#{table_name}.id = ANY(path)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#00a8c8">SELECT</span> <span style="color:#111">id</span> <span style="color:#00a8c8">FROM</span> <span style="color:#111">search_tree</span> <span style="color:#00a8c8">ORDER</span> <span style="color:#00a8c8">BY</span> <span style="color:#111">path</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#00a8c8">SQL</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#00a8c8">end</span>
+</span></span><span style="display:flex;"><span><span style="color:#00a8c8">end</span>
+</span></span></code></pre></div><p>You should notice right away where our recursive query is. The
 <code>tree_sql_for</code> class method returns a SQL string that can be used with
 other queries. Compared to the WITH query we looked at before, there a
 few differences worth mentioning.</p>
@@ -334,14 +454,26 @@ relation that includes all pictures from this category and all
 subcategories. In other words, what used to take 2 database round trips
 for each category in the tree (one to grab children, one to get its
 pictures) will now only take 1 for the entire set.</p>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion">
+  Conclusion
+  <a class="heading-link" href="#conclusion">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Taking advantage of PostgreSQL&rsquo;s advanced features can provide large
 performance boons, especially when a tree get several levels deep.</p>
 <p>Although using database recursion is an efficient way of improving
 performance with our existing schema, other methods of handling tree
 structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antipatterns" title="SQL Antipatterns book">SQL Antipatterns</a> book has a great
 breakdown of other tree solutions that would require schema changes.</p>
-<h2 id="example-app">Example app</h2>
+<h2 id="example-app">
+  Example app
+  <a class="heading-link" href="#example-app">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL">sample Rails app</a> to
 iterate quickly. I used TDD to write the pure-ruby approach, and reused
 the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
@@ -350,6 +482,7 @@ model](<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/m
 dels/category.rb), which mirrors the code above.</p>
 
       </div>
+
 
       <footer>
         
@@ -361,25 +494,66 @@ dels/category.rb), which mirrors the code above.</p>
       </footer>
     </article>
 
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+  
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
+    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,
+      {
+        delimiters: [
+          {left: '$$', right: '$$', display:true},
+          {left: '$', right: '$', display:false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      }
+    );"></script>
   </section>
 
-      </div><footer class="footer">
-  <section class="container"> © 2022</section>
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2022
+     Joshua Davey 
+    ·
+    
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
 </footer>
 
-    </main>
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-330362-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-  </body>
+  </main>
+
+  
+
+  
+  
+  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
 </html>

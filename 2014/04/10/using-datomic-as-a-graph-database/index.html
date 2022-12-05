@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>
+  Using Datomic as a Graph Database · Joshua Davey
+</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Joshua Davey">
-    <meta name="description" content="Joshua Davey&#39;s Website">
-    <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="Joshua Davey">
+<meta name="description" content="This is a repost. You can find the original here
+Datomic is a database that changes the way that you think about databases. It also happens to be effective at modeling graph data and was a great fit for performing graph traversal in a recent project I built.
+I started out building a six degress of Kevin Bacon project using Neo4j, a popular open-source graph database. It worked very well for actors that were a few hops away, but finding paths between actors with more than 5 hops proved problematic.">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Using Datomic as a Graph Database"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
 Datomic is a database that changes the way that you think about databases. It also happens to be effective at modeling graph data and was a great fit for performing graph traversal in a recent project I built.
 I started out building a six degress of Kevin Bacon project using Neo4j, a popular open-source graph database. It worked very well for actors that were a few hops away, but finding paths between actors with more than 5 hops proved problematic."/>
+
 <meta property="og:title" content="Using Datomic as a Graph Database" />
 <meta property="og:description" content="This is a repost. You can find the original here
 Datomic is a database that changes the way that you think about databases. It also happens to be effective at modeling graph data and was a great fit for performing graph traversal in a recent project I built.
@@ -19,66 +33,130 @@ I started out building a six degress of Kevin Bacon project using Neo4j, a popul
 <meta property="article:modified_time" content="2014-04-10T00:00:00+00:00" />
 
 
-    <base href="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/">
-    <title>
-  Using Datomic as a Graph Database · Joshua Davey
-</title><link rel="canonical" href="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" /><link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
-      <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="canonical" href="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/">
+
+
+<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="https://joshuadavey.com/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://joshuadavey.com/images/apple-touch-icon.png">
+
+<link rel="manifest" href="https://joshuadavey.com/site.webmanifest">
+<link rel="mask-icon" href="https://joshuadavey.com/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.107.0">
+
+
+
+
+
   </head>
-  <body class="colorscheme-light">
-    <main class="wrapper">
-      <nav class="navigation">
+
+
+
+
+<body class="preload-transitions colorscheme-light">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
   <section class="container">
     <a class="navigation-title" href="https://joshuadavey.com/">
       Joshua Davey
     </a>
-    <input type="checkbox" id="menu-toggle" />
-    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
-    <ul class="navigation-list">
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
-          </li>
-    </ul>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+            </li>
+          
+        
+        
+      </ul>
+    
   </section>
 </nav>
-<div class="content">
-        
+
+
+    <div class="content">
+      
   <section class="container post">
     <article>
       <header>
         <div class="post-title">
-          <h1 class="title">Using Datomic as a Graph Database</h1>
+          <h1 class="title">
+            <a class="title-link" href="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/">
+              Using Datomic as a Graph Database
+            </a>
+          </h1>
         </div>
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fas fa-calendar"></i>
-              <time datetime='2014-04-10T00:00:00Z'>
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2014-04-10T00:00:00Z">
                 April 10, 2014
               </time>
             </span>
             <span class="reading-time">
-              <i class="fas fa-clock"></i>
-              9 minutes read
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              9-minute read
             </span>
           </div>
+          
           
           
         </div>
       </header>
 
       <div>
+        
         <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database">here</a></em></p>
 <p>Datomic is a database that changes the way that you think about databases. It
 also happens to be effective at modeling graph data and was a great fit for
@@ -95,7 +173,13 @@ the appropriate graph searching algorithm, solved my problem elegantly. This
 technique ended up being fast as well.</p>
 <p>Quick aside: this post assumes a cursory understanding of Datomic. I won&rsquo;t cover
 the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
-<h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold</h2>
+<h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">
+  6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold
+  <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
 Bacon</a>. I wanted to create an app where you could pick an
 actor and find out what their Bacon Number was. That is, given an actor,
@@ -103,118 +187,129 @@ I wanted to answer the question &ldquo;how many degrees of separation is there
 between that actor and Kevin Bacon?&rdquo;</p>
 <p>Using <a href="https://www.imdb.com/interfaces">information freely available from IMDb</a>, I developed the following
 schema:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[</span>
- <span style="color:#75715e">;; movies</span>
- <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:movie/title</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db/fulltext</span> <span style="color:#111">true</span>
-  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
-  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;A movie&#39;s title (upsertable)&#34;</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
-
- <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:movie/year</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/long</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;A movie&#39;s release year&#34;</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
-
- <span style="color:#75715e">;; actors</span>
- <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:person/name</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db/fulltext</span> <span style="color:#111">true</span>
-  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
-  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;A person&#39;s name (upsertable)&#34;</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
-
- <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:actor/movies</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/ref</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/many</span>
-  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;An actor&#39;s ref to a movie&#34;</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
- <span style="color:#111">]</span>
-
-</code></pre></div><p>In a nutshell, movies have titles and years. Actors have names and movies.
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">[</span>
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">;; movies</span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:movie/title</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/fulltext</span> <span style="color:#111">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;A movie&#39;s title (upsertable)&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:movie/year</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/long</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;A movie&#39;s release year&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#75715e">;; actors</span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:person/name</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/fulltext</span> <span style="color:#111">true</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;A person&#39;s name (upsertable)&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span><span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:actor/movies</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/ref</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/many</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;An actor&#39;s ref to a movie&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">]</span>
+</span></span></code></pre></div><p>In a nutshell, movies have titles and years. Actors have names and movies.
 The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I&rsquo;ve declared the
 <code>:actor/movies</code> attribute as having a cardinality of many.</p>
-<h2 id="using-datalog-queries">Using datalog queries</h2>
+<h2 id="using-datalog-queries">
+  Using datalog queries
+  <a class="heading-link" href="#using-datalog-queries">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Using datalog and <code>datomic.api/q</code>, we can make graph-like queries fairly easily.
 Because the <code>:where</code> clauses of a datalog query form an implicit join, we can
 join from our starting point to our ending point with relative ease.</p>
 <p>As an example, what if we wanted to know the shortest path or paths from Kevin
 Bacon to Jon Belushi? Let&rsquo;s use a query to find out:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">datomic.api</span> <span style="color:#d88200">:as</span> <span style="color:#111">d</span> <span style="color:#d88200">:refer</span> <span style="color:#111">[</span><span style="color:#111">q</span> <span style="color:#111">db</span><span style="color:#111">]])</span>
-<span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#111">...</span><span style="color:#111">))</span>
-
-<span style="color:#111">(</span><span style="color:#75af00">q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?start</span> <span style="color:#111">?title</span> <span style="color:#111">?end</span>
-      <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?start</span> <span style="color:#111">?end</span>
-      <span style="color:#d88200">:where</span>
-     <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?start</span><span style="color:#111">]</span>
-     <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?end</span><span style="color:#111">]</span>
-     <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
-     <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
-     <span style="color:#111">[</span><span style="color:#111">?m</span> <span style="color:#d88200">:movie/title</span> <span style="color:#111">?title</span><span style="color:#111">]]</span>
-    <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
-    <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span>
-    <span style="color:#d88200">&#34;Belushi, John&#34;</span><span style="color:#111">)</span>
-
-<span style="color:#75715e">;=&gt; #{[&#34;Bacon, Kevin (I)&#34; &#34;Animal House (1978)&#34; &#34;Belushi, John&#34;]}</span>
-</code></pre></div><p>That is fine when actors have worked together in a movie (a Bacon Number of 1),
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">require</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#111">datomic.api</span> <span style="color:#d88200">:as</span> <span style="color:#111">d</span> <span style="color:#d88200">:refer</span> <span style="color:#111">[</span><span style="color:#111">q</span> <span style="color:#111">db</span><span style="color:#111">]])</span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">d/connect</span> <span style="color:#111">...</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?start</span> <span style="color:#111">?title</span> <span style="color:#111">?end</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?start</span> <span style="color:#111">?end</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#d88200">:where</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?start</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?end</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?m</span> <span style="color:#d88200">:movie/title</span> <span style="color:#111">?title</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#d88200">&#34;Belushi, John&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; #{[&#34;Bacon, Kevin (I)&#34; &#34;Animal House (1978)&#34; &#34;Belushi, John&#34;]}</span>
+</span></span></code></pre></div><p>That is fine when actors have worked together in a movie (a Bacon Number of 1),
 but doesn&rsquo;t help us solve Bacon numbers when there are 2 or more movies between
 the actors. We could add more where clauses to join over two movies, but that
 isn&rsquo;t sustainable. The queries would quickly become too long to reason about.
 This is a prime opportunity to use Datomic&rsquo;s rules.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">acted-with-rules</span>
-  <span style="color:#f92672">&#39;</span><span style="color:#111">[[(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
-     <span style="color:#111">[</span><span style="color:#111">?e1</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
-     <span style="color:#111">[</span><span style="color:#111">?e2</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
-     <span style="color:#111">[(</span><span style="color:#75af00">!=</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span><span style="color:#111">)]</span>
-     <span style="color:#111">[(</span><span style="color:#111">vector </span><span style="color:#111">?e1</span> <span style="color:#111">?m</span> <span style="color:#111">?e2</span><span style="color:#111">)</span> <span style="color:#111">?path</span><span style="color:#111">]]</span>
-    <span style="color:#111">[(</span><span style="color:#75af00">acted-with-1</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
-     <span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)]</span>
-    <span style="color:#111">[(</span><span style="color:#75af00">acted-with-2</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
-     <span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?x</span> <span style="color:#111">?pp</span><span style="color:#111">)</span>
-     <span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?x</span> <span style="color:#111">?e2</span> <span style="color:#111">?p2</span><span style="color:#111">)</span>
-     <span style="color:#111">[(</span><span style="color:#111">butlast </span><span style="color:#111">?pp</span><span style="color:#111">)</span> <span style="color:#111">?p1</span><span style="color:#111">]</span>
-     <span style="color:#111">[(</span><span style="color:#111">concat </span><span style="color:#111">?p1</span> <span style="color:#111">?p2</span><span style="color:#111">)</span> <span style="color:#111">?path</span><span style="color:#111">]]])</span>
-
-<span style="color:#111">(</span><span style="color:#75af00">q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?path</span>
-     <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">%</span> <span style="color:#111">?start</span> <span style="color:#111">?end</span>
-     <span style="color:#d88200">:where</span>
-     <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?start</span><span style="color:#111">]</span>
-     <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?end</span><span style="color:#111">]</span>
-     <span style="color:#111">(</span><span style="color:#75af00">acted-with-2</span> <span style="color:#111">?a1</span> <span style="color:#111">?a2</span> <span style="color:#111">?path</span><span style="color:#111">)]</span>
-    <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#111">acted-with-rules</span> <span style="color:#d88200">&#34;Bieber, Justin&#34;</span> <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span><span style="color:#111">))</span>
-<span style="color:#75715e">;=&gt; #{[(17592186887476 17592186434418 17592187362817 17592186339273 17592186838882)] [(17592186887476 17592186434418 17592188400376 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592187854963 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592186926035 17592186302397 17592186838882)]}</span>
-</code></pre></div><p>This time we get back a collection of paths with entity ids. We can easily
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">acted-with-rules</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#39;</span><span style="color:#111">[[(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?e1</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?e2</span> <span style="color:#d88200">:actor/movies</span> <span style="color:#111">?m</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[(</span><span style="color:#75af00">!=</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[(</span><span style="color:#111">vector </span><span style="color:#111">?e1</span> <span style="color:#111">?m</span> <span style="color:#111">?e2</span><span style="color:#111">)</span> <span style="color:#111">?path</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">[(</span><span style="color:#75af00">acted-with-1</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">[(</span><span style="color:#75af00">acted-with-2</span> <span style="color:#111">?e1</span> <span style="color:#111">?e2</span> <span style="color:#111">?path</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?e1</span> <span style="color:#111">?x</span> <span style="color:#111">?pp</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">(</span><span style="color:#75af00">acted-with</span> <span style="color:#111">?x</span> <span style="color:#111">?e2</span> <span style="color:#111">?p2</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[(</span><span style="color:#111">butlast </span><span style="color:#111">?pp</span><span style="color:#111">)</span> <span style="color:#111">?p1</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[(</span><span style="color:#111">concat </span><span style="color:#111">?p1</span> <span style="color:#111">?p2</span><span style="color:#111">)</span> <span style="color:#111">?path</span><span style="color:#111">]]])</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?path</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">%</span> <span style="color:#111">?start</span> <span style="color:#111">?end</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#d88200">:where</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?start</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?end</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#111">(</span><span style="color:#75af00">acted-with-2</span> <span style="color:#111">?a1</span> <span style="color:#111">?a2</span> <span style="color:#111">?path</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span> <span style="color:#111">acted-with-rules</span> <span style="color:#d88200">&#34;Bieber, Justin&#34;</span> <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; #{[(17592186887476 17592186434418 17592187362817 17592186339273 17592186838882)] [(17592186887476 17592186434418 17592188400376 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592187854963 17592186529535 17592186838882)] [(17592186887476 17592186434418 17592186926035 17592186302397 17592186838882)]}</span>
+</span></span></code></pre></div><p>This time we get back a collection of paths with entity ids. We can easily
 transform these ids by mapping them into entities and getting the name or title,
 using a function like the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">actor-or-movie-name</span> <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">ent</span> <span style="color:#111">(</span><span style="color:#75af00">d/entity</span> <span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">)]</span>
-    <span style="color:#111">(</span><span style="color:#111">or </span><span style="color:#111">(</span><span style="color:#d88200">:movie/title</span> <span style="color:#111">ent</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#d88200">:person/name</span> <span style="color:#111">ent</span><span style="color:#111">))))</span>
-</code></pre></div><p>So, putting the query together with the above function, we get:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
-      <span style="color:#111">name </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">actor-or-movie-name</span> <span style="color:#111">d</span><span style="color:#111">)]</span>
-  <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">(</span><span style="color:#75af00">q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?path</span>
-            <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">%</span> <span style="color:#111">?start</span> <span style="color:#111">?end</span>
-            <span style="color:#d88200">:where</span>
-            <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?start</span><span style="color:#111">]</span>
-            <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?end</span><span style="color:#111">]</span>
-            <span style="color:#111">(</span><span style="color:#75af00">acted-with-2</span> <span style="color:#111">?a1</span> <span style="color:#111">?a2</span> <span style="color:#111">?path</span><span style="color:#111">)]</span>
-          <span style="color:#111">d</span> <span style="color:#111">acted-with-rules</span> <span style="color:#d88200">&#34;Bieber, Justin&#34;</span> <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span><span style="color:#111">)</span>
-       <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">first</span><span style="color:#111">)</span>
-       <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">mapv</span> <span style="color:#111">name</span><span style="color:#111">))))</span>
-<span style="color:#75715e">;=&gt; ([&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Jones, Tommy Lee&#34; &#34;JFK (1991)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Howard, Rosemary (II)&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Segal, Tobias&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Brolin, Josh&#34; &#34;Hollow Man (2000)&#34; &#34;Bacon, Kevin (I)&#34;])</span>
-</code></pre></div><p>The rules above are defined statically, but they are simply clojure data
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">actor-or-movie-name</span> <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">ent</span> <span style="color:#111">(</span><span style="color:#75af00">d/entity</span> <span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#111">or </span><span style="color:#111">(</span><span style="color:#d88200">:movie/title</span> <span style="color:#111">ent</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#d88200">:person/name</span> <span style="color:#111">ent</span><span style="color:#111">))))</span>
+</span></span></code></pre></div><p>So, putting the query together with the above function, we get:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">name </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">actor-or-movie-name</span> <span style="color:#111">d</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">(</span><span style="color:#75af00">q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?path</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">%</span> <span style="color:#111">?start</span> <span style="color:#111">?end</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#d88200">:where</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">[</span><span style="color:#111">?a1</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?start</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">[</span><span style="color:#111">?a2</span> <span style="color:#d88200">:actor/name</span> <span style="color:#111">?end</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">(</span><span style="color:#75af00">acted-with-2</span> <span style="color:#111">?a1</span> <span style="color:#111">?a2</span> <span style="color:#111">?path</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#111">d</span> <span style="color:#111">acted-with-rules</span> <span style="color:#d88200">&#34;Bieber, Justin&#34;</span> <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">first</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">mapv</span> <span style="color:#111">name</span><span style="color:#111">))))</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; ([&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Jones, Tommy Lee&#34; &#34;JFK (1991)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Howard, Rosemary (II)&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Segal, Tobias&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Brolin, Josh&#34; &#34;Hollow Man (2000)&#34; &#34;Bacon, Kevin (I)&#34;])</span>
+</span></span></code></pre></div><p>The rules above are defined statically, but they are simply clojure data
 structures: it would be trivial to generate those rules to an arbitrary
 depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj">Datomic mbrainz
 sample</a>.</p>
-<h2 id="low-level-traversal-for-better-performance">Low-level traversal for better performance</h2>
+<h2 id="low-level-traversal-for-better-performance">
+  Low-level traversal for better performance
+  <a class="heading-link" href="#low-level-traversal-for-better-performance">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Having to know the depth at which to traverse the graph is cumbersome. Datomic
 has a distinct advantage of being able to treat your data as local, even if its
 permanent storage lives somewhere else. That means that we can bring our own
@@ -225,111 +320,110 @@ our own graph-searching algorithm, rather than relying on the query engine.</p>
 density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
 efficient alogrithm for finding the shortest paths from one point to another. A
 generic bidirectional BFS returning all shortest paths might look like this.</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">paths</span>
-  <span style="color:#d88200">&#34;Returns a lazy seq of all non-looping path vectors starting with
-</span><span style="color:#d88200">  [&lt;start-node&gt;]&#34;</span>
-  <span style="color:#111">[</span><span style="color:#111">nodes-fn</span> <span style="color:#111">path</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">this-node</span> <span style="color:#111">(</span><span style="color:#111">peek </span><span style="color:#111">path</span><span style="color:#111">)]</span>
-    <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">(</span><span style="color:#75af00">nodes-fn</span> <span style="color:#111">this-node</span><span style="color:#111">)</span>
-         <span style="color:#111">(</span><span style="color:#111">filter </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#111">not-any? </span><span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">edge</span><span style="color:#111">]</span> <span style="color:#111">(</span><span style="color:#111">= </span><span style="color:#111">edge</span> <span style="color:#111">[</span><span style="color:#111">this-node</span> <span style="color:#111">%</span><span style="color:#111">]))</span>
-                            <span style="color:#111">(</span><span style="color:#75af00">partition</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">1</span> <span style="color:#111">path</span><span style="color:#111">)))</span>
-         <span style="color:#111">(</span><span style="color:#111">mapcat </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#75af00">paths</span> <span style="color:#111">nodes-fn</span> <span style="color:#111">(</span><span style="color:#111">conj path </span><span style="color:#111">%</span><span style="color:#111">)))</span>
-         <span style="color:#111">(</span><span style="color:#111">cons </span><span style="color:#111">path</span><span style="color:#111">))))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">trace-paths</span> <span style="color:#111">[</span><span style="color:#111">m</span> <span style="color:#111">start</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#111">remove </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#75af00">m</span> <span style="color:#111">(</span><span style="color:#111">peek </span><span style="color:#111">%</span><span style="color:#111">))</span> <span style="color:#111">(</span><span style="color:#75af00">paths</span> <span style="color:#111">m</span> <span style="color:#111">[</span><span style="color:#111">start</span><span style="color:#111">])))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">defn- </span><span style="color:#111">find-paths</span> <span style="color:#111">[</span><span style="color:#111">from-map</span> <span style="color:#111">to-map</span> <span style="color:#111">matches</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#111">for </span><span style="color:#111">[</span><span style="color:#111">n</span> <span style="color:#111">matches</span>
-        <span style="color:#111">from</span> <span style="color:#111">(</span><span style="color:#111">map reverse </span><span style="color:#111">(</span><span style="color:#75af00">trace-paths</span> <span style="color:#111">from-map</span> <span style="color:#111">n</span><span style="color:#111">))</span>
-        <span style="color:#111">to</span> <span style="color:#111">(</span><span style="color:#111">map rest </span><span style="color:#111">(</span><span style="color:#75af00">trace-paths</span> <span style="color:#111">to-map</span> <span style="color:#111">n</span><span style="color:#111">))]</span>
-    <span style="color:#111">(</span><span style="color:#75af00">vec</span> <span style="color:#111">(</span><span style="color:#111">concat </span><span style="color:#111">from</span> <span style="color:#111">to</span><span style="color:#111">))))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">defn- </span><span style="color:#111">neighbor-pairs</span> <span style="color:#111">[</span><span style="color:#111">neighbors</span> <span style="color:#111">q</span> <span style="color:#111">coll</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#111">for </span><span style="color:#111">[</span><span style="color:#111">node </span><span style="color:#111">q</span>
-        <span style="color:#111">nbr</span> <span style="color:#111">(</span><span style="color:#75af00">neighbors</span> <span style="color:#111">node</span><span style="color:#111">)</span>
-        <span style="color:#d88200">:when</span> <span style="color:#111">(</span><span style="color:#111">not </span><span style="color:#111">(</span><span style="color:#111">contains? </span><span style="color:#111">coll</span> <span style="color:#111">nbr</span><span style="color:#111">))]</span>
-    <span style="color:#111">[</span><span style="color:#111">nbr</span> <span style="color:#111">node</span><span style="color:#111">]))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">bidirectional-bfs</span> <span style="color:#111">[</span><span style="color:#111">start</span> <span style="color:#111">end</span> <span style="color:#111">neighbors</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">find-pairs</span> <span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">neighbor-pairs</span> <span style="color:#111">neighbors</span><span style="color:#111">)</span>
-        <span style="color:#111">overlaps</span> <span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">coll</span> <span style="color:#111">q</span><span style="color:#111">]</span> <span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">(</span><span style="color:#111">filter </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#111">contains? </span><span style="color:#111">coll</span> <span style="color:#111">%</span><span style="color:#111">)</span> <span style="color:#111">q</span><span style="color:#111">)))</span>
-        <span style="color:#111">map-set-pairs</span> <span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">map </span><span style="color:#111">pairs</span><span style="color:#111">]</span>
-                        <span style="color:#111">(</span><span style="color:#75af00">persistent!</span> <span style="color:#111">(</span><span style="color:#111">reduce </span><span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">map </span><span style="color:#111">[</span><span style="color:#111">key </span><span style="color:#111">val</span><span style="color:#111">]]</span>
-                                  <span style="color:#111">(</span><span style="color:#75af00">assoc!</span> <span style="color:#111">map key </span><span style="color:#111">(</span><span style="color:#111">conj </span><span style="color:#111">(</span><span style="color:#111">get map key </span><span style="color:#f92672">#</span><span style="color:#111">{})</span> <span style="color:#111">val</span><span style="color:#111">)))</span>
-                                <span style="color:#111">(</span><span style="color:#75af00">transient</span> <span style="color:#111">map</span><span style="color:#111">)</span> <span style="color:#111">pairs</span><span style="color:#111">)))]</span>
-    <span style="color:#111">(</span><span style="color:#00a8c8">loop </span><span style="color:#111">[</span><span style="color:#111">preds</span> <span style="color:#111">{</span><span style="color:#111">start</span> <span style="color:#111">nil</span><span style="color:#111">}</span> <span style="color:#75715e">; map of outgoing nodes to where they came from</span>
-           <span style="color:#111">succs</span> <span style="color:#111">{</span><span style="color:#111">end</span> <span style="color:#111">nil</span><span style="color:#111">}</span>   <span style="color:#75715e">; map of incoming nodes to where they came from</span>
-           <span style="color:#111">q1</span> <span style="color:#111">(</span><span style="color:#111">list </span><span style="color:#111">start</span><span style="color:#111">)</span>   <span style="color:#75715e">; queue of outgoing things to check</span>
-           <span style="color:#111">q2</span> <span style="color:#111">(</span><span style="color:#111">list </span><span style="color:#111">end</span><span style="color:#111">)]</span>    <span style="color:#75715e">; queue of incoming things to check</span>
-      <span style="color:#111">(</span><span style="color:#111">when </span><span style="color:#111">(</span><span style="color:#111">and </span><span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">q1</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">q2</span><span style="color:#111">))</span>
-        <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">(</span><span style="color:#111">&lt;= </span><span style="color:#111">(</span><span style="color:#111">count </span><span style="color:#111">q1</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#111">count </span><span style="color:#111">q2</span><span style="color:#111">))</span>
-          <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">pairs</span> <span style="color:#111">(</span><span style="color:#75af00">find-pairs</span> <span style="color:#111">q1</span> <span style="color:#111">preds</span><span style="color:#111">)</span>
-                <span style="color:#111">preds</span> <span style="color:#111">(</span><span style="color:#75af00">map-set-pairs</span> <span style="color:#111">preds</span> <span style="color:#111">pairs</span><span style="color:#111">)</span>
-                <span style="color:#111">q1</span> <span style="color:#111">(</span><span style="color:#111">map first </span><span style="color:#111">pairs</span><span style="color:#111">)]</span>
-            <span style="color:#111">(</span><span style="color:#111">if-let </span><span style="color:#111">[</span><span style="color:#111">all</span> <span style="color:#111">(</span><span style="color:#75af00">overlaps</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span><span style="color:#111">)]</span>
-              <span style="color:#111">(</span><span style="color:#75af00">find-paths</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#111">set </span><span style="color:#111">all</span><span style="color:#111">))</span>
-              <span style="color:#111">(</span><span style="color:#75af00">recur</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span> <span style="color:#111">q2</span><span style="color:#111">)))</span>
-          <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">pairs</span> <span style="color:#111">(</span><span style="color:#75af00">find-pairs</span> <span style="color:#111">q2</span> <span style="color:#111">succs</span><span style="color:#111">)</span>
-                <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#75af00">map-set-pairs</span> <span style="color:#111">succs</span> <span style="color:#111">pairs</span><span style="color:#111">)</span>
-                <span style="color:#111">q2</span> <span style="color:#111">(</span><span style="color:#111">map first </span><span style="color:#111">pairs</span><span style="color:#111">)]</span>
-            <span style="color:#111">(</span><span style="color:#111">if-let </span><span style="color:#111">[</span><span style="color:#111">all</span> <span style="color:#111">(</span><span style="color:#75af00">overlaps</span> <span style="color:#111">preds</span> <span style="color:#111">q2</span><span style="color:#111">)]</span>
-              <span style="color:#111">(</span><span style="color:#75af00">find-paths</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#111">set </span><span style="color:#111">all</span><span style="color:#111">))</span>
-              <span style="color:#111">(</span><span style="color:#75af00">recur</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span> <span style="color:#111">q2</span><span style="color:#111">))))))))</span>
-</code></pre></div><p>There&rsquo;s a lot of code here, including some optimizations and helper functions.
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">paths</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#34;Returns a lazy seq of all non-looping path vectors starting with
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">  [&lt;start-node&gt;]&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">[</span><span style="color:#111">nodes-fn</span> <span style="color:#111">path</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">this-node</span> <span style="color:#111">(</span><span style="color:#111">peek </span><span style="color:#111">path</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">-&gt;&gt;</span> <span style="color:#111">(</span><span style="color:#75af00">nodes-fn</span> <span style="color:#111">this-node</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#111">(</span><span style="color:#111">filter </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#111">not-any? </span><span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">edge</span><span style="color:#111">]</span> <span style="color:#111">(</span><span style="color:#111">= </span><span style="color:#111">edge</span> <span style="color:#111">[</span><span style="color:#111">this-node</span> <span style="color:#111">%</span><span style="color:#111">]))</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#111">(</span><span style="color:#75af00">partition</span> <span style="color:#ae81ff">2</span> <span style="color:#ae81ff">1</span> <span style="color:#111">path</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#111">(</span><span style="color:#111">mapcat </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#75af00">paths</span> <span style="color:#111">nodes-fn</span> <span style="color:#111">(</span><span style="color:#111">conj path </span><span style="color:#111">%</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>         <span style="color:#111">(</span><span style="color:#111">cons </span><span style="color:#111">path</span><span style="color:#111">))))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">trace-paths</span> <span style="color:#111">[</span><span style="color:#111">m</span> <span style="color:#111">start</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">remove </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#75af00">m</span> <span style="color:#111">(</span><span style="color:#111">peek </span><span style="color:#111">%</span><span style="color:#111">))</span> <span style="color:#111">(</span><span style="color:#75af00">paths</span> <span style="color:#111">m</span> <span style="color:#111">[</span><span style="color:#111">start</span><span style="color:#111">])))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn- </span><span style="color:#111">find-paths</span> <span style="color:#111">[</span><span style="color:#111">from-map</span> <span style="color:#111">to-map</span> <span style="color:#111">matches</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">for </span><span style="color:#111">[</span><span style="color:#111">n</span> <span style="color:#111">matches</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">from</span> <span style="color:#111">(</span><span style="color:#111">map reverse </span><span style="color:#111">(</span><span style="color:#75af00">trace-paths</span> <span style="color:#111">from-map</span> <span style="color:#111">n</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">to</span> <span style="color:#111">(</span><span style="color:#111">map rest </span><span style="color:#111">(</span><span style="color:#75af00">trace-paths</span> <span style="color:#111">to-map</span> <span style="color:#111">n</span><span style="color:#111">))]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">vec</span> <span style="color:#111">(</span><span style="color:#111">concat </span><span style="color:#111">from</span> <span style="color:#111">to</span><span style="color:#111">))))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn- </span><span style="color:#111">neighbor-pairs</span> <span style="color:#111">[</span><span style="color:#111">neighbors</span> <span style="color:#111">q</span> <span style="color:#111">coll</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">for </span><span style="color:#111">[</span><span style="color:#111">node </span><span style="color:#111">q</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">nbr</span> <span style="color:#111">(</span><span style="color:#75af00">neighbors</span> <span style="color:#111">node</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#d88200">:when</span> <span style="color:#111">(</span><span style="color:#111">not </span><span style="color:#111">(</span><span style="color:#111">contains? </span><span style="color:#111">coll</span> <span style="color:#111">nbr</span><span style="color:#111">))]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">[</span><span style="color:#111">nbr</span> <span style="color:#111">node</span><span style="color:#111">]))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">bidirectional-bfs</span> <span style="color:#111">[</span><span style="color:#111">start</span> <span style="color:#111">end</span> <span style="color:#111">neighbors</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">find-pairs</span> <span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">neighbor-pairs</span> <span style="color:#111">neighbors</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">overlaps</span> <span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">coll</span> <span style="color:#111">q</span><span style="color:#111">]</span> <span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">(</span><span style="color:#111">filter </span><span style="color:#f92672">#</span><span style="color:#111">(</span><span style="color:#111">contains? </span><span style="color:#111">coll</span> <span style="color:#111">%</span><span style="color:#111">)</span> <span style="color:#111">q</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">map-set-pairs</span> <span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">map </span><span style="color:#111">pairs</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>                        <span style="color:#111">(</span><span style="color:#75af00">persistent!</span> <span style="color:#111">(</span><span style="color:#111">reduce </span><span style="color:#111">(</span><span style="color:#00a8c8">fn </span><span style="color:#111">[</span><span style="color:#111">map </span><span style="color:#111">[</span><span style="color:#111">key </span><span style="color:#111">val</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>                                  <span style="color:#111">(</span><span style="color:#75af00">assoc!</span> <span style="color:#111">map key </span><span style="color:#111">(</span><span style="color:#111">conj </span><span style="color:#111">(</span><span style="color:#111">get map key </span><span style="color:#f92672">#</span><span style="color:#111">{})</span> <span style="color:#111">val</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>                                <span style="color:#111">(</span><span style="color:#75af00">transient</span> <span style="color:#111">map</span><span style="color:#111">)</span> <span style="color:#111">pairs</span><span style="color:#111">)))]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#00a8c8">loop </span><span style="color:#111">[</span><span style="color:#111">preds</span> <span style="color:#111">{</span><span style="color:#111">start</span> <span style="color:#111">nil</span><span style="color:#111">}</span> <span style="color:#75715e">; map of outgoing nodes to where they came from</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#111">succs</span> <span style="color:#111">{</span><span style="color:#111">end</span> <span style="color:#111">nil</span><span style="color:#111">}</span>   <span style="color:#75715e">; map of incoming nodes to where they came from</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#111">q1</span> <span style="color:#111">(</span><span style="color:#111">list </span><span style="color:#111">start</span><span style="color:#111">)</span>   <span style="color:#75715e">; queue of outgoing things to check</span>
+</span></span><span style="display:flex;"><span>           <span style="color:#111">q2</span> <span style="color:#111">(</span><span style="color:#111">list </span><span style="color:#111">end</span><span style="color:#111">)]</span>    <span style="color:#75715e">; queue of incoming things to check</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">(</span><span style="color:#111">when </span><span style="color:#111">(</span><span style="color:#111">and </span><span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">q1</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">q2</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">(</span><span style="color:#111">&lt;= </span><span style="color:#111">(</span><span style="color:#111">count </span><span style="color:#111">q1</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#111">count </span><span style="color:#111">q2</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">pairs</span> <span style="color:#111">(</span><span style="color:#75af00">find-pairs</span> <span style="color:#111">q1</span> <span style="color:#111">preds</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">preds</span> <span style="color:#111">(</span><span style="color:#75af00">map-set-pairs</span> <span style="color:#111">preds</span> <span style="color:#111">pairs</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">q1</span> <span style="color:#111">(</span><span style="color:#111">map first </span><span style="color:#111">pairs</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">(</span><span style="color:#111">if-let </span><span style="color:#111">[</span><span style="color:#111">all</span> <span style="color:#111">(</span><span style="color:#75af00">overlaps</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">(</span><span style="color:#75af00">find-paths</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#111">set </span><span style="color:#111">all</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">(</span><span style="color:#75af00">recur</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span> <span style="color:#111">q2</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">pairs</span> <span style="color:#111">(</span><span style="color:#75af00">find-pairs</span> <span style="color:#111">q2</span> <span style="color:#111">succs</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#75af00">map-set-pairs</span> <span style="color:#111">succs</span> <span style="color:#111">pairs</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#111">q2</span> <span style="color:#111">(</span><span style="color:#111">map first </span><span style="color:#111">pairs</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#111">(</span><span style="color:#111">if-let </span><span style="color:#111">[</span><span style="color:#111">all</span> <span style="color:#111">(</span><span style="color:#75af00">overlaps</span> <span style="color:#111">preds</span> <span style="color:#111">q2</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">(</span><span style="color:#75af00">find-paths</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">(</span><span style="color:#111">set </span><span style="color:#111">all</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">(</span><span style="color:#75af00">recur</span> <span style="color:#111">preds</span> <span style="color:#111">succs</span> <span style="color:#111">q1</span> <span style="color:#111">q2</span><span style="color:#111">))))))))</span>
+</span></span></code></pre></div><p>There&rsquo;s a lot of code here, including some optimizations and helper functions.
 The important function here is <code>bidirectional-bfs</code>. I won&rsquo;t explain the details
 of the algorithm, but at a high level, it takes in a start and end node and a
 function to be called on any node to get it&rsquo;s &ldquo;neighbors&rdquo;.</p>
 <p>This is a generic, pure function, agnostic of Datomic or our data. In fact, I used
 a simple map as the &ldquo;graph&rdquo; while developing this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">graph</span>
-  <span style="color:#111">{</span><span style="color:#d88200">:a</span> <span style="color:#111">[</span><span style="color:#d88200">:b</span><span style="color:#111">]</span>
-   <span style="color:#d88200">:b</span> <span style="color:#111">[</span><span style="color:#d88200">:a</span> <span style="color:#d88200">:c</span> <span style="color:#d88200">:d</span><span style="color:#111">]</span>
-   <span style="color:#d88200">:c</span> <span style="color:#111">[</span><span style="color:#d88200">:b</span> <span style="color:#d88200">:e</span><span style="color:#111">]</span>
-   <span style="color:#d88200">:d</span> <span style="color:#111">[</span><span style="color:#d88200">:b</span> <span style="color:#d88200">:c</span> <span style="color:#d88200">:e</span><span style="color:#111">]</span>
-   <span style="color:#d88200">:e</span> <span style="color:#111">[</span><span style="color:#d88200">:c</span> <span style="color:#d88200">:d</span> <span style="color:#d88200">:f</span><span style="color:#111">]</span>
-   <span style="color:#d88200">:f</span> <span style="color:#111">[]})</span>
-
-<span style="color:#111">(</span><span style="color:#75af00">bidirectional-bfs</span> <span style="color:#d88200">:a</span> <span style="color:#d88200">:e</span> <span style="color:#111">graph</span><span style="color:#111">)</span>
-<span style="color:#75715e">;=&gt; [[:a :b :c :e] [:a :b :d :e]]</span>
-</code></pre></div><p>To use this generic algorithm with our database, we need a <code>neighbors</code> function.
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">graph</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">{</span><span style="color:#d88200">:a</span> <span style="color:#111">[</span><span style="color:#d88200">:b</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#d88200">:b</span> <span style="color:#111">[</span><span style="color:#d88200">:a</span> <span style="color:#d88200">:c</span> <span style="color:#d88200">:d</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#d88200">:c</span> <span style="color:#111">[</span><span style="color:#d88200">:b</span> <span style="color:#d88200">:e</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#d88200">:d</span> <span style="color:#111">[</span><span style="color:#d88200">:b</span> <span style="color:#d88200">:c</span> <span style="color:#d88200">:e</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#d88200">:e</span> <span style="color:#111">[</span><span style="color:#d88200">:c</span> <span style="color:#d88200">:d</span> <span style="color:#d88200">:f</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>   <span style="color:#d88200">:f</span> <span style="color:#111">[]})</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">bidirectional-bfs</span> <span style="color:#d88200">:a</span> <span style="color:#d88200">:e</span> <span style="color:#111">graph</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; [[:a :b :c :e] [:a :b :d :e]]</span>
+</span></span></code></pre></div><p>To use this generic algorithm with our database, we need a <code>neighbors</code> function.
 Depending on whether a node is an &ldquo;actor&rdquo; or a &ldquo;movie&rdquo;, we need to return its
 appropriate counterpart. A naive &ldquo;or&rdquo; condition is actually good enough here:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">movie-actors</span>
-  <span style="color:#d88200">&#34;Given a Datomic database value and a movie id,
-</span><span style="color:#d88200">  returns ids for actors in that movie.&#34;</span>
-  <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#d88200">:e</span> <span style="color:#111">(</span><span style="color:#75af00">d/datoms</span> <span style="color:#111">db</span> <span style="color:#d88200">:vaet</span> <span style="color:#111">eid</span> <span style="color:#d88200">:actor/movies</span><span style="color:#111">)))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">actor-movies</span>
-  <span style="color:#d88200">&#34;Given a Datomic database value and an actor id,
-</span><span style="color:#d88200">  returns ids for movies that actor was in.&#34;</span>
-  <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#d88200">:v</span> <span style="color:#111">(</span><span style="color:#75af00">d/datoms</span> <span style="color:#111">db</span> <span style="color:#d88200">:eavt</span> <span style="color:#111">eid</span> <span style="color:#d88200">:actor/movies</span><span style="color:#111">)))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">neighbors</span>
-  <span style="color:#d88200">&#34;db is database value
-</span><span style="color:#d88200">  eid is an actor or movie eid&#34;</span>
-  <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#111">or </span><span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">(</span><span style="color:#75af00">actor-movies</span> <span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">))</span>
-      <span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">(</span><span style="color:#75af00">movie-actors</span> <span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">))))</span>
-
-</code></pre></div><p>Gluing everything together is a simple matter of partial application:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">find-id-paths</span> <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">source</span> <span style="color:#111">target</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#75af00">bidirectional-bfs</span> <span style="color:#111">source</span> <span style="color:#111">target</span> <span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">neighbors</span> <span style="color:#111">db</span><span style="color:#111">)))</span>
-</code></pre></div><p>Given a source entity id and a target entity id, this will return all shortest
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">movie-actors</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#34;Given a Datomic database value and a movie id,
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">  returns ids for actors in that movie.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#d88200">:e</span> <span style="color:#111">(</span><span style="color:#75af00">d/datoms</span> <span style="color:#111">db</span> <span style="color:#d88200">:vaet</span> <span style="color:#111">eid</span> <span style="color:#d88200">:actor/movies</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">actor-movies</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#34;Given a Datomic database value and an actor id,
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">  returns ids for movies that actor was in.&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#d88200">:v</span> <span style="color:#111">(</span><span style="color:#75af00">d/datoms</span> <span style="color:#111">db</span> <span style="color:#d88200">:eavt</span> <span style="color:#111">eid</span> <span style="color:#d88200">:actor/movies</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">neighbors</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">&#34;db is database value
+</span></span></span><span style="display:flex;"><span><span style="color:#d88200">  eid is an actor or movie eid&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">or </span><span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">(</span><span style="color:#75af00">actor-movies</span> <span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">(</span><span style="color:#111">seq </span><span style="color:#111">(</span><span style="color:#75af00">movie-actors</span> <span style="color:#111">db</span> <span style="color:#111">eid</span><span style="color:#111">))))</span>
+</span></span></code></pre></div><p>Gluing everything together is a simple matter of partial application:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">find-id-paths</span> <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">source</span> <span style="color:#111">target</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#75af00">bidirectional-bfs</span> <span style="color:#111">source</span> <span style="color:#111">target</span> <span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">neighbors</span> <span style="color:#111">db</span><span style="color:#111">)))</span>
+</span></span></code></pre></div><p>Given a source entity id and a target entity id, this will return all shortest
 paths (ids), much like the query example above. From there, we could map them
 to Datomic entities, get their names, or sort the paths using a domain-specific
 heuristic. Plugging in the previous example, we might do something like the
 following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
-      <span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">d/filter</span> <span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">without-documentaries</span> <span style="color:#111">d</span><span style="color:#111">))</span>
-      <span style="color:#111">biebs</span> <span style="color:#111">(</span><span style="color:#75af00">d/entid</span> <span style="color:#111">d</span> <span style="color:#111">[</span><span style="color:#d88200">:actor/name</span> <span style="color:#d88200">&#34;Bieber, Justin&#34;</span><span style="color:#111">])</span>
-      <span style="color:#111">bacon</span> <span style="color:#111">(</span><span style="color:#75af00">d/entid</span> <span style="color:#111">d</span> <span style="color:#111">[</span><span style="color:#d88200">:actor/name</span> <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span><span style="color:#111">])</span>
-      <span style="color:#111">name </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">actor-or-movie-name</span> <span style="color:#111">d</span><span style="color:#111">)]</span>
-  <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">mapv</span> <span style="color:#111">name</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#75af00">find-id-paths</span> <span style="color:#111">d</span> <span style="color:#111">biebs</span> <span style="color:#111">bacon</span><span style="color:#111">)))</span>
-<span style="color:#75715e">;=&gt; ([&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Jones, Tommy Lee&#34; &#34;JFK (1991)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Segal, Tobias&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Brolin, Josh&#34; &#34;Hollow Man (2000)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Howard, Rosemary (II)&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;])</span>
-</code></pre></div><p>This returns the same set of paths as the query method did. However, this
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">d/filter</span> <span style="color:#111">d</span> <span style="color:#111">(</span><span style="color:#75af00">without-documentaries</span> <span style="color:#111">d</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">biebs</span> <span style="color:#111">(</span><span style="color:#75af00">d/entid</span> <span style="color:#111">d</span> <span style="color:#111">[</span><span style="color:#d88200">:actor/name</span> <span style="color:#d88200">&#34;Bieber, Justin&#34;</span><span style="color:#111">])</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">bacon</span> <span style="color:#111">(</span><span style="color:#75af00">d/entid</span> <span style="color:#111">d</span> <span style="color:#111">[</span><span style="color:#d88200">:actor/name</span> <span style="color:#d88200">&#34;Bacon, Kevin (I)&#34;</span><span style="color:#111">])</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">name </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">actor-or-movie-name</span> <span style="color:#111">d</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#111">map </span><span style="color:#111">(</span><span style="color:#111">partial </span><span style="color:#111">mapv</span> <span style="color:#111">name</span><span style="color:#111">)</span> <span style="color:#111">(</span><span style="color:#75af00">find-id-paths</span> <span style="color:#111">d</span> <span style="color:#111">biebs</span> <span style="color:#111">bacon</span><span style="color:#111">)))</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; ([&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Jones, Tommy Lee&#34; &#34;JFK (1991)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Segal, Tobias&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Brolin, Josh&#34; &#34;Hollow Man (2000)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Howard, Rosemary (II)&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;])</span>
+</span></span></code></pre></div><p>This returns the same set of paths as the query method did. However, this
 version has the advantage of going to an arbitrary depth.</p>
 <p>This is just one example of graph searching with Datomic. Different kinds of
 problems and domains could use other algorithms. The idea, though, is that
@@ -337,16 +431,29 @@ generic graph searching functions can be used directly, since the data is
 effectively local to the peer machine.</p>
 <p>For more Clojure implementations of generic graph searching algorithms,
 <a href="https://github.com/aysylu/loom">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
-<h2 id="performance">Performance</h2>
+<h2 id="performance">
+  Performance
+  <a class="heading-link" href="#performance">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
 the project. Once the peer&rsquo;s index caches are warmed, the performance
 is quite good: most searches I&rsquo;ve performed between well-known actors complete
 in under a second, and in many cases, under 100 ms. I never got results that
 good with Neo4j&rsquo;s cypher query language.</p>
-<h2 id="source">Source</h2>
+<h2 id="source">
+  Source
+  <a class="heading-link" href="#source">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
 
       </div>
+
 
       <footer>
         
@@ -358,25 +465,66 @@ good with Neo4j&rsquo;s cypher query language.</p>
       </footer>
     </article>
 
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+  
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
+    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,
+      {
+        delimiters: [
+          {left: '$$', right: '$$', display:true},
+          {left: '$', right: '$', display:false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      }
+    );"></script>
   </section>
 
-      </div><footer class="footer">
-  <section class="container"> © 2022</section>
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2022
+     Joshua Davey 
+    ·
+    
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
 </footer>
 
-    </main>
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-330362-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-  </body>
+  </main>
+
+  
+
+  
+  
+  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
 </html>

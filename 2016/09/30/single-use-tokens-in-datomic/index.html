@@ -1,13 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>
+  Single-Use Tokens in Datomic · Joshua Davey
+</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Joshua Davey">
-    <meta name="description" content="Joshua Davey&#39;s Website">
-    <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="Joshua Davey">
+<meta name="description" content="Single-use tokens have a variety of security applications. Whether it&rsquo;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
+Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it).">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Single-Use Tokens in Datomic"/>
 <meta name="twitter:description" content="Single-use tokens have a variety of security applications. Whether it&rsquo;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
 Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it)."/>
+
 <meta property="og:title" content="Single-Use Tokens in Datomic" />
 <meta property="og:description" content="Single-use tokens have a variety of security applications. Whether it&rsquo;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
 Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it)." />
@@ -17,66 +30,130 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
 <meta property="article:modified_time" content="2016-09-30T00:00:00+00:00" />
 
 
-    <base href="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/">
-    <title>
-  Single-Use Tokens in Datomic · Joshua Davey
-</title><link rel="canonical" href="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" /><link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
-      <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="canonical" href="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/">
+
+
+<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="https://joshuadavey.com/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://joshuadavey.com/images/apple-touch-icon.png">
+
+<link rel="manifest" href="https://joshuadavey.com/site.webmanifest">
+<link rel="mask-icon" href="https://joshuadavey.com/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.107.0">
+
+
+
+
+
   </head>
-  <body class="colorscheme-light">
-    <main class="wrapper">
-      <nav class="navigation">
+
+
+
+
+<body class="preload-transitions colorscheme-light">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
   <section class="container">
     <a class="navigation-title" href="https://joshuadavey.com/">
       Joshua Davey
     </a>
-    <input type="checkbox" id="menu-toggle" />
-    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
-    <ul class="navigation-list">
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
-          </li>
-    </ul>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+            </li>
+          
+        
+        
+      </ul>
+    
   </section>
 </nav>
-<div class="content">
-        
+
+
+    <div class="content">
+      
   <section class="container post">
     <article>
       <header>
         <div class="post-title">
-          <h1 class="title">Single-Use Tokens in Datomic</h1>
+          <h1 class="title">
+            <a class="title-link" href="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/">
+              Single-Use Tokens in Datomic
+            </a>
+          </h1>
         </div>
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fas fa-calendar"></i>
-              <time datetime='2016-09-30T00:00:00Z'>
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2016-09-30T00:00:00Z">
                 September 30, 2016
               </time>
             </span>
             <span class="reading-time">
-              <i class="fas fa-clock"></i>
-              6 minutes read
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              6-minute read
             </span>
           </div>
+          
           
           
         </div>
       </header>
 
       <div>
+        
         <p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
 a password-reset token, or capturing a financial transaction, there are
 times when something should happen exactly once, atomically. Once a
@@ -86,56 +163,68 @@ traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
 finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1">1</a><!-- raw HTML omitted --></p>
 <p>But how can we accomplish some like this in Datomic?</p>
-<h2 id="the-worlds-worst-singles-network">The World&rsquo;s Worst Singles Network</h2>
+<h2 id="the-worlds-worst-singles-network">
+  The World&rsquo;s Worst Singles Network
+  <a class="heading-link" href="#the-worlds-worst-singles-network">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <blockquote>
 <p>Welcome to WWSN! We&rsquo;re so excited you&rsquo;re here! On WWSN, you can sign up,
 sign in, and reset your password. It&rsquo;s so simple!</p>
 </blockquote>
 <p>Let&rsquo;s say we have a really simple schema. A user has an email address
 and a bcrypted password:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/email</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
-  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
- <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/crypted-password</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
- <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/single-use-token</span>
-  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
-  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/value</span>
-  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
-  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}]</span>
-</code></pre></div><p>Some initial data might be added like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
-                   <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;jim@example.com&#34;</span>
-                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;jello4stapler&#34;</span><span style="color:#111">)}</span>
-                  <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
-                   <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;pam@example.com&#34;</span>
-                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;art4evah&#34;</span><span style="color:#111">)}])</span>
-</code></pre></div><p>Later, one of the users wants to reset their password, so we generate a
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/email</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/identity</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/crypted-password</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}</span>
+</span></span><span style="display:flex;"><span> <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:user/single-use-token</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/valueType</span> <span style="color:#d88200">:db.type/string</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/unique</span> <span style="color:#d88200">:db.unique/value</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/cardinality</span> <span style="color:#d88200">:db.cardinality/one</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db.install/_attribute</span> <span style="color:#d88200">:db.part/db</span><span style="color:#111">}]</span>
+</span></span></code></pre></div><p>Some initial data might be added like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;jim@example.com&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;jello4stapler&#34;</span><span style="color:#111">)}</span>
+</span></span><span style="display:flex;"><span>                  <span style="color:#111">{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;pam@example.com&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">(</span><span style="color:#75af00">crypt</span> <span style="color:#d88200">&#34;art4evah&#34;</span><span style="color:#111">)}])</span>
+</span></span></code></pre></div><p>Later, one of the users wants to reset their password, so we generate a
 password reset token and persist it:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
-                   <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;jim@example.com&#34;</span>
-                   <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">(</span><span style="color:#75af00">generate-secure-random</span><span style="color:#111">)}])</span>
-</code></pre></div><h2 id="an-initial-approach">An initial approach</h2>
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#111">(</span><span style="color:#75af00">d/tempid</span> <span style="color:#d88200">:db.part/user</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/email</span> <span style="color:#d88200">&#34;jim@example.com&#34;</span>
+</span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">(</span><span style="color:#75af00">generate-secure-random</span><span style="color:#111">)}])</span>
+</span></span></code></pre></div><h2 id="an-initial-approach">
+  An initial approach
+  <a class="heading-link" href="#an-initial-approach">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>After receiving an email, they follow the link that includes the
 single-use token in the URL. When they submit their new password, we
 look up the user by that token and update them accordingly:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
-      <span style="color:#111">token</span> <span style="color:#111">(</span><span style="color:#d88200">:token</span> <span style="color:#111">params</span><span style="color:#111">)</span>
-      <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
-               <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
-               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
-              <span style="color:#111">db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
-  <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
-                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
-</code></pre></div><p>But there&rsquo;s a problem with this solution. Even though the new password
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">token</span> <span style="color:#111">(</span><span style="color:#d88200">:token</span> <span style="color:#111">params</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
+</span></span></code></pre></div><p>But there&rsquo;s a problem with this solution. Even though the new password
 is asserted in the same transaction that the token is invalidated, the
 opportunity for concurrency problems between threads and/or peers still
 exists.</p>
@@ -145,30 +234,35 @@ and its new facts are transacted, somebody else could have already used
 transactional, the reads are not. In practice this is rarely, if ever,
 a problem. <code>(d/db conn)</code> will return the most recent version of the
 database that the peer can get.</p>
-<h2 id="croutons-are-just-stale-bread">Croutons are just stale bread</h2>
+<h2 id="croutons-are-just-stale-bread">
+  Croutons are just stale bread
+  <a class="heading-link" href="#croutons-are-just-stale-bread">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">stale-db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]}</span> <span style="color:#111">params</span>
-      <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
-               <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
-               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
-              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
-  <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
-                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
-
-<span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">(</span><span style="color:#d88200">:token</span> <span style="color:#111">params</span><span style="color:#111">)</span>
-      <span style="color:#75715e">;; this token still exists because we&#39;re using and &#34;old&#34; db value</span>
-      <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
-               <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
-               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
-              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
-  <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#d88200">&#34;somethingelse&#34;</span><span style="color:#111">]</span>
-                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
-
-</code></pre></div><p>The user entity <code>e</code> is found both times because the database value is
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">def </span><span style="color:#111">stale-db</span> <span style="color:#111">(</span><span style="color:#75af00">d/db</span> <span style="color:#111">conn</span><span style="color:#111">))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]}</span> <span style="color:#111">params</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">(</span><span style="color:#d88200">:token</span> <span style="color:#111">params</span><span style="color:#111">)</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#75715e">;; this token still exists because we&#39;re using and &#34;old&#34; db value</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">d/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?token</span>
+</span></span><span style="display:flex;"><span>               <span style="color:#d88200">:where</span> <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">?token</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#111">stale-db</span> <span style="color:#111">token</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/crypted-password</span> <span style="color:#d88200">&#34;somethingelse&#34;</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>                      <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span><span style="color:#111">]])))</span>
+</span></span></code></pre></div><p>The user entity <code>e</code> is found both times because the database value is
 immutable. So, the transactions will both succeed.</p>
 <p>The astute reader may have noticed something. I said all writes are
 transactional, but in the second block of code, we&rsquo;re retracting a value
@@ -176,7 +270,13 @@ that&rsquo;s already been retracted. Something must be broken!</p>
 <p>Nothing&rsquo;s broken. This tripped me up at first, but it turns out that
 retractions work just like assertions with regard to <em>redundancy
 elimination</em>.</p>
-<h2 id="the-department-of-redundancy-department">The Department of Redundancy Department</h2>
+<h2 id="the-department-of-redundancy-department">
+  The Department of Redundancy Department
+  <a class="heading-link" href="#the-department-of-redundancy-department">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
 <blockquote>
 <p>Redundancy Elimination</p>
@@ -191,7 +291,13 @@ already retracted the token, so the effective datoms of the transaction
 only include the <code>[:db/add ...]</code> of the new password. In this particular
 use case, retractions cannot be used to safeguard us from using a token
 more than once.</p>
-<h2 id="transaction-functions-to-the-rescue">Transaction functions to the rescue</h2>
+<h2 id="transaction-functions-to-the-rescue">
+  Transaction functions to the rescue
+  <a class="heading-link" href="#transaction-functions-to-the-rescue">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
 transactional, and reads are not. That&rsquo;s actually only true on the
 peers. The transactor itself is guaranteed to always have access to the
@@ -205,35 +311,41 @@ transaction. Also, a database function always receives the most recent
 of the Datomic API, you can leverage this <code>db</code> value to do all sorts of
 things.</p>
 <p>Let&rsquo;s transact the following new schema info into our database:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
-  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:db.fn/set-with-token</span>
-  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;Look up entity by token, set attr and value, and retract token&#34;</span>
-  <span style="color:#d88200">:db/fn</span> <span style="color:#f92672">#</span><span style="color:#111">db/fn</span> <span style="color:#111">{</span><span style="color:#d88200">:lang</span> <span style="color:#d88200">&#34;clojure&#34;</span>
-                 <span style="color:#d88200">:params</span> <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span> <span style="color:#111">attr</span> <span style="color:#111">value</span><span style="color:#111">]</span>
-                 <span style="color:#d88200">:code</span> <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">datomic.api/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
-                                                <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span>
-                                                <span style="color:#d88200">:where</span>
-                                                <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span><span style="color:#111">]]</span>
-                                              <span style="color:#111">db</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">)]</span>
-                         <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
-                           <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#111">attr</span> <span style="color:#111">value</span><span style="color:#111">]</span>
-                            <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">]]</span>
-                           <span style="color:#111">(</span><span style="color:#75af00">throw</span> <span style="color:#111">(</span><span style="color:#75af00">ex-info</span> <span style="color:#d88200">&#34;No entity with that token exists&#34;</span>
-                                           <span style="color:#111">{</span><span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">}))))}}]</span>
-</code></pre></div><p>This function is more generic than our immediate use-case, but I prefer
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">[{</span><span style="color:#d88200">:db/id</span> <span style="color:#f92672">#</span><span style="color:#111">db/id</span> <span style="color:#111">[</span><span style="color:#d88200">:db.part/db</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/ident</span> <span style="color:#d88200">:db.fn/set-with-token</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/doc</span> <span style="color:#d88200">&#34;Look up entity by token, set attr and value, and retract token&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#d88200">:db/fn</span> <span style="color:#f92672">#</span><span style="color:#111">db/fn</span> <span style="color:#111">{</span><span style="color:#d88200">:lang</span> <span style="color:#d88200">&#34;clojure&#34;</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#d88200">:params</span> <span style="color:#111">[</span><span style="color:#111">db</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span> <span style="color:#111">attr</span> <span style="color:#111">value</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>                 <span style="color:#d88200">:code</span> <span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[</span><span style="color:#111">e</span> <span style="color:#111">(</span><span style="color:#75af00">datomic.api/q</span> <span style="color:#f92672">&#39;</span><span style="color:#111">[</span><span style="color:#d88200">:find</span> <span style="color:#111">?e</span> <span style="color:#111">.</span>
+</span></span><span style="display:flex;"><span>                                                <span style="color:#d88200">:in</span> <span style="color:#111">$</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span>
+</span></span><span style="display:flex;"><span>                                                <span style="color:#d88200">:where</span>
+</span></span><span style="display:flex;"><span>                                                <span style="color:#111">[</span><span style="color:#111">?e</span> <span style="color:#111">?ta</span> <span style="color:#111">?tv</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>                                              <span style="color:#111">db</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">)]</span>
+</span></span><span style="display:flex;"><span>                         <span style="color:#111">(</span><span style="color:#00a8c8">if </span><span style="color:#111">e</span>
+</span></span><span style="display:flex;"><span>                           <span style="color:#111">[[</span><span style="color:#d88200">:db/add</span> <span style="color:#111">e</span> <span style="color:#111">attr</span> <span style="color:#111">value</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>                            <span style="color:#111">[</span><span style="color:#d88200">:db/retract</span> <span style="color:#111">e</span> <span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">]]</span>
+</span></span><span style="display:flex;"><span>                           <span style="color:#111">(</span><span style="color:#75af00">throw</span> <span style="color:#111">(</span><span style="color:#75af00">ex-info</span> <span style="color:#d88200">&#34;No entity with that token exists&#34;</span>
+</span></span><span style="display:flex;"><span>                                           <span style="color:#111">{</span><span style="color:#111">token-attr</span> <span style="color:#111">token-value</span><span style="color:#111">}))))}}]</span>
+</span></span></code></pre></div><p>This function is more generic than our immediate use-case, but I prefer
 to parameterize attributes as well as values in database functions. It
 allows us to re-use the database function for other token fields, and
 won&rsquo;t have to be updated in the schema if we ever change the name our
 token attribute.</p>
 <p>Here&rsquo;s how we use this shiny new function:</p>
-<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-clojure" data-lang="clojure"><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]}</span> <span style="color:#111">params</span><span style="color:#111">]</span>
-  <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db.fn/set-with-token</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span>
-                                           <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]]))</span>
-</code></pre></div><p>When we transact this data, the transactor invokes our function using
+<div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">let </span><span style="color:#111">[{</span><span style="color:#d88200">:keys</span> <span style="color:#111">[</span><span style="color:#111">token</span> <span style="color:#111">new-password</span><span style="color:#111">]}</span> <span style="color:#111">params</span><span style="color:#111">]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#111">(</span><span style="color:#75af00">d/transact</span> <span style="color:#111">conn</span> <span style="color:#111">[[</span><span style="color:#d88200">:db.fn/set-with-token</span> <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">token</span>
+</span></span><span style="display:flex;"><span>                                           <span style="color:#d88200">:user/crypted-password</span> <span style="color:#111">new-password</span><span style="color:#111">]]))</span>
+</span></span></code></pre></div><p>When we transact this data, the transactor invokes our function using
 the most recent database value. In other words, we are making the lookup
 portion serializable with the rest of the operations.</p>
 <p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
-<h2 id="in-summary">In Summary</h2>
+<h2 id="in-summary">
+  In Summary
+  <a class="heading-link" href="#in-summary">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
 <p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
 single-writer design. Other database systems (e.g. SQL) have to employ
 very complicated isolation patterns like MVVC to allow multiple writers
@@ -260,6 +372,7 @@ serializable isolation level.</p>
 
       </div>
 
+
       <footer>
         
 
@@ -270,25 +383,66 @@ serializable isolation level.</p>
       </footer>
     </article>
 
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+  
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
+    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,
+      {
+        delimiters: [
+          {left: '$$', right: '$$', display:true},
+          {left: '$', right: '$', display:false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      }
+    );"></script>
   </section>
 
-      </div><footer class="footer">
-  <section class="container"> © 2022</section>
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2022
+     Joshua Davey 
+    ·
+    
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
 </footer>
 
-    </main>
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-330362-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-  </body>
+  </main>
+
+  
+
+  
+  
+  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
 </html>

@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>
+  zsh completion for hitch · Joshua Davey
+</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="author" content="Joshua Davey">
-    <meta name="description" content="Joshua Davey&#39;s Website">
-    <meta name="keywords" content="blog,developer,personal"><meta name="twitter:card" content="summary"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+
+
+
+
+<meta name="author" content="Joshua Davey">
+<meta name="description" content="At hashrocket, we use hitch to manage our paired git authors, written by our own Rogelio Samour.
+Hitch works by setting the GIT_AUTHOR_NAME and GIT_AUTHOR_EMAIL environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;&#43;&rdquo;, creating email addresses of the form &ldquo;dev&#43;jgdavey&#43;therubymug@hashrocket.com&rdquo;. Using it is as simple as hitch &lt;github_username&gt; &lt;github_username&gt;.
+Recently, I was annoyed that I had to always remember the github username of the person I was pairing with.">
+<meta name="keywords" content="blog,developer,personal">
+
+<meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="zsh completion for hitch"/>
 <meta name="twitter:description" content="At hashrocket, we use hitch to manage our paired git authors, written by our own Rogelio Samour.
 Hitch works by setting the GIT_AUTHOR_NAME and GIT_AUTHOR_EMAIL environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;&#43;&rdquo;, creating email addresses of the form &ldquo;dev&#43;jgdavey&#43;therubymug@hashrocket.com&rdquo;. Using it is as simple as hitch &lt;github_username&gt; &lt;github_username&gt;.
 Recently, I was annoyed that I had to always remember the github username of the person I was pairing with."/>
+
 <meta property="og:title" content="zsh completion for hitch" />
 <meta property="og:description" content="At hashrocket, we use hitch to manage our paired git authors, written by our own Rogelio Samour.
 Hitch works by setting the GIT_AUTHOR_NAME and GIT_AUTHOR_EMAIL environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;&#43;&rdquo;, creating email addresses of the form &ldquo;dev&#43;jgdavey&#43;therubymug@hashrocket.com&rdquo;. Using it is as simple as hitch &lt;github_username&gt; &lt;github_username&gt;.
@@ -19,66 +33,130 @@ Recently, I was annoyed that I had to always remember the github username of the
 <meta property="article:modified_time" content="2011-10-11T00:00:00+00:00" />
 
 
-    <base href="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/">
-    <title>
-  zsh completion for hitch · Joshua Davey
-</title><link rel="canonical" href="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/"><link href="https://fonts.googleapis.com/css?family=Lato:400,700%7CMerriweather:300,700%7CSource+Code+Pro:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css" integrity="sha384-KA6wR/X5RY4zFAHpv/CnoG2UW1uogYfdnP67Uv7eULvTveboZJg0qUpmJZb5VqzN" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" /><link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.28d751104f30c16da1aa1bb04015cbe662cacfe0d1b01af4f2240ad58580069c.css" integrity="sha256-KNdREE8wwW2hqhuwQBXL5mLKz&#43;DRsBr08iQK1YWABpw=" crossorigin="anonymous" media="screen" />
-      <link rel="stylesheet" href="https://joshuadavey.com/css/custom.css" />
 
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16"><meta name="generator" content="Hugo 0.92.0" />
+
+
+<link rel="canonical" href="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/">
+
+
+<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+
+
+  
+  
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
+
+<link rel="apple-touch-icon" href="https://joshuadavey.com/images/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="https://joshuadavey.com/images/apple-touch-icon.png">
+
+<link rel="manifest" href="https://joshuadavey.com/site.webmanifest">
+<link rel="mask-icon" href="https://joshuadavey.com/images/safari-pinned-tab.svg" color="#5bbad5">
+
+
+
+
+<meta name="generator" content="Hugo 0.107.0">
+
+
+
+
+
   </head>
-  <body class="colorscheme-light">
-    <main class="wrapper">
-      <nav class="navigation">
+
+
+
+
+<body class="preload-transitions colorscheme-light">
+  
+<div class="float-container">
+    <a id="dark-mode-toggle" class="colorscheme-toggle">
+        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
+    </a>
+</div>
+
+
+  <main class="wrapper">
+    <nav class="navigation">
   <section class="container">
     <a class="navigation-title" href="https://joshuadavey.com/">
       Joshua Davey
     </a>
-    <input type="checkbox" id="menu-toggle" />
-    <label class="menu-button float-right" for="menu-toggle"><i class="fas fa-bars"></i></label>
-    <ul class="navigation-list">
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
-          </li>
-          <li class="navigation-item">
-            <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
-          </li>
-    </ul>
+    
+      <input type="checkbox" id="menu-toggle" />
+      <label class="menu-button float-right" for="menu-toggle">
+        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+      </label>
+      <ul class="navigation-list">
+        
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+            </li>
+          
+            <li class="navigation-item">
+              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+            </li>
+          
+        
+        
+      </ul>
+    
   </section>
 </nav>
-<div class="content">
-        
+
+
+    <div class="content">
+      
   <section class="container post">
     <article>
       <header>
         <div class="post-title">
-          <h1 class="title">zsh completion for hitch</h1>
+          <h1 class="title">
+            <a class="title-link" href="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/">
+              zsh completion for hitch
+            </a>
+          </h1>
         </div>
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fas fa-calendar"></i>
-              <time datetime='2011-10-11T00:00:00Z'>
+              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <time datetime="2011-10-11T00:00:00Z">
                 October 11, 2011
               </time>
             </span>
             <span class="reading-time">
-              <i class="fas fa-clock"></i>
-              One minute read
+              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              One-minute read
             </span>
           </div>
+          
           
           
         </div>
       </header>
 
       <div>
+        
         <p>At <a href="https://www.hashrocket.com">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
 <p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev+jgdavey+therubymug@hashrocket.com">dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
@@ -88,6 +166,7 @@ Recently, I was annoyed that I had to always remember the github username of the
 <p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698">gist</a> on github.</p>
 
       </div>
+
 
       <footer>
         
@@ -99,25 +178,66 @@ Recently, I was annoyed that I had to always remember the github username of the
       </footer>
     </article>
 
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
+    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+  
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
+    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
+    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+    onload="renderMathInElement(document.body,
+      {
+        delimiters: [
+          {left: '$$', right: '$$', display:true},
+          {left: '$', right: '$', display:false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ]
+      }
+    );"></script>
   </section>
 
-      </div><footer class="footer">
-  <section class="container"> © 2022</section>
+    </div>
+
+    <footer class="footer">
+  <section class="container">
+    ©
+    
+    2022
+     Joshua Davey 
+    ·
+    
+    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    
+  </section>
 </footer>
 
-    </main>
-<script type="application/javascript">
-var doNotTrack = false;
-if (!doNotTrack) {
-	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-	ga('create', 'UA-330362-1', 'auto');
-	
-	ga('send', 'pageview');
-}
-</script>
-  </body>
+  </main>
+
+  
+
+  
+  
+  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</body>
+
 </html>
