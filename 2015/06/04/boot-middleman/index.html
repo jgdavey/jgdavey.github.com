@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Boot &#43; Middleman: The ClojureScript development environment of my dreams · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -43,7 +44,7 @@ At Hashrocket, designers and developers work very closely together. Visual desig
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -69,25 +70,18 @@ At Hashrocket, designers and developers work very closely together. Visual desig
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -154,32 +148,32 @@ At Hashrocket, designers and developers work very closely together. Visual desig
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
-        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot + Middleman: The ClojureScript development environment of my dreams">here</a></em></p>
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot &#43; Middleman: The ClojureScript development environment of my dreams"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
 combination of editor integration, live browser reload, and not having to
 manually run commands over and over is time-saving and a pleasure to
 work with.</p>
 <p>At Hashrocket, designers and developers work very closely
 together. Visual design and markup is handled by our
-designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
+designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller"  class="external-link" target="_blank" rel="noopener">the UI
 directory</a>.
 It&rsquo;s a process that works very well for us, and
 allows us to iteratively add features to an application.</p>
-<p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
+<p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller"  class="external-link" target="_blank" rel="noopener">UI
 controller</a>,
 available only in development mode.</p>
 <p>I&rsquo;ve been using ClojureScript a lot lately, particularly with Om, and
 have missed that directory of collaboration. After all, the designers
 at Hashrocket have a proclivity for HAML and SASS.</p>
-<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
+<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com"  class="external-link" target="_blank" rel="noopener">Middleman</a> to
 handle markup and styles, using <code>middleman build</code>, copying the generated
 CSS files, and eyeballing the generated markup to ensure it matched the
 Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
 get out of sync with a manual process like this. The static resource
 generation should be a part of our build process.</p>
-<p>Enter <a href="https://boot-clj.com">boot</a>.</p>
+<p>Enter <a href="https://boot-clj.com"  class="external-link" target="_blank" rel="noopener">boot</a>.</p>
 <h3 id="using-boot-for-clojurescript-development">
   Using Boot for ClojureScript development
   <a class="heading-link" href="#using-boot-for-clojurescript-development">
@@ -187,13 +181,13 @@ generation should be a part of our build process.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h3>
-<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org"  class="external-link" target="_blank" rel="noopener">Leiningen</a>,
 which is the de facto dependency management and build tool for
 Clojure/Script. Boot is similar to Leiningen, but adds the ability to
 compose tasks to create build pipelines. This composability, along with
 some really smart architectural decisions, is what makes boot a great
 choice for the problem at hand.</p>
-<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
+<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example"  class="external-link" target="_blank" rel="noopener">example repo</a>
 is a great way to get started with ClojureScript and boot. Of particular
 note is the <code>build.boot</code> file. It demonstrates how one can build
 up a <code>dev</code> task that watches a directory for changes, rebuilding
@@ -212,14 +206,14 @@ pipeline.</p>
 <p>I had an epiphany one night after working on this problem for a while: I
 can just use Middleman. After all, boot and the ClojureScript compiler
 run on the JVM, and JRuby is easily embeddable. After a short bit, I
-came up with <a href="https://github.com/jgdavey/boot-middleman">boot-middleman</a>, the glue I needed to build HAML/SASS as
+came up with <a href="https://github.com/jgdavey/boot-middleman"  class="external-link" target="_blank" rel="noopener">boot-middleman</a>, the glue I needed to build HAML/SASS as
 a part of my build process.</p>
 <p>It assumes a subdirectory is a Middleman app (<code>assets</code> by default). This
 works nicely because my designer pals can collaborate with me without
 having to use the JVM at all. They just run <code>middleman</code> in the <code>assets</code>
 subdirectory and work as normal.</p>
 <p>See the boot-middleman README for instructions on setting up.</p>
-<p>I used this workflow to create a minesweeper clone, <a href="https://github.com/jgdavey/minesweeper">the
+<p>I used this workflow to create a minesweeper clone, <a href="https://github.com/jgdavey/minesweeper"  class="external-link" target="_blank" rel="noopener">the
 source</a> of which is on GitHub.
 Just clone and run <code>boot dev</code>.</p>
 <h3 id="the-workflow-in-action">
@@ -244,16 +238,17 @@ refresh to see the effects.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -276,7 +271,7 @@ refresh to see the effects.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -287,7 +282,22 @@ refresh to see the effects.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

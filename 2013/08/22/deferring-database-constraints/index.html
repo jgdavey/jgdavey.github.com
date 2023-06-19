@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Deferring constraints in PostgreSQL · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -40,7 +41,7 @@ Database constraints are essential to ensuring data integrity, and you should us
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -66,25 +67,18 @@ Database constraints are essential to ensuring data integrity, and you should us
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -151,9 +145,9 @@ Database constraints are essential to ensuring data integrity, and you should us
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
-        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL">here</a></em></p>
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Database constraints are essential to ensuring data integrity, and you
 should use them. Allowing them to be deferrable during transactions
 makes them even more convenient. A common scenario in which the database
@@ -244,7 +238,7 @@ or database constraints: each list item&rsquo;s position should be <em>unique pe
 list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
-the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations">thoughtbot recently warned</a>,
+the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations"  class="external-link" target="_blank" rel="noopener">thoughtbot recently warned</a>,
 application-level uniqueness validations are insufficient <em>at best</em>, and
 fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
@@ -337,7 +331,7 @@ constraint will by default behave just like a non-deferrable constraint,
 checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
-call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
+call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html"  class="external-link" target="_blank" rel="noopener">documentation</a>).</p>
 <p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
@@ -436,10 +430,10 @@ to query the constraint names instead.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h1>
-<p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example">sample Rails app</a> to iterate
+<p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
 quickly. I used TDD to write the initial approach, and reused the specs
 while I &ldquo;refactored&rdquo; the implementation to the subsequent approaches.
-Each <a href="https://github.com/jgdavey/uniqueness_constraints_example/commits/master">commit on the master branch</a> more or less follows the
+Each <a href="https://github.com/jgdavey/uniqueness_constraints_example/commits/master"  class="external-link" target="_blank" rel="noopener">commit on the master branch</a> more or less follows the
 sections above.</p>
 
       </div>
@@ -452,16 +446,17 @@ sections above.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -484,7 +479,7 @@ sections above.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -495,7 +490,22 @@ sections above.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

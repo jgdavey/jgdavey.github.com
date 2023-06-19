@@ -49,8 +49,8 @@ representation.</li>
 <p>There may be other benefits I&rsquo;m unaware of, but those two things alone
 made me curious if there was a way to get the <code>COPY</code> goodness with
 idiomatic Clojure.</p>
-<p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/">https://jdbc.postgresql.org/</a> and
-<a href="https://impossibl.github.io/pgjdbc-ng/">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
+<p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/"  class="external-link" target="_blank" rel="noopener">https://jdbc.postgresql.org/</a> and
+<a href="https://impossibl.github.io/pgjdbc-ng/"  class="external-link" target="_blank" rel="noopener">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
 into COPY mode, after which data can be streamed into or out of
 postgresql. However, both drivers don&rsquo;t do anything to help you get
 the data into the raw format that postgresql expects. For the text
@@ -60,9 +60,9 @@ postgresql data type has a very specific binary representation. Again,
 while the postgresql jdbc drivers provide a way to stream in or stream
 out COPY data, the data within those streams is left entirely up to
 you. The best library I found to do this kind of serialization was
-<a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
+<a href="https://github.com/bytefish/PgBulkInsert"  class="external-link" target="_blank" rel="noopener">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
 API.</p>
-<p>That&rsquo;s where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
+<p>That&rsquo;s where <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> comes in. It maps common data types to
 their binary represenation, with the hope that using the binary COPY
 style of importing data is as easy to use as clojure.java.jdbc
 methods. The primary API of clj-pgcopy is
@@ -162,8 +162,8 @@ Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 </tbody>
 </table>
 <p>For measurement methodology, or to run your own benchmarks, see the
-<a href="https://github.com/jgdavey/clj-pgcopy/blob/master/bench/clj_pgcopy/benchmark.clj">benchmark</a>
-namespace of the <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> repository.</p>
+<a href="https://github.com/jgdavey/clj-pgcopy/blob/master/bench/clj_pgcopy/benchmark.clj"  class="external-link" target="_blank" rel="noopener">benchmark</a>
+namespace of the <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> repository.</p>
 <h2 id="type-mappings">
   Type Mappings
   <a class="heading-link" href="#type-mappings">
@@ -415,7 +415,7 @@ token is used, it is invalidated.</p>
 <p>Doing things exactly once, atomically, is relatively straightforward in
 traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
-finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1">1</a><!-- raw HTML omitted --></p>
+finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1" >1</a><!-- raw HTML omitted --></p>
 <p>But how can we accomplish some like this in Datomic?</p>
 <h2 id="the-worlds-worst-singles-network">
   The World&rsquo;s Worst Singles Network
@@ -531,7 +531,7 @@ elimination</em>.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
+<p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination"  class="external-link" target="_blank" rel="noopener">documentation on transactions</a>:</p>
 <blockquote>
 <p>Redundancy Elimination</p>
 <p>A datom is redundant with the current value of the database if
@@ -556,7 +556,7 @@ more than once.</p>
 transactional, and reads are not. That&rsquo;s actually only true on the
 peers. The transactor itself is guaranteed to always have access to the
 most recent database value at any time. Among other things, this is what
-enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
+enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions"  class="external-link" target="_blank" rel="noopener">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
 <p>Within a transaction, a database function is used in place of a
 <code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
 function, it invokes it and splices the result into the rest of the
@@ -609,12 +609,12 @@ using a single writer, paired with immutable history.</p>
 the use of database functions to maintain atomicity. Of course, database
 functions have uses outside of concurrency contexts. And, as a bonus,
 they can be loaded and invoked on the client as well.</p>
-<p>For more information on database functions, see <a href="https://docs.datomic.com/database-functions.html">the
-docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA">watch
+<p>For more information on database functions, see <a href="https://docs.datomic.com/database-functions.html"  class="external-link" target="_blank" rel="noopener">the
+docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA"  class="external-link" target="_blank" rel="noopener">watch
 the video</a>,
 or see [the Day of Datomic
-examples](<a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial">https://github.com/Datomic/day-of-datomic/blob/master/tutorial</a>
-/data_functions.clj). You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932">scratch.clj</a> file that I
+examples](<a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial"  class="external-link" target="_blank" rel="noopener">https://github.com/Datomic/day-of-datomic/blob/master/tutorial</a>
+/data_functions.clj). You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932"  class="external-link" target="_blank" rel="noopener">scratch.clj</a> file that I
 used to build up the code examples here.</p>
 <p><!-- raw HTML omitted -->1<!-- raw HTML omitted --> However, even in SQL setups there are potential
 pitfalls. Because of the potential for multiple writers, care must be
@@ -635,7 +635,7 @@ serializable isolation level.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
 wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve
 learned from doing several imports.</p>
@@ -652,7 +652,7 @@ reshaping of data and formatting transactions. I
 use <code>core.async</code> to parallelize just about everything in the import
 pipeline.</p>
 <p>One example of how I&rsquo;ve leveraged <code>core.async</code> for
-import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/master/src/kevin/loader.clj">Kevin Bacon project
+import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/master/src/kevin/loader.clj"  class="external-link" target="_blank" rel="noopener">Kevin Bacon project
 repository</a>.</p>
 <h2 id="run-the-import-locally">
   Run the import locally
@@ -684,7 +684,7 @@ up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">;; blocks until done indexing</span>
 </span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">d/gc-storage</span> <span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">java.util.Date.</span><span style="color:#111">))</span>
 </span></span></code></pre></div><p>For more information on why this cleanup
-is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
+is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4"  class="external-link" target="_blank" rel="noopener">the relevant Datomic
 documentation</a>.</p>
 <h2 id="use-backuprestore">
   Use backup/restore
@@ -702,7 +702,7 @@ up to production. Assuming you&rsquo;ve already deployed a production transactor
 <li>Run the <code>datomic restore-db</code> command from the backup folder to the
 remote database.</li>
 <li>Turn the &ldquo;write throughput&rdquo; back down to whatever
-value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capacity.html#sec-5">the Datomic
+value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capacity.html#sec-5"  class="external-link" target="_blank" rel="noopener">the Datomic
 documentation</a> for more
 information).</li>
 </ol>
@@ -724,30 +724,30 @@ is half the battle.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2015/06/04/boot-middleman/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot + Middleman: The ClojureScript development environment of my dreams">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2015/06/04/boot-middleman/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot &#43; Middleman: The ClojureScript development environment of my dreams"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
 combination of editor integration, live browser reload, and not having to
 manually run commands over and over is time-saving and a pleasure to
 work with.</p>
 <p>At Hashrocket, designers and developers work very closely
 together. Visual design and markup is handled by our
-designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">the UI
+designers, who create &ldquo;stubbed out&rdquo; templates in <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller"  class="external-link" target="_blank" rel="noopener">the UI
 directory</a>.
 It&rsquo;s a process that works very well for us, and
 allows us to iteratively add features to an application.</p>
-<p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller">UI
+<p>This process has served us very well in Rails using a <a href="https://hashrocket.com/blog/posts/managing-design-handoffs-with-the-ui-controller"  class="external-link" target="_blank" rel="noopener">UI
 controller</a>,
 available only in development mode.</p>
 <p>I&rsquo;ve been using ClojureScript a lot lately, particularly with Om, and
 have missed that directory of collaboration. After all, the designers
 at Hashrocket have a proclivity for HAML and SASS.</p>
-<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com">Middleman</a> to
+<p>In the past, I&rsquo;ve set up a separate repository using <a href="https://middlemanapp.com"  class="external-link" target="_blank" rel="noopener">Middleman</a> to
 handle markup and styles, using <code>middleman build</code>, copying the generated
 CSS files, and eyeballing the generated markup to ensure it matched the
 Om component&rsquo;s markup. Aside from being tedious, it&rsquo;s really easy to
 get out of sync with a manual process like this. The static resource
 generation should be a part of our build process.</p>
-<p>Enter <a href="https://boot-clj.com">boot</a>.</p>
+<p>Enter <a href="https://boot-clj.com"  class="external-link" target="_blank" rel="noopener">boot</a>.</p>
 <h3 id="using-boot-for-clojurescript-development">
   Using Boot for ClojureScript development
   <a class="heading-link" href="#using-boot-for-clojurescript-development">
@@ -755,13 +755,13 @@ generation should be a part of our build process.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h3>
-<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org">Leiningen</a>,
+<p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org"  class="external-link" target="_blank" rel="noopener">Leiningen</a>,
 which is the de facto dependency management and build tool for
 Clojure/Script. Boot is similar to Leiningen, but adds the ability to
 compose tasks to create build pipelines. This composability, along with
 some really smart architectural decisions, is what makes boot a great
 choice for the problem at hand.</p>
-<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example">example repo</a>
+<p>Adzerk&rsquo;s <a href="https://github.com/adzerk-oss/boot-cljs-example"  class="external-link" target="_blank" rel="noopener">example repo</a>
 is a great way to get started with ClojureScript and boot. Of particular
 note is the <code>build.boot</code> file. It demonstrates how one can build
 up a <code>dev</code> task that watches a directory for changes, rebuilding
@@ -780,14 +780,14 @@ pipeline.</p>
 <p>I had an epiphany one night after working on this problem for a while: I
 can just use Middleman. After all, boot and the ClojureScript compiler
 run on the JVM, and JRuby is easily embeddable. After a short bit, I
-came up with <a href="https://github.com/jgdavey/boot-middleman">boot-middleman</a>, the glue I needed to build HAML/SASS as
+came up with <a href="https://github.com/jgdavey/boot-middleman"  class="external-link" target="_blank" rel="noopener">boot-middleman</a>, the glue I needed to build HAML/SASS as
 a part of my build process.</p>
 <p>It assumes a subdirectory is a Middleman app (<code>assets</code> by default). This
 works nicely because my designer pals can collaborate with me without
 having to use the JVM at all. They just run <code>middleman</code> in the <code>assets</code>
 subdirectory and work as normal.</p>
 <p>See the boot-middleman README for instructions on setting up.</p>
-<p>I used this workflow to create a minesweeper clone, <a href="https://github.com/jgdavey/minesweeper">the
+<p>I used this workflow to create a minesweeper clone, <a href="https://github.com/jgdavey/minesweeper"  class="external-link" target="_blank" rel="noopener">the
 source</a> of which is on GitHub.
 Just clone and run <code>boot dev</code>.</p>
 <h3 id="the-workflow-in-action">
@@ -961,12 +961,12 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Datomic is a database that changes the way that you think about databases. It
 also happens to be effective at modeling graph data and was a great fit for
 performing graph traversal in a recent project I built.</p>
 <p>I started out building a six degress of Kevin Bacon project using
-<a href="https://www.neo4j.org/">Neo4j</a>, a popular open-source graph database. It worked very well
+<a href="https://www.neo4j.org/"  class="external-link" target="_blank" rel="noopener">Neo4j</a>, a popular open-source graph database. It worked very well
 for actors that were a few hops away, but finding paths between actors
 with more than 5 hops proved problematic.  The cypher query language
 gave me little visibility into the graph algorithms actually being
@@ -976,7 +976,7 @@ graph database. Its ability to arbitrarily traverse datoms, when paired with
 the appropriate graph searching algorithm, solved my problem elegantly. This
 technique ended up being fast as well.</p>
 <p>Quick aside: this post assumes a cursory understanding of Datomic. I won&rsquo;t cover
-the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
+the basics, but the <a href="https://docs.datomic.com/tutorial.html"  class="external-link" target="_blank" rel="noopener">official tutorial</a> will help you get started.</p>
 <h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">
   6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold
   <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold">
@@ -984,12 +984,12 @@ the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tu
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
+<p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon"  class="external-link" target="_blank" rel="noopener">the 6 degrees of Kevin
 Bacon</a>. I wanted to create an app where you could pick an
 actor and find out what their Bacon Number was. That is, given an actor,
 I wanted to answer the question &ldquo;how many degrees of separation is there
 between that actor and Kevin Bacon?&rdquo;</p>
-<p>Using <a href="https://www.imdb.com/interfaces">information freely available from IMDb</a>, I developed the following
+<p>Using <a href="https://www.imdb.com/interfaces"  class="external-link" target="_blank" rel="noopener">information freely available from IMDb</a>, I developed the following
 schema:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">[</span>
 </span></span><span style="display:flex;"><span> <span style="color:#75715e">;; movies</span>
@@ -1105,7 +1105,7 @@ using a function like the following:</p>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; ([&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Jones, Tommy Lee&#34; &#34;JFK (1991)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Howard, Rosemary (II)&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Segal, Tobias&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Brolin, Josh&#34; &#34;Hollow Man (2000)&#34; &#34;Bacon, Kevin (I)&#34;])</span>
 </span></span></code></pre></div><p>The rules above are defined statically, but they are simply clojure data
 structures: it would be trivial to generate those rules to an arbitrary
-depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj">Datomic mbrainz
+depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj"  class="external-link" target="_blank" rel="noopener">Datomic mbrainz
 sample</a>.</p>
 <h2 id="low-level-traversal-for-better-performance">
   Low-level traversal for better performance
@@ -1118,10 +1118,10 @@ sample</a>.</p>
 has a distinct advantage of being able to treat your data as local, even if its
 permanent storage lives somewhere else. That means that we can bring our own
 functions to the problem and execute locally, rather than on a database server.
-We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
+We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"  class="external-link" target="_blank" rel="noopener"><code>datoms</code> function</a> to search the graph using
 our own graph-searching algorithm, rather than relying on the query engine.</p>
 <p>Our IMDb actor data is essentially a dense unweighted graph. Because of its
-density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
+density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search"  class="external-link" target="_blank" rel="noopener">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search"  class="external-link" target="_blank" rel="noopener">breadth-first search</a> is probably the most
 efficient alogrithm for finding the shortest paths from one point to another. A
 generic bidirectional BFS returning all shortest paths might look like this.</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">paths</span>
@@ -1234,7 +1234,7 @@ problems and domains could use other algorithms. The idea, though, is that
 generic graph searching functions can be used directly, since the data is
 effectively local to the peer machine.</p>
 <p>For more Clojure implementations of generic graph searching algorithms,
-<a href="https://github.com/aysylu/loom">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
+<a href="https://github.com/aysylu/loom"  class="external-link" target="_blank" rel="noopener">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj"  class="external-link" target="_blank" rel="noopener">alg_generic</a> namespace is a great starting point.</p>
 <h2 id="performance">
   Performance
   <a class="heading-link" href="#performance">
@@ -1254,7 +1254,7 @@ good with Neo4j&rsquo;s cypher query language.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
+<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin"  class="external-link" target="_blank" rel="noopener">source</a>.</p>
 ]]></content>
   </entry>
   <entry>
@@ -1267,7 +1267,7 @@ good with Neo4j&rsquo;s cypher query language.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2013/08/22/deferring-database-constraints/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2013/08/22/deferring-database-constraints/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Database constraints are essential to ensuring data integrity, and you
 should use them. Allowing them to be deferrable during transactions
 makes them even more convenient. A common scenario in which the database
@@ -1358,7 +1358,7 @@ or database constraints: each list item&rsquo;s position should be <em>unique pe
 list</em>. No two list items in a list should have the same position. That
 would make the ordering non-deterministic.</p>
 <p>We could add a uniqueness validation for <code>position</code>, scoped to
-the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations">thoughtbot recently warned</a>,
+the <code>list_id</code>. However, as <a href="https://robots.thoughtbot.com/post/55689359336/the-perils-of-uniqueness-validations" title="The Perils of Uniqueness Validations"  class="external-link" target="_blank" rel="noopener">thoughtbot recently warned</a>,
 application-level uniqueness validations are insufficient <em>at best</em>, and
 fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
@@ -1451,7 +1451,7 @@ constraint will by default behave just like a non-deferrable constraint,
 checking every statement immediately. A constraint that is initially
 deferred will, by default, defer its checks until the transaction is
 committed. Both of these can change their behavior per-transaction with a
-call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html">documentation</a>).</p>
+call to <code>SET CONSTRAINTS</code> (<a href="https://www.postgresql.org/docs/9.2/static/sql-set-constraints.html"  class="external-link" target="_blank" rel="noopener">documentation</a>).</p>
 <p>With that information, let&rsquo;s change the definition of the constraint we
 defined before:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">AddUniquenessValidationOnListItems</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Migration</span>
@@ -1550,10 +1550,10 @@ to query the constraint names instead.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h1>
-<p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example">sample Rails app</a> to iterate
+<p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
 quickly. I used TDD to write the initial approach, and reused the specs
 while I &ldquo;refactored&rdquo; the implementation to the subsequent approaches.
-Each <a href="https://github.com/jgdavey/uniqueness_constraints_example/commits/master">commit on the master branch</a> more or less follows the
+Each <a href="https://github.com/jgdavey/uniqueness_constraints_example/commits/master"  class="external-link" target="_blank" rel="noopener">commit on the master branch</a> more or less follows the
 sections above.</p>
 ]]></content>
   </entry>
@@ -1567,7 +1567,7 @@ sections above.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-views-and-activerecord" title="has_one view">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-views-and-activerecord" title="has_one view"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Sometimes, aggregating data can become overly complex in a normal
 ActiveRecord model. Because Rails works well with SQL views, we can
 create associations to SQL views that aggregate data for us, simplifying
@@ -1928,8 +1928,8 @@ still working as expect in the database console:</p>
 </span></span></code></pre></div><p>That&rsquo;s a lot of SQL! But actually, all I&rsquo;ve added are one join to a
 subquery, and a subselect. Let&rsquo;s review both of these changes.</p>
 <p>There are many ways to grab the most recent message for a conversation
-in SQL, including using <a href="https://blog.hashrocket.com/posts/sql-window-functions">window functions</a>. The method I&rsquo;ve opted for
-here is a <a href="https://www.postgresql.org/docs/9.2/static/queries-table-expressions.html#QUERIES-SUBQUERIES" title="Postgresql documentation">subquery in the table expression</a>. The subquery
+in SQL, including using <a href="https://blog.hashrocket.com/posts/sql-window-functions"  class="external-link" target="_blank" rel="noopener">window functions</a>. The method I&rsquo;ve opted for
+here is a <a href="https://www.postgresql.org/docs/9.2/static/queries-table-expressions.html#QUERIES-SUBQUERIES" title="Postgresql documentation"  class="external-link" target="_blank" rel="noopener">subquery in the table expression</a>. The subquery
 alone would return rows for only the most recent messages for each
 conversation:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>conversation_id |                  body                  |         created_at
@@ -2065,11 +2065,11 @@ our toolbelt.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views">sample Rails app</a> to
+<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
 iterate quickly. I used TDD to write the pure-ruby approach, and reused
 the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
-approaches. Of particular note is the <a href="https://github.com/jgdavey/sql_views/commits/master/app/models/conversation.rb">history of the Conversation
-model</a>(<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
+approaches. Of particular note is the <a href="https://github.com/jgdavey/sql_views/commits/master/app/models/conversation.rb"  class="external-link" target="_blank" rel="noopener">history of the Conversation
+model</a>(<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo"  class="external-link" target="_blank" rel="noopener">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
 dels/category.rb), which mirrors the code above.</p>
 ]]></content>
   </entry>
@@ -2083,9 +2083,9 @@ dels/category.rb), which mirrors the code above.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/recursive-sql-in-activerecord" title="Using Recursive SQL with ActiveRecord trees">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/recursive-sql-in-activerecord" title="Using Recursive SQL with ActiveRecord trees"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p><strong>tl;dr</strong> When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.</p>
-<p>In a <a href="https://blog.hashrocket.com/posts/sql-window-functions" title="SQL Window Functions and You">previous post</a>, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories.
+<p>In a <a href="https://blog.hashrocket.com/posts/sql-window-functions" title="SQL Window Functions and You"  class="external-link" target="_blank" rel="noopener">previous post</a>, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories.
 How can we create a homepage that includes all cat pictures for a given category <em>and</em> all of its subcategories?</p>
 <p>Pictorally, the category tree might look like this:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Cat Pictures
@@ -2183,7 +2183,7 @@ the <code>descendents</code> method.</p>
   </a>
 </h2>
 <p>Since we&rsquo;re using PostgreSQL, we can take advantage of its special
-features. In this case, we can use a WITH query. From the <a href="https://www.postgresql.org/docs/9.1/static/queries-with.html" title="WITH queries">PostgreSQL
+features. In this case, we can use a WITH query. From the <a href="https://www.postgresql.org/docs/9.1/static/queries-with.html" title="WITH queries"  class="external-link" target="_blank" rel="noopener">PostgreSQL
 documentation</a>:</p>
 <blockquote>
 <p>WITH provides a way to write auxiliary statements for use in a larger
@@ -2391,7 +2391,7 @@ pictures) will now only take 1 for the entire set.</p>
 performance boons, especially when a tree get several levels deep.</p>
 <p>Although using database recursion is an efficient way of improving
 performance with our existing schema, other methods of handling tree
-structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antipatterns" title="SQL Antipatterns book">SQL Antipatterns</a> book has a great
+structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antipatterns" title="SQL Antipatterns book"  class="external-link" target="_blank" rel="noopener">SQL Antipatterns</a> book has a great
 breakdown of other tree solutions that would require schema changes.</p>
 <h2 id="example-app">
   Example app
@@ -2400,11 +2400,11 @@ breakdown of other tree solutions that would require schema changes.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL">sample Rails app</a> to
+<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
 iterate quickly. I used TDD to write the pure-ruby approach, and reused
 the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
 approaches. Of particular note is the [history of the Category
-model](<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
+model](<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo"  class="external-link" target="_blank" rel="noopener">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
 dels/category.rb), which mirrors the code above.</p>
 ]]></content>
   </entry>
@@ -2418,7 +2418,7 @@ dels/category.rb), which mirrors the code above.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2012/05/22/sql-window-functions/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-window-functions" title="SQL Window Functions and You">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2012/05/22/sql-window-functions/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-window-functions" title="SQL Window Functions and You"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Suppose you have a storefront application that sells pictures of cats.
 These cat pictures are categorized in meaningful ways. For example,
 there are LOLcats pictures and &ldquo;Classic&rdquo; cat pictures. Now, on the
@@ -2567,7 +2567,7 @@ reduced to calls to <code>where</code>, <code>select</code> and <code>order</cod
 </h2>
 <p>But there is still another option. The SQL standard defines a concept
 called window functions, which act a lot like aggregates, but don&rsquo;t
-change the result set. From the Postgresql documentation&rsquo;s <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">excellent
+change the result set. From the Postgresql documentation&rsquo;s <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions"  class="external-link" target="_blank" rel="noopener">excellent
 introduction to window functions</a>:</p>
 <blockquote>
 <p>A window function performs a calculation across a set of table rows that
@@ -2719,8 +2719,8 @@ are a great tool for your toolbelt. They excel at filtering down rows
 based on aggregate data, or adding aggregate data to the rows you&rsquo;d
 already like to select.</p>
 <p>For more information about window functions, the Postgres documentation
-is an excellent resource, both for its <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions">introduction</a>,
-and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.html" title="List of PostgreSQL window functions">list of window functions</a>.</p>
+is an excellent resource, both for its <a href="https://www.postgresql.org/docs/9.1/static/tutorial-window.html" title="Introduction to using window functions"  class="external-link" target="_blank" rel="noopener">introduction</a>,
+and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.html" title="List of PostgreSQL window functions"  class="external-link" target="_blank" rel="noopener">list of window functions</a>.</p>
 <h2 id="example-app">
   Example app
   <a class="heading-link" href="#example-app">
@@ -2728,10 +2728,10 @@ and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.htm
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>While writing this post, I created a <a href="https://github.com/jgdavey/windowing-example/" title="Window functions example application">sample Rails app</a> to iterate
+<p>While writing this post, I created a <a href="https://github.com/jgdavey/windowing-example/" title="Window functions example application"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
 quickly. I used TDD to write the pure-ruby approach, and reused the
 specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
-approaches. Of particular note is <a href="https://github.com/jgdavey/windowing-example/commits/master/app/models/cat_picture.rb" title="Git history of the CatPicture model">the history of the CatPicture
+approaches. Of particular note is <a href="https://github.com/jgdavey/windowing-example/commits/master/app/models/cat_picture.rb" title="Git history of the CatPicture model"  class="external-link" target="_blank" rel="noopener">the history of the CatPicture
 model</a>, which mirrors the code above.</p>
 ]]></content>
   </entry>
@@ -2745,7 +2745,7 @@ model</a>, which mirrors the code above.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2012/05/16/easier-atomic-commits/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits">here</a></em></p>
+    <content type="html" xml:base="https://joshuadavey.com/2012/05/16/easier-atomic-commits/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
 <h2 id="problem">
   Problem
@@ -2755,7 +2755,7 @@ model</a>, which mirrors the code above.</p>
   </a>
 </h2>
 <p>As a practitioner of good source control, you and your team have decided
-to make all of your git commits <a href="http://goo.gl/P95KkZ">atomic</a> within your projects. That is,
+to make all of your git commits <a href="http://goo.gl/P95KkZ"  class="external-link" target="_blank" rel="noopener">atomic</a> within your projects. That is,
 every commit has a green test suite, and you prefer small, incremental
 commits to large, monolithic ones. Keeping commits small and atomic has
 tons of benefits, from more consistent continuous integration results,
@@ -2820,7 +2820,7 @@ control, and this tool makes it slightly easier to do so.</p>
 </span></span><span style="display:flex;"><span>reset_branch
 </span></span></code></pre></div><p>To use, just drop that in a file in your <code>$PATH</code>, and make sure it is executable.</p>
 <p>Thanks to Gary Bernhardt for the scripts&rsquo; inspiration,
-<code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions">his
+<code>run-command-on-git-revisions</code>, which you can see in <a href="https://github.com/garybernhardt/dotfiles/blob/master/bin/run-command-on-git-revisions"  class="external-link" target="_blank" rel="noopener">his
 dotfiles</a>.</p>
 ]]></content>
   </entry>
@@ -2835,7 +2835,7 @@ dotfiles</a>.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"><![CDATA[<p>Sometimes it&rsquo;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
-<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/">Joe Miller&rsquo;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
+<p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/"  class="external-link" target="_blank" rel="noopener">Joe Miller&rsquo;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
 <!-- raw HTML omitted -->
 <p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &ldquo;hinder&rdquo;. After that, it&rsquo;s simply a matter of using it:</p>
 <pre><code>$ hinder www.google.com
@@ -2876,9 +2876,9 @@ dotfiles</a>.</p>
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
 context of what I&rsquo;m working on to see the test result.</p>
-<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
+<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX"  class="external-link" target="_blank" rel="noopener">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
 been using tmux lately as my primary workspace. There are excellent
-<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I&rsquo;ve really
+<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper&#39;s introduction to tmux"  class="external-link" target="_blank" rel="noopener">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost&#39;s introduction to tmux"  class="external-link" target="_blank" rel="noopener">tmux elsewhere</a>, but I&rsquo;ve really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
 development. But rather than sing tmux&rsquo;s praises, I&rsquo;d like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
@@ -2896,7 +2896,7 @@ many times I&rsquo;ve saved a feature file, only to immediately notice a typo.
 Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
 <p>I&rsquo;ve also tried more editor-embedding techniques of running tests. Both
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools"  class="external-link" target="_blank" rel="noopener">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
@@ -2919,9 +2919,9 @@ increase for running individual specs or tests. This technique is being
 championed by Gary Bernhardt and Corey Haines, among others.</p>
 <p>Because tmux is so scriptable, it isn&rsquo;t hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools"  class="external-link" target="_blank" rel="noopener">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork"  class="external-link" target="_blank" rel="noopener">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
 the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
-<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
+<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-tslimevim">
   Using tslime.vim
   <a class="heading-link" href="#using-tslimevim">
@@ -2942,7 +2942,7 @@ the configured tmux pane. For example, you can use it in the following way:</p>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
 open is so common that I&rsquo;ve packaged up some useful defaults in
-<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
+<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-turbuxvim">
   Using turbux.vim
   <a class="heading-link" href="#using-turbuxvim">
@@ -2954,7 +2954,7 @@ open is so common that I&rsquo;ve packaged up some useful defaults in
 to run when you invoke it. If you&rsquo;re in a spec, invoking the plugin
 (by default with <code>&lt;leader&gt;t</code>) will run <code>rspec path/to/my_spec.rb</code> in
 the corresponding pane. In a test-unit file, it will run <code>ruby -Itest path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber path/to/my.feature</code>.</p>
-<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools"  class="external-link" target="_blank" rel="noopener">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
 when the current file has a corresponding test or spec. For example,
 When I&rsquo;m in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
@@ -2974,7 +2974,7 @@ the rspec or cucumber command.</p>
 <p>This setup has been really rewarding so far. There&rsquo;s far less context
 switching, as I never have to leave my editor. There are also fewer
 surprises. As far as I&rsquo;m concerned, the faster my feedback, the better.</p>
-<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
+<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork"  class="external-link" target="_blank" rel="noopener">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 <h2 id="bonus">
@@ -2998,13 +2998,13 @@ merged in.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/"><![CDATA[<p>At <a href="https://www.hashrocket.com">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
-<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev+jgdavey+therubymug@hashrocket.com">dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
+    <content type="html" xml:base="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/"><![CDATA[<p>At <a href="https://www.hashrocket.com"  class="external-link" target="_blank" rel="noopener">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch"  class="external-link" target="_blank" rel="noopener">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
+<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev&#43;jgdavey&#43;therubymug@hashrocket.com" >dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
 <p>So I quickly whipped up a zsh completion script, and <em>boom</em>, pairing nirvana.</p>
 <p>To use the completion script, save the following script as <code>_hitch</code> and add it to your <code>fpath</code>:</p>
 <!-- raw HTML omitted -->
-<p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698">gist</a> on github.</p>
+<p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698"  class="external-link" target="_blank" rel="noopener">gist</a> on github.</p>
 ]]></content>
   </entry>
   <entry>
@@ -3032,8 +3032,8 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </h2>
 <p>From my experience, there are two solid options for QR code generation in Ruby:</p>
 <ul>
-<li><a href="http://whomwah.github.com/rqrcode/">rQRCode</a> Pure ruby QR code generator</li>
-<li><a href="https://github.com/harrisj/qrencoder">qrencoder</a> A Ruby wrapper around libqrencode</li>
+<li><a href="http://whomwah.github.com/rqrcode/"  class="external-link" target="_blank" rel="noopener">rQRCode</a> Pure ruby QR code generator</li>
+<li><a href="https://github.com/harrisj/qrencoder"  class="external-link" target="_blank" rel="noopener">qrencoder</a> A Ruby wrapper around libqrencode</li>
 </ul>
 <h3 id="rqrcode">
   rQRCode
@@ -3072,9 +3072,9 @@ counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
 libraries that I&rsquo;ve found are:</p>
 <ul>
-<li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
-<li><a href="https://github.com/ecin/zxing.rb">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
-<li><a href="https://github.com/jgdavey/qrdecoder">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
+<li><a href="https://github.com/rubysolo/qrio"  class="external-link" target="_blank" rel="noopener">qrio</a> Pure ruby QR Code decoder</li>
+<li><a href="https://github.com/ecin/zxing.rb"  class="external-link" target="_blank" rel="noopener">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
+<li><a href="https://github.com/jgdavey/qrdecoder"  class="external-link" target="_blank" rel="noopener">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
 </ul>
 <h3 id="qrio">
   Qrio
@@ -3098,8 +3098,8 @@ libraries that I&rsquo;ve found are:</p>
   </a>
 </h3>
 <ul>
-<li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
-<li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
+<li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing"  class="external-link" target="_blank" rel="noopener">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
+<li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars"  class="external-link" target="_blank" rel="noopener">jruby-jars gem</a>)</li>
 <li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
 </ul>
 <h3 id="qrdecoder">
@@ -3113,7 +3113,7 @@ libraries that I&rsquo;ve found are:</p>
 <li>Wrapper for libzxing, a C++ port of the ZXing Java library</li>
 <li>By far the fastest option for MRI</li>
 <li>The C++ port of ZXing is less maintained than its big brother</li>
-<li>You must build <a href="https://github.com/jgdavey/zxing-cpp">libzxing</a> from source (a homebrew package is pending)</li>
+<li>You must build <a href="https://github.com/jgdavey/zxing-cpp"  class="external-link" target="_blank" rel="noopener">libzxing</a> from source (a homebrew package is pending)</li>
 </ul>
 <h2 id="the-bottom-line">
   The Bottom Line
@@ -3149,7 +3149,7 @@ fits your needs best will largely depend on your stack.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"><![CDATA[<p><!-- raw HTML omitted -->This is still rough, but I&rsquo;m finding it quite useful:<!-- raw HTML omitted --></p>
-<p>I&rsquo;ve converted this to a full-blown VIM plugin: <a href="https://github.com/jgdavey/vim-blockle">https://github.com/jgdavey/vim-blockle</a></p>
+<p>I&rsquo;ve converted this to a full-blown VIM plugin: <a href="https://github.com/jgdavey/vim-blockle"  class="external-link" target="_blank" rel="noopener">https://github.com/jgdavey/vim-blockle</a></p>
 ]]></content>
   </entry>
   

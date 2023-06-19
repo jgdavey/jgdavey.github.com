@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Using Datomic as a Graph Database · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -43,7 +44,7 @@ I started out building a six degress of Kevin Bacon project using Neo4j, a popul
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -69,25 +70,18 @@ I started out building a six degress of Kevin Bacon project using Neo4j, a popul
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -154,14 +148,14 @@ I started out building a six degress of Kevin Bacon project using Neo4j, a popul
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
-        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database">here</a></em></p>
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Datomic is a database that changes the way that you think about databases. It
 also happens to be effective at modeling graph data and was a great fit for
 performing graph traversal in a recent project I built.</p>
 <p>I started out building a six degress of Kevin Bacon project using
-<a href="https://www.neo4j.org/">Neo4j</a>, a popular open-source graph database. It worked very well
+<a href="https://www.neo4j.org/"  class="external-link" target="_blank" rel="noopener">Neo4j</a>, a popular open-source graph database. It worked very well
 for actors that were a few hops away, but finding paths between actors
 with more than 5 hops proved problematic.  The cypher query language
 gave me little visibility into the graph algorithms actually being
@@ -171,7 +165,7 @@ graph database. Its ability to arbitrarily traverse datoms, when paired with
 the appropriate graph searching algorithm, solved my problem elegantly. This
 technique ended up being fast as well.</p>
 <p>Quick aside: this post assumes a cursory understanding of Datomic. I won&rsquo;t cover
-the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tutorial</a> will help you get started.</p>
+the basics, but the <a href="https://docs.datomic.com/tutorial.html"  class="external-link" target="_blank" rel="noopener">official tutorial</a> will help you get started.</p>
 <h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">
   6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold
   <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold">
@@ -179,12 +173,12 @@ the basics, but the <a href="https://docs.datomic.com/tutorial.html">official tu
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon">the 6 degrees of Kevin
+<p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon"  class="external-link" target="_blank" rel="noopener">the 6 degrees of Kevin
 Bacon</a>. I wanted to create an app where you could pick an
 actor and find out what their Bacon Number was. That is, given an actor,
 I wanted to answer the question &ldquo;how many degrees of separation is there
 between that actor and Kevin Bacon?&rdquo;</p>
-<p>Using <a href="https://www.imdb.com/interfaces">information freely available from IMDb</a>, I developed the following
+<p>Using <a href="https://www.imdb.com/interfaces"  class="external-link" target="_blank" rel="noopener">information freely available from IMDb</a>, I developed the following
 schema:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">[</span>
 </span></span><span style="display:flex;"><span> <span style="color:#75715e">;; movies</span>
@@ -300,7 +294,7 @@ using a function like the following:</p>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">;=&gt; ([&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Jones, Tommy Lee&#34; &#34;JFK (1991)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Howard, Rosemary (II)&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Segal, Tobias&#34; &#34;R.I.P.D. (2013)&#34; &#34;Bacon, Kevin (I)&#34;] [&#34;Bieber, Justin&#34; &#34;Men in Black 3 (2012)&#34; &#34;Brolin, Josh&#34; &#34;Hollow Man (2000)&#34; &#34;Bacon, Kevin (I)&#34;])</span>
 </span></span></code></pre></div><p>The rules above are defined statically, but they are simply clojure data
 structures: it would be trivial to generate those rules to an arbitrary
-depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj">Datomic mbrainz
+depth. For an example of doing just that, see the <a href="https://github.com/Datomic/mbrainz-sample/blob/master/src/clj/datomic/samples/mbrainz/rules.clj"  class="external-link" target="_blank" rel="noopener">Datomic mbrainz
 sample</a>.</p>
 <h2 id="low-level-traversal-for-better-performance">
   Low-level traversal for better performance
@@ -313,10 +307,10 @@ sample</a>.</p>
 has a distinct advantage of being able to treat your data as local, even if its
 permanent storage lives somewhere else. That means that we can bring our own
 functions to the problem and execute locally, rather than on a database server.
-We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"><code>datoms</code> function</a> to search the graph using
+We can leverage Datomic&rsquo;s <a href="https://docs.datomic.com/clojure/#datomic.api/datoms"  class="external-link" target="_blank" rel="noopener"><code>datoms</code> function</a> to search the graph using
 our own graph-searching algorithm, rather than relying on the query engine.</p>
 <p>Our IMDb actor data is essentially a dense unweighted graph. Because of its
-density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> is probably the most
+density, a <a href="https://en.wikipedia.org/wiki/Bidirectional_search"  class="external-link" target="_blank" rel="noopener">bidirectional</a> <a href="https://en.wikipedia.org/wiki/Breadth-first_search"  class="external-link" target="_blank" rel="noopener">breadth-first search</a> is probably the most
 efficient alogrithm for finding the shortest paths from one point to another. A
 generic bidirectional BFS returning all shortest paths might look like this.</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-clojure" data-lang="clojure"><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#00a8c8">defn </span><span style="color:#111">paths</span>
@@ -429,7 +423,7 @@ problems and domains could use other algorithms. The idea, though, is that
 generic graph searching functions can be used directly, since the data is
 effectively local to the peer machine.</p>
 <p>For more Clojure implementations of generic graph searching algorithms,
-<a href="https://github.com/aysylu/loom">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj">alg_generic</a> namespace is a great starting point.</p>
+<a href="https://github.com/aysylu/loom"  class="external-link" target="_blank" rel="noopener">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj"  class="external-link" target="_blank" rel="noopener">alg_generic</a> namespace is a great starting point.</p>
 <h2 id="performance">
   Performance
   <a class="heading-link" href="#performance">
@@ -449,7 +443,7 @@ good with Neo4j&rsquo;s cypher query language.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin">source</a>.</p>
+<p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin"  class="external-link" target="_blank" rel="noopener">source</a>.</p>
 
       </div>
 
@@ -461,16 +455,17 @@ good with Neo4j&rsquo;s cypher query language.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -493,7 +488,7 @@ good with Neo4j&rsquo;s cypher query language.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -504,7 +499,22 @@ good with Neo4j&rsquo;s cypher query language.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

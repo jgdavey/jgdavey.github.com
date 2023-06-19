@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Faster TDD feedback with tmux, tslime.vim, and turbux.vim · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -40,7 +41,7 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -66,25 +67,18 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -151,15 +145,15 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
         <p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
 get immediate feedback in one pane, but never have to leave vim or lose
 context of what I&rsquo;m working on to see the test result.</p>
-<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
+<p>Taking a cue from <a href="https://rhnh.net/2011/08/20/vim-and-tmux-on-osx" title="Robot Has No Heart - Vim and tmux on OSX"  class="external-link" target="_blank" rel="noopener">Xavier Shay&rsquo;s excellent intro to tmux</a>, I&rsquo;ve
 been using tmux lately as my primary workspace. There are excellent
-<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper's introduction to tmux">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost's introduction to tmux">tmux elsewhere</a>, but I&rsquo;ve really
+<a href="https://peterc.org/blog/2010/216-tmux.html" title="Peter Cooper&#39;s introduction to tmux"  class="external-link" target="_blank" rel="noopener">introductions to</a> <a href="https://blog.hawkhost.com/2010/06/28/tmux-the-terminal-multiplexer/" title="Hawkhost&#39;s introduction to tmux"  class="external-link" target="_blank" rel="noopener">tmux elsewhere</a>, but I&rsquo;ve really
 enjoyed the switch from MacVim/Terminal to a single tmux session for
 development. But rather than sing tmux&rsquo;s praises, I&rsquo;d like to talk about
 how tmux and a vim plugin have changed my testing feedback loop for the
@@ -177,7 +171,7 @@ many times I&rsquo;ve saved a feature file, only to immediately notice a typo.
 Especially with Rails project, this can be an expensive amount of time.
 I end up feeling punished for saving my work.</p>
 <p>I&rsquo;ve also tried more editor-embedding techniques of running tests. Both
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools"  class="external-link" target="_blank" rel="noopener">rails.vim</a> and rake.vim provide facilities for running <code>:Rake</code>. When
 combined with a keyboard shortcut, this gets closer to the kind of
 control I like to have, running my tests exactly when I want them. The
 downside, though, is that I lose control of my editor and have to wait
@@ -200,9 +194,9 @@ increase for running individual specs or tests. This technique is being
 championed by Gary Bernhardt and Corey Haines, among others.</p>
 <p>Because tmux is so scriptable, it isn&rsquo;t hard to send commands to other
 panes in a tmux session programmatically. Leveraging the power of
-<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
+<a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools"  class="external-link" target="_blank" rel="noopener">rails.vim</a> and <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork"  class="external-link" target="_blank" rel="noopener">tslime.vim</a>, I&rsquo;ve created a vim plugin that shortens
 the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
-<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
+<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-tslimevim">
   Using tslime.vim
   <a class="heading-link" href="#using-tslimevim">
@@ -223,7 +217,7 @@ the configured tmux pane. For example, you can use it in the following way:</p>
 <p>The above command would send <code>rspec path/to/spec.rb</code> to the configured
 pane. For me, this pattern of running the test file that is currently
 open is so common that I&rsquo;ve packaged up some useful defaults in
-<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux">turbux.vim</a>.</p>
+<a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-turbuxvim">
   Using turbux.vim
   <a class="heading-link" href="#using-turbuxvim">
@@ -235,7 +229,7 @@ open is so common that I&rsquo;ve packaged up some useful defaults in
 to run when you invoke it. If you&rsquo;re in a spec, invoking the plugin
 (by default with <code>&lt;leader&gt;t</code>) will run <code>rspec path/to/my_spec.rb</code> in
 the corresponding pane. In a test-unit file, it will run <code>ruby -Itest path/to/test.rb</code>. In a cucumber feature file, it will run <code>cucumber path/to/my.feature</code>.</p>
-<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
+<p>Thanks to <a href="https://github.com/tpope/vim-rails" title="Rails.vim: Ruby on Rails power tools"  class="external-link" target="_blank" rel="noopener">rails.vim</a>&rsquo;s awesomeness, I&rsquo;ve also provided some mappings for
 when the current file has a corresponding test or spec. For example,
 When I&rsquo;m in a file that has a corresponding spec, such as a model or
 controller, the command will run the that spec.</p>
@@ -255,7 +249,7 @@ the rspec or cucumber command.</p>
 <p>This setup has been really rewarding so far. There&rsquo;s far less context
 switching, as I never have to leave my editor. There are also fewer
 surprises. As far as I&rsquo;m concerned, the faster my feedback, the better.</p>
-<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey's tslime.vim fork">tslime.vim</a>, as the main
+<p><em>Note:</em> You will probably want to use my fork of <a href="https://github.com/jgdavey/tslime.vim" title="Joshua Davey&#39;s tslime.vim fork"  class="external-link" target="_blank" rel="noopener">tslime.vim</a>, as the main
 repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 <h2 id="bonus">
@@ -278,16 +272,17 @@ merged in.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -310,7 +305,7 @@ merged in.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -321,7 +316,22 @@ merged in.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

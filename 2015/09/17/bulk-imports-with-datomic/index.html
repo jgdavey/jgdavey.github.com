@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Bulk imports with Datomic · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -43,7 +44,7 @@ Use core.async Link to heading The Datomic transactor handles concurrency by tra
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -69,25 +70,18 @@ Use core.async Link to heading The Datomic transactor handles concurrency by tra
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -154,9 +148,9 @@ Use core.async Link to heading The Datomic transactor handles concurrency by tra
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
-        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic">here</a></em></p>
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
 wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;ve
 learned from doing several imports.</p>
@@ -173,7 +167,7 @@ reshaping of data and formatting transactions. I
 use <code>core.async</code> to parallelize just about everything in the import
 pipeline.</p>
 <p>One example of how I&rsquo;ve leveraged <code>core.async</code> for
-import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/master/src/kevin/loader.clj">Kevin Bacon project
+import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/master/src/kevin/loader.clj"  class="external-link" target="_blank" rel="noopener">Kevin Bacon project
 repository</a>.</p>
 <h2 id="run-the-import-locally">
   Run the import locally
@@ -205,7 +199,7 @@ up is advantageous. Here&rsquo;s what a REPL session looks like:</p>
 </span></span><span style="display:flex;"><span><span style="color:#75715e">;; blocks until done indexing</span>
 </span></span><span style="display:flex;"><span><span style="color:#111">(</span><span style="color:#75af00">d/gc-storage</span> <span style="color:#111">conn</span> <span style="color:#111">(</span><span style="color:#75af00">java.util.Date.</span><span style="color:#111">))</span>
 </span></span></code></pre></div><p>For more information on why this cleanup
-is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4">the relevant Datomic
+is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4"  class="external-link" target="_blank" rel="noopener">the relevant Datomic
 documentation</a>.</p>
 <h2 id="use-backuprestore">
   Use backup/restore
@@ -223,7 +217,7 @@ up to production. Assuming you&rsquo;ve already deployed a production transactor
 <li>Run the <code>datomic restore-db</code> command from the backup folder to the
 remote database.</li>
 <li>Turn the &ldquo;write throughput&rdquo; back down to whatever
-value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capacity.html#sec-5">the Datomic
+value I plan to use for ongoing use (see <a href="https://docs.datomic.com/capacity.html#sec-5"  class="external-link" target="_blank" rel="noopener">the Datomic
 documentation</a> for more
 information).</li>
 </ol>
@@ -244,16 +238,17 @@ is half the battle.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -276,7 +271,7 @@ is half the battle.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -287,7 +282,22 @@ is half the battle.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

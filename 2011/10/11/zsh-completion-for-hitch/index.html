@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   zsh completion for hitch · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -43,7 +44,7 @@ Recently, I was annoyed that I had to always remember the github username of the
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -69,25 +70,18 @@ Recently, I was annoyed that I had to always remember the github username of the
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -154,15 +148,15 @@ Recently, I was annoyed that I had to always remember the github username of the
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
-        <p>At <a href="https://www.hashrocket.com">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
-<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev+jgdavey+therubymug@hashrocket.com">dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
+        <p>At <a href="https://www.hashrocket.com"  class="external-link" target="_blank" rel="noopener">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch"  class="external-link" target="_blank" rel="noopener">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
+<p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev&#43;jgdavey&#43;therubymug@hashrocket.com" >dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
 <p>So I quickly whipped up a zsh completion script, and <em>boom</em>, pairing nirvana.</p>
 <p>To use the completion script, save the following script as <code>_hitch</code> and add it to your <code>fpath</code>:</p>
 <!-- raw HTML omitted -->
-<p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698">gist</a> on github.</p>
+<p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698"  class="external-link" target="_blank" rel="noopener">gist</a> on github.</p>
 
       </div>
 
@@ -174,16 +168,17 @@ Recently, I was annoyed that I had to always remember the github username of the
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -206,7 +201,7 @@ Recently, I was annoyed that I had to always remember the github username of the
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -217,7 +212,22 @@ Recently, I was annoyed that I had to always remember the github username of the
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

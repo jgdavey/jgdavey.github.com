@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Single-Use Tokens in Datomic · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -40,7 +41,7 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -66,25 +67,18 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -151,7 +145,7 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
         <p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
 a password-reset token, or capturing a financial transaction, there are
@@ -160,7 +154,7 @@ token is used, it is invalidated.</p>
 <p>Doing things exactly once, atomically, is relatively straightforward in
 traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
-finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1">1</a><!-- raw HTML omitted --></p>
+finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1" >1</a><!-- raw HTML omitted --></p>
 <p>But how can we accomplish some like this in Datomic?</p>
 <h2 id="the-worlds-worst-singles-network">
   The World&rsquo;s Worst Singles Network
@@ -276,7 +270,7 @@ elimination</em>.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination">documentation on transactions</a>:</p>
+<p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination"  class="external-link" target="_blank" rel="noopener">documentation on transactions</a>:</p>
 <blockquote>
 <p>Redundancy Elimination</p>
 <p>A datom is redundant with the current value of the database if
@@ -301,7 +295,7 @@ more than once.</p>
 transactional, and reads are not. That&rsquo;s actually only true on the
 peers. The transactor itself is guaranteed to always have access to the
 most recent database value at any time. Among other things, this is what
-enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
+enables <a href="https://docs.datomic.com/transactions.html#built-in-transaction-functions"  class="external-link" target="_blank" rel="noopener">built-in database functions</a> like <code>:db.fn/cas</code> to work.</p>
 <p>Within a transaction, a database function is used in place of a
 <code>:db/add</code> or <code>:db/retract</code>. When the transactor sees a transactor
 function, it invokes it and splices the result into the rest of the
@@ -354,12 +348,12 @@ using a single writer, paired with immutable history.</p>
 the use of database functions to maintain atomicity. Of course, database
 functions have uses outside of concurrency contexts. And, as a bonus,
 they can be loaded and invoked on the client as well.</p>
-<p>For more information on database functions, see <a href="https://docs.datomic.com/database-functions.html">the
-docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA">watch
+<p>For more information on database functions, see <a href="https://docs.datomic.com/database-functions.html"  class="external-link" target="_blank" rel="noopener">the
+docs</a>, <a href="https://www.youtube.com/watch?v=8fY687k7DMA"  class="external-link" target="_blank" rel="noopener">watch
 the video</a>,
 or see [the Day of Datomic
-examples](<a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial">https://github.com/Datomic/day-of-datomic/blob/master/tutorial</a>
-/data_functions.clj). You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932">scratch.clj</a> file that I
+examples](<a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial"  class="external-link" target="_blank" rel="noopener">https://github.com/Datomic/day-of-datomic/blob/master/tutorial</a>
+/data_functions.clj). You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932"  class="external-link" target="_blank" rel="noopener">scratch.clj</a> file that I
 used to build up the code examples here.</p>
 <p><!-- raw HTML omitted -->1<!-- raw HTML omitted --> However, even in SQL setups there are potential
 pitfalls. Because of the potential for multiple writers, care must be
@@ -379,16 +373,17 @@ serializable isolation level.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -411,7 +406,7 @@ serializable isolation level.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -422,7 +417,22 @@ serializable isolation level.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   QR Codes in Ruby · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -37,7 +38,7 @@
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -63,25 +64,18 @@
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -148,7 +142,7 @@
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
         <p>QR codes seem to be everywhere these days. I&rsquo;ve seen them in
 advertisements on the train, on the back of magazines, and, most
@@ -165,8 +159,8 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </h2>
 <p>From my experience, there are two solid options for QR code generation in Ruby:</p>
 <ul>
-<li><a href="http://whomwah.github.com/rqrcode/">rQRCode</a> Pure ruby QR code generator</li>
-<li><a href="https://github.com/harrisj/qrencoder">qrencoder</a> A Ruby wrapper around libqrencode</li>
+<li><a href="http://whomwah.github.com/rqrcode/"  class="external-link" target="_blank" rel="noopener">rQRCode</a> Pure ruby QR code generator</li>
+<li><a href="https://github.com/harrisj/qrencoder"  class="external-link" target="_blank" rel="noopener">qrencoder</a> A Ruby wrapper around libqrencode</li>
 </ul>
 <h3 id="rqrcode">
   rQRCode
@@ -205,9 +199,9 @@ counterpart. There are several ooptions to choose from, and the best one
 for you will likely depend your environment and stack. The top three
 libraries that I&rsquo;ve found are:</p>
 <ul>
-<li><a href="https://github.com/rubysolo/qrio">qrio</a> Pure ruby QR Code decoder</li>
-<li><a href="https://github.com/ecin/zxing.rb">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
-<li><a href="https://github.com/jgdavey/qrdecoder">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
+<li><a href="https://github.com/rubysolo/qrio"  class="external-link" target="_blank" rel="noopener">qrio</a> Pure ruby QR Code decoder</li>
+<li><a href="https://github.com/ecin/zxing.rb"  class="external-link" target="_blank" rel="noopener">zxing.rb</a> JRuby wrapper for ZXing 1D/2D barcode image processing library.</li>
+<li><a href="https://github.com/jgdavey/qrdecoder"  class="external-link" target="_blank" rel="noopener">qrdecoder</a> A ruby wrapper for the C++ port of ZXing</li>
 </ul>
 <h3 id="qrio">
   Qrio
@@ -231,8 +225,8 @@ libraries that I&rsquo;ve found are:</p>
   </a>
 </h3>
 <ul>
-<li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
-<li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars">jruby-jars gem</a>)</li>
+<li>Uses the well-maintained <a href="https://code.google.com/p/zxing/" title="Zebra Crossing"  class="external-link" target="_blank" rel="noopener">Zxing</a> (Zebra Crossing) Java barcode decoding library</li>
+<li>Works with both JRuby and MRI (via <a href="https://rubygems.org/gems/jruby-jars"  class="external-link" target="_blank" rel="noopener">jruby-jars gem</a>)</li>
 <li>MRI versions of ruby will notice a slow startup as a forked JRuby server is started</li>
 </ul>
 <h3 id="qrdecoder">
@@ -246,7 +240,7 @@ libraries that I&rsquo;ve found are:</p>
 <li>Wrapper for libzxing, a C++ port of the ZXing Java library</li>
 <li>By far the fastest option for MRI</li>
 <li>The C++ port of ZXing is less maintained than its big brother</li>
-<li>You must build <a href="https://github.com/jgdavey/zxing-cpp">libzxing</a> from source (a homebrew package is pending)</li>
+<li>You must build <a href="https://github.com/jgdavey/zxing-cpp"  class="external-link" target="_blank" rel="noopener">libzxing</a> from source (a homebrew package is pending)</li>
 </ul>
 <h2 id="the-bottom-line">
   The Bottom Line
@@ -280,16 +274,17 @@ fits your needs best will largely depend on your stack.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -312,7 +307,7 @@ fits your needs best will largely depend on your stack.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -323,7 +318,22 @@ fits your needs best will largely depend on your stack.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

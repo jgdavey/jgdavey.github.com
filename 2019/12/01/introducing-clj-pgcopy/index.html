@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Introducting clj-pgcopy · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -40,7 +41,7 @@ Although the overhead from org." />
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -66,25 +67,18 @@ Although the overhead from org." />
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -151,7 +145,7 @@ Although the overhead from org." />
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
         <p>On a recent project, I was working on an ETL process, where
 the transform step happened in Clojure. After all of the data
@@ -182,8 +176,8 @@ representation.</li>
 <p>There may be other benefits I&rsquo;m unaware of, but those two things alone
 made me curious if there was a way to get the <code>COPY</code> goodness with
 idiomatic Clojure.</p>
-<p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/">https://jdbc.postgresql.org/</a> and
-<a href="https://impossibl.github.io/pgjdbc-ng/">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
+<p>Both main postgresql jdbc drivers, <a href="https://jdbc.postgresql.org/"  class="external-link" target="_blank" rel="noopener">https://jdbc.postgresql.org/</a> and
+<a href="https://impossibl.github.io/pgjdbc-ng/"  class="external-link" target="_blank" rel="noopener">https://impossibl.github.io/pgjdbc-ng/</a>, support putting a connection
 into COPY mode, after which data can be streamed into or out of
 postgresql. However, both drivers don&rsquo;t do anything to help you get
 the data into the raw format that postgresql expects. For the text
@@ -193,9 +187,9 @@ postgresql data type has a very specific binary representation. Again,
 while the postgresql jdbc drivers provide a way to stream in or stream
 out COPY data, the data within those streams is left entirely up to
 you. The best library I found to do this kind of serialization was
-<a href="https://github.com/bytefish/PgBulkInsert">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
+<a href="https://github.com/bytefish/PgBulkInsert"  class="external-link" target="_blank" rel="noopener">PgBulkInsert</a>, which works with JDBC, but has a very Java-centric
 API.</p>
-<p>That&rsquo;s where <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> comes in. It maps common data types to
+<p>That&rsquo;s where <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> comes in. It maps common data types to
 their binary represenation, with the hope that using the binary COPY
 style of importing data is as easy to use as clojure.java.jdbc
 methods. The primary API of clj-pgcopy is
@@ -295,8 +289,8 @@ Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 </tbody>
 </table>
 <p>For measurement methodology, or to run your own benchmarks, see the
-<a href="https://github.com/jgdavey/clj-pgcopy/blob/master/bench/clj_pgcopy/benchmark.clj">benchmark</a>
-namespace of the <a href="https://github.com/jgdavey/clj-pgcopy">clj-pgcopy</a> repository.</p>
+<a href="https://github.com/jgdavey/clj-pgcopy/blob/master/bench/clj_pgcopy/benchmark.clj"  class="external-link" target="_blank" rel="noopener">benchmark</a>
+namespace of the <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> repository.</p>
 <h2 id="type-mappings">
   Type Mappings
   <a class="heading-link" href="#type-mappings">
@@ -540,16 +534,17 @@ guidance on doing so.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -572,7 +567,7 @@ guidance on doing so.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -583,7 +578,22 @@ guidance on doing so.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   

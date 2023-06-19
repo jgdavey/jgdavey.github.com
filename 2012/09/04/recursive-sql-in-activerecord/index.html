@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>
+
+<head>
+  <title>
   Using Recursive SQL with ActiveRecord trees · Joshua Davey
 </title>
-    <meta charset="utf-8">
+  <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light dark">
 
@@ -43,7 +44,7 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.7f9d180e3b3bebba9ba80d55eed1255c35e00764872854736d6ad7db38884ffc.css" integrity="sha256-f50YDjs767qbqA1V7tElXDXgB2SHKFRzbWrX2ziIT/w=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -69,25 +70,18 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
 
 
 
-<meta name="generator" content="Hugo 0.113.0">
 
 
 
 
 
-  </head>
+</head>
 
 
 
 
 <body class="preload-transitions colorscheme-light">
   
-<div class="float-container">
-    <a id="dark-mode-toggle" class="colorscheme-toggle">
-        <i class="fa fa-adjust fa-fw" aria-hidden="true"></i>
-    </a>
-</div>
-
 
   <main class="wrapper">
     <nav class="navigation">
@@ -154,11 +148,11 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
         </div>
       </header>
 
-      <div>
+      <div class="post-content">
         
-        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/recursive-sql-in-activerecord" title="Using Recursive SQL with ActiveRecord trees">here</a></em></p>
+        <p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/recursive-sql-in-activerecord" title="Using Recursive SQL with ActiveRecord trees"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p><strong>tl;dr</strong> When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.</p>
-<p>In a <a href="https://blog.hashrocket.com/posts/sql-window-functions" title="SQL Window Functions and You">previous post</a>, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories.
+<p>In a <a href="https://blog.hashrocket.com/posts/sql-window-functions" title="SQL Window Functions and You"  class="external-link" target="_blank" rel="noopener">previous post</a>, I outlined a Cat Picture store application. As our store grows, more and more categories have to be created, and we end up with a tree of categories.
 How can we create a homepage that includes all cat pictures for a given category <em>and</em> all of its subcategories?</p>
 <p>Pictorally, the category tree might look like this:</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Cat Pictures
@@ -256,7 +250,7 @@ the <code>descendents</code> method.</p>
   </a>
 </h2>
 <p>Since we&rsquo;re using PostgreSQL, we can take advantage of its special
-features. In this case, we can use a WITH query. From the <a href="https://www.postgresql.org/docs/9.1/static/queries-with.html" title="WITH queries">PostgreSQL
+features. In this case, we can use a WITH query. From the <a href="https://www.postgresql.org/docs/9.1/static/queries-with.html" title="WITH queries"  class="external-link" target="_blank" rel="noopener">PostgreSQL
 documentation</a>:</p>
 <blockquote>
 <p>WITH provides a way to write auxiliary statements for use in a larger
@@ -464,7 +458,7 @@ pictures) will now only take 1 for the entire set.</p>
 performance boons, especially when a tree get several levels deep.</p>
 <p>Although using database recursion is an efficient way of improving
 performance with our existing schema, other methods of handling tree
-structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antipatterns" title="SQL Antipatterns book">SQL Antipatterns</a> book has a great
+structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antipatterns" title="SQL Antipatterns book"  class="external-link" target="_blank" rel="noopener">SQL Antipatterns</a> book has a great
 breakdown of other tree solutions that would require schema changes.</p>
 <h2 id="example-app">
   Example app
@@ -473,11 +467,11 @@ breakdown of other tree solutions that would require schema changes.</p>
     <span class="sr-only">Link to heading</span>
   </a>
 </h2>
-<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL">sample Rails app</a> to
+<p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
 iterate quickly. I used TDD to write the pure-ruby approach, and reused
 the specs while I &ldquo;refactored&rdquo; the implementation to the subsequent
 approaches. Of particular note is the [history of the Category
-model](<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
+model](<a href="https://github.com/jgdavey/tree-sql-example/commits/master/app/mo"  class="external-link" target="_blank" rel="noopener">https://github.com/jgdavey/tree-sql-example/commits/master/app/mo</a>
 dels/category.rb), which mirrors the code above.</p>
 
       </div>
@@ -490,16 +484,17 @@ dels/category.rb), which mirrors the code above.</p>
         
         
         
+        
       </footer>
     </article>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"
-    integrity="sha384-R4558gYOUz8mP9YWpZJjofhk+zx0AS11p36HnD2ZKj/6JR5z27gSSULCNHIRReVs" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css"
+    integrity="sha384-vKruj+a13U8yHIkAyGgK1J3ArTLzrFGBbBc0tDp4ad/EyewESeXE/Iv67Aj8gKZ0" crossorigin="anonymous">
   
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js"
-    integrity="sha384-z1fJDqw8ZApjGO3/unPWUPsIymfsJmyrDVWC8Tv/a1HeOtGmkwNd/7xUS0Xcnvsx" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js"
-    integrity="sha384-+XBljXPPiv+OzfbB3cVmLHf4hdUFHlWNZN5spNQ7rmHTXpd7WvJum6fIACpNNfIR" crossorigin="anonymous"
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"
+    integrity="sha384-PwRUT/YqbnEjkZO0zZxNqcxACrXe+j766U2amXcgMg5457rve2Y7I6ZJSm2A0mS4" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/contrib/auto-render.min.js"
+    integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
     onload="renderMathInElement(document.body,
       {
         delimiters: [
@@ -522,7 +517,7 @@ dels/category.rb), which mirrors the code above.</p>
      Joshua Davey 
     ·
     
-    Powered by <a href="https://gohugo.io/">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/">Coder</a>.
+    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> & <a href="https://github.com/luizdepra/hugo-coder/" target="_blank" rel="noopener">Coder</a>.
     
   </section>
 </footer>
@@ -533,7 +528,22 @@ dels/category.rb), which mirrors the code above.</p>
 
   
   
-  <script src="https://joshuadavey.com/js/coder.min.27afce394fb6284f521b3fbc9f6a8326342333c3092267f3944d770489876fed.js" integrity="sha256-J6/OOU&#43;2KE9SGz&#43;8n2qDJjQjM8MJImfzlE13BImHb&#43;0="></script>
+  <script src="https://joshuadavey.com/js/coder.min.6ae284be93d2d19dad1f02b0039508d9aab3180a12a06dcc71b0b0ef7825a317.js" integrity="sha256-auKEvpPS0Z2tHwKwA5UI2aqzGAoSoG3McbCw73gloxc="></script>
+  
+
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
   
 
   
