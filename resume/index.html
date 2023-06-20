@@ -13,18 +13,18 @@
 
 
 <meta name="author" content="Joshua Davey">
-<meta name="description" content="Experience Link to heading Senior Software Engineer at Aclaimant Link to heading Mar 2021 - Jun 2023 Link to heading Aclaimant is a SaaS platform providing risk management workflow software. I was as member of the core team of full-stack developers. The core stack is Clojure, Clojurescript and Postgresql.
-Senior Software Engineer at Root Link to heading Mar 2020 - Mar 2021 Link to heading Root is an auto insurance provider that uses machine learning to give safe drivers better rates.">
+<meta name="description" content="Experience Link to heading Senior Software Engineer at Aclaimant Link to heading Mar 2021 - Jun 2023 Link to heading Aclaimant is a SaaS platform providing risk management workflow software. I was as member of the core team of full-stack developers. The core stack is Clojure, Clojurescript, and Postgresql, deployed via Kubernetes. Some accomplishments I&rsquo;m proud of:
+Designed, developed and deployed a new asynchronous job runner that improved on our existing serial polling model, leveraging Postgresql&rsquo;s built-in pub/sub, graceful and forceful cancellation, multi-node scaling, and frontend live reporting.">
 <meta name="keywords" content="blog,software,engineer,personal">
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Joshua Davey"/>
-<meta name="twitter:description" content="Experience Link to heading Senior Software Engineer at Aclaimant Link to heading Mar 2021 - Jun 2023 Link to heading Aclaimant is a SaaS platform providing risk management workflow software. I was as member of the core team of full-stack developers. The core stack is Clojure, Clojurescript and Postgresql.
-Senior Software Engineer at Root Link to heading Mar 2020 - Mar 2021 Link to heading Root is an auto insurance provider that uses machine learning to give safe drivers better rates."/>
+<meta name="twitter:description" content="Experience Link to heading Senior Software Engineer at Aclaimant Link to heading Mar 2021 - Jun 2023 Link to heading Aclaimant is a SaaS platform providing risk management workflow software. I was as member of the core team of full-stack developers. The core stack is Clojure, Clojurescript, and Postgresql, deployed via Kubernetes. Some accomplishments I&rsquo;m proud of:
+Designed, developed and deployed a new asynchronous job runner that improved on our existing serial polling model, leveraging Postgresql&rsquo;s built-in pub/sub, graceful and forceful cancellation, multi-node scaling, and frontend live reporting."/>
 
 <meta property="og:title" content="Joshua Davey" />
-<meta property="og:description" content="Experience Link to heading Senior Software Engineer at Aclaimant Link to heading Mar 2021 - Jun 2023 Link to heading Aclaimant is a SaaS platform providing risk management workflow software. I was as member of the core team of full-stack developers. The core stack is Clojure, Clojurescript and Postgresql.
-Senior Software Engineer at Root Link to heading Mar 2020 - Mar 2021 Link to heading Root is an auto insurance provider that uses machine learning to give safe drivers better rates." />
+<meta property="og:description" content="Experience Link to heading Senior Software Engineer at Aclaimant Link to heading Mar 2021 - Jun 2023 Link to heading Aclaimant is a SaaS platform providing risk management workflow software. I was as member of the core team of full-stack developers. The core stack is Clojure, Clojurescript, and Postgresql, deployed via Kubernetes. Some accomplishments I&rsquo;m proud of:
+Designed, developed and deployed a new asynchronous job runner that improved on our existing serial polling model, leveraging Postgresql&rsquo;s built-in pub/sub, graceful and forceful cancellation, multi-node scaling, and frontend live reporting." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/resume/" /><meta property="article:section" content="" />
 
@@ -149,7 +149,18 @@ Senior Software Engineer at Root Link to heading Mar 2020 - Mar 2021 Link to hea
 </h3>
 <p>Aclaimant is a SaaS platform providing risk management workflow
 software. I was as member of the core team of full-stack developers.
-The core stack is Clojure, Clojurescript and Postgresql.</p>
+The core stack is Clojure, Clojurescript, and Postgresql, deployed via
+Kubernetes. Some accomplishments I&rsquo;m proud of:</p>
+<ul>
+<li>Designed, developed and deployed a new asynchronous job runner that
+improved on our existing serial polling model, leveraging
+Postgresql&rsquo;s built-in pub/sub, graceful and forceful cancellation,
+multi-node scaling, and frontend live reporting.</li>
+<li>Scaled up an ETL process that was taking multiple hours to complete
+in the best case and improved the run time to minutes by doing more
+batch processing on the server, and tranferring the data to the
+database using my clj-pgcopy library.</li>
+</ul>
 <h2 id="senior-software-engineer-at-roothttpswwwjoinrootcom">
   Senior Software Engineer at <a href="https://www.joinroot.com"  class="external-link" target="_blank" rel="noopener">Root</a>
   <a class="heading-link" href="#senior-software-engineer-at-roothttpswwwjoinrootcom">
@@ -166,7 +177,7 @@ The core stack is Clojure, Clojurescript and Postgresql.</p>
 </h3>
 <p>Root is an auto insurance provider that uses machine learning to give
 safe drivers better rates. I worked on the Core Services team, helping
-to build and support customer billing, among other things.</p>
+to build and support customer billing, among other backend services.</p>
 <h2 id="senior-software-engineer-at-suitenesshttpswwwsuitenesscom">
   Senior Software Engineer at <a href="https://www.suiteness.com"  class="external-link" target="_blank" rel="noopener">Suiteness</a>
   <a class="heading-link" href="#senior-software-engineer-at-suitenesshttpswwwsuitenesscom">
@@ -185,14 +196,18 @@ to build and support customer billing, among other things.</p>
 core stack is Clojure, Clojurescript, Postgresql, and Redis. Some
 accomplishments I&rsquo;m particularly proud of:</p>
 <ul>
-<li>Designing and developing a transitional event system in
+<li>
+<p>Designing and developing a transitional event system in
 Postgresql. The end result was something like Kafka, but without the
-deployment overhead.</li>
-<li>Moving our large, long-term cache from Redis to Postgresql. With
+deployment overhead.</p>
+</li>
+<li>
+<p>Moving our large, long-term cache from Redis to Postgresql. With
 hundreds of gigabytes of cache data, a disk-based (rather than
 RAM-based) cache was necessary. Using Postgresql in this way
 involved challenges to get the write performance up, but the end
-result scaled beautifully.</li>
+result scaled beautifully.</p>
+</li>
 </ul>
 <h2 id="senior-software-engineer-at-sonianhttpswwwbarracudacomproductscloudarchive">
   Senior Software Engineer at <a href="https://www.barracuda.com/products/cloudarchive"  class="external-link" target="_blank" rel="noopener">Sonian</a>
