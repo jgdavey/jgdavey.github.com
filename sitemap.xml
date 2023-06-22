@@ -2,19 +2,22 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://joshuadavey.com/articles/</loc>
-    <lastmod>2022-01-25T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>https://joshuadavey.com/</loc>
+    <lastmod>2023-06-22T13:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://joshuadavey.com/posts/</loc>
+    <lastmod>2023-06-22T13:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://joshuadavey.com/2023/06/22/social-offboarding/</loc>
+    <lastmod>2023-06-22T13:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://joshuadavey.com/articles/</loc>
     <lastmod>2022-01-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://joshuadavey.com/articles/what-your-favorite-church-song-says-about-you/</loc>
     <lastmod>2022-01-25T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/</loc>
-    <lastmod>2019-12-01T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://joshuadavey.com/posts/</loc>
     <lastmod>2019-12-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/</loc>

@@ -3,13 +3,129 @@
   <generator>Hugo -- gohugo.io</generator>
   <link href="https://joshuadavey.com/" rel="alternate" type="text/html"/>
   <link href="https://joshuadavey.com/atom.xml" rel="self" type="application/atom+xml"/>
-  <updated>2022-01-25T00:00:00+00:00</updated>
+  <updated>2023-06-22T13:00:00+00:00</updated>
   <id>https://joshuadavey.com/</id>
   <title type="html">Joshua Davey</title>
   <author>
     <name>Joshua Davey</name>
     <email>josh@joshuadavey.com</email>
   </author>
+  <entry>
+    <title type="html">Social Offboarding</title>
+    <link href="https://joshuadavey.com/2023/06/22/social-offboarding/" rel="alternate" type="text/html" title="Social Offboarding"/>
+    <published>2023-06-22T13:00:00+00:00</published>
+    <updated>2023-06-22T13:00:00+00:00</updated>
+    <id>https://joshuadavey.com/2023/06/22/social-offboarding/</id>
+    <author>
+      <name>Joshua Davey</name>
+      <email>josh@joshuadavey.com</email>
+    </author>
+    <content type="html" xml:base="https://joshuadavey.com/2023/06/22/social-offboarding/"><![CDATA[<p>Few people would dispute the importance of onboarding new members of a
+team. Getting to know the other people you&rsquo;ll be working with is vital
+to becoming part of a team. This is often done a number of ways, but
+at the very least involves introductions and informal get-to-know-you
+icebreakers. Depending on the position, it can also involve training
+sessions, one-on-one conversations, happy hour meetups or other
+social events. Even when the stated topic is about &ldquo;work&rdquo; stuff, good
+managers allow and even encourage informal chatting.</p>
+<p>If a team is a machine, then socializing is the grease that keeps it
+moving fluidly.</p>
+<p>I&rsquo;ve remotely for 8 years, for 5 different companies. The kind of
+social onboarding that I mention above has been a part of each
+position, even when it happens organically. Given how important
+socializing is to team health, it should not come as a surprise that
+the places that have emphasized social onboarding have also been the
+ones that I started contributing to most quickly.</p>
+<p>Bringing a new person into a team changes that team fundamentally,
+and the healthiest teams I&rsquo;ve been a part of seem to understand that,
+emphasizing this social onboarding in ways both subtle and overt.</p>
+<p>When a person leaves a company, be it because of downsizing, accepting
+an offer at another company, or even just an internal reorganization,
+the same priority to the social is not always given. Indeed, even as
+projects are handed off, and any HR offboarding procedure is executed
+carefully, few teams give adequate attention the <em>social</em> offboarding.</p>
+<p>One the most helpful traditions that I&rsquo;ve come to embrace when someone
+leaves a team has been a &ldquo;social offboarding&rdquo; call with the team.
+Given that I&rsquo;ve been on remote teams, this has looked like an informal
+Zoom call and has been a great way to say goodbye, talk about &ldquo;what&rsquo;s
+next&rdquo;, and gain some sense of closure. And when I&rsquo;ve been the one
+leaving, it has served as a nice palette cleanser amid all of the HR
+paperwork and other formalized processes necessary when one leaves a
+company.</p>
+<h2 id="how-does-this-get-set-up">
+  How does this get set up?
+  <a class="heading-link" href="#how-does-this-get-set-up">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Depending on the circumstances that a person is leaving, it might just
+be a normal Zoom (or whatever) meeting that you make and invite all
+the teammates to. But if access to internal tools has been revoked,
+this may involve treating the leaving employee like an external
+entity, and invite them to a meeting as such. At the very least,
+ensuring that you have personal contact information makes this a
+possibility.</p>
+<h2 id="who-should-come">
+  Who should come?
+  <a class="heading-link" href="#who-should-come">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>This has usually involved anyone that I worked with every day. If you
+are involved in a daily standup meeting, for example, that might be a
+good place to start with the &ldquo;guest list&rdquo;. Not everyone feels
+comfortable being candid with higher-ups, so use your discretion on
+who the team and employee would feel comfortable with.</p>
+<p>Of course, you can always as the person leaving who they would <em>like</em>
+to have on the call.</p>
+<h2 id="what-do-we-say">
+  What do we say?
+  <a class="heading-link" href="#what-do-we-say">
+    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
+  </a>
+</h2>
+<p>Given that this is usually an informal conversation, the folks on the
+call can discuss whatever makes sense. However, as a guideline, I&rsquo;d
+caution against discussing the terms of the end of the employment or
+other topics that could get you in hot water. If the person leaving is
+going to another position, they might give some details about what
+drew them to the new place, but steer clear of why they are leaving
+this team.</p>
+<p>This might be a time to reminisce about projects people worked on
+together, accomplishments you are proud of, or just re-tell funny
+stories. Again, this should be an informal call.</p>
+<p>If, however, you are hoping for more structure, here&rsquo;s an approach
+I&rsquo;ve taken at several places when I&rsquo;ve left: I offer positive
+affirmations about the specific people on the call. I&rsquo;ll address each
+person individually, naming the things I appreciate about them as
+coworkers or what I may miss about not being on their team anymore.</p>
+<p>Here&rsquo;s an illustration using completely made up people and positions:</p>
+<pre><code>Alice, I've learned so much from your deep knowledge of Bells, and
+your work with Whistles has been inspiring. The team is so lucky
+to have you, and I'll miss learning from you.
+
+Bob, you were the first person that reached out to me when I was
+new here, and you've never ceased encouraging me even while I
+learned the ropes. You've been a great teammate, and I'll miss
+having you in my corner.
+
+Charlotte, thank you for trusting me enough to experiment on the
+Widget project, even though it was clearly in your area of
+expertise. You helped me when I got stuck, and I'm so appreciative.
+</code></pre>
+<p>People, in general, seem to like when you compliment them, and even
+more so when you&rsquo;re able to call out specifics. Every time I&rsquo;ve used
+this format, the people on the call have been quite receptive. It&rsquo;s
+been a helpful, perhaps even therapeutic, way to spend the last few
+minutes of time with these people as teammates.</p>
+<p>And when someone else has been the one leaving, this kind of call has
+been helpful to me and the rest of the team to have a sense of
+closure, and we leave the call with positive vibes.</p>
+]]></content>
+  </entry>
   <entry>
     <title type="html">Introducting clj-pgcopy</title>
     <link href="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/" rel="alternate" type="text/html" title="Introducting clj-pgcopy"/>
