@@ -15,22 +15,22 @@
 <meta name="author" content="Joshua Davey">
 <meta name="description" content="This is a repost. You can find the original here
 Sometimes, aggregating data can become overly complex in a normal ActiveRecord model. Because Rails works well with SQL views, we can create associations to SQL views that aggregate data for us, simplifying our models and potentially speeding up queries.
-Modeling an inbox Link to heading I&rsquo;ve got an inbox. A cat inbox. For real.
-There are many possible implementations for modeling an inbox.">
+Modeling an inbox I&rsquo;ve got an inbox. A cat inbox. For real.
+There are many possible implementations for modeling an inbox. I&rsquo;ve gone with a relatively simple approach.">
 <meta name="keywords" content="blog,software,engineer,personal">
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="has_one view"/>
 <meta name="twitter:description" content="This is a repost. You can find the original here
 Sometimes, aggregating data can become overly complex in a normal ActiveRecord model. Because Rails works well with SQL views, we can create associations to SQL views that aggregate data for us, simplifying our models and potentially speeding up queries.
-Modeling an inbox Link to heading I&rsquo;ve got an inbox. A cat inbox. For real.
-There are many possible implementations for modeling an inbox."/>
+Modeling an inbox I&rsquo;ve got an inbox. A cat inbox. For real.
+There are many possible implementations for modeling an inbox. I&rsquo;ve gone with a relatively simple approach."/>
 
 <meta property="og:title" content="has_one view" />
 <meta property="og:description" content="This is a repost. You can find the original here
 Sometimes, aggregating data can become overly complex in a normal ActiveRecord model. Because Rails works well with SQL views, we can create associations to SQL views that aggregate data for us, simplifying our models and potentially speeding up queries.
-Modeling an inbox Link to heading I&rsquo;ve got an inbox. A cat inbox. For real.
-There are many possible implementations for modeling an inbox." />
+Modeling an inbox I&rsquo;ve got an inbox. A cat inbox. For real.
+There are many possible implementations for modeling an inbox. I&rsquo;ve gone with a relatively simple approach." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2013-02-12T00:00:00+00:00" />
@@ -160,9 +160,8 @@ create associations to SQL views that aggregate data for us, simplifying
 our models and potentially speeding up queries.</p>
 <h2 id="modeling-an-inbox">
   Modeling an inbox
-  <a class="heading-link" href="#modeling-an-inbox">
+  <a class="heading-link" href="#modeling-an-inbox" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I&rsquo;ve got an inbox. A cat inbox. For real.</p>
@@ -229,9 +228,8 @@ expected interface each conversation object should have:</p>
 </span></span></code></pre></div><p>Let&rsquo;s explore a typical way to model this in our model directly.</p>
 <h2 id="a-typical-ruby-implementation">
   A typical Ruby implementation
-  <a class="heading-link" href="#a-typical-ruby-implementation">
+  <a class="heading-link" href="#a-typical-ruby-implementation" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># app/models/conversation.rb</span>
@@ -311,9 +309,8 @@ outputs a log like this:</p>
 </span></span><span style="display:flex;"><span>Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)
 </span></span></code></pre></div><h2 id="eager-loading">
   Eager-loading
-  <a class="heading-link" href="#eager-loading">
+  <a class="heading-link" href="#eager-loading" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>We can definitely cut down on the N+1 query problem by introducing eager
@@ -345,9 +342,8 @@ We can use a native feature of SQL to aggregate information for us:
 views.</p>
 <h2 id="sql-views">
   SQL views
-  <a class="heading-link" href="#sql-views">
+  <a class="heading-link" href="#sql-views" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>A SQL view is essentially a virtual table. It can be queried just like a
@@ -363,9 +359,8 @@ like they would with a normal table, with one exception: the records are
 read-only.</p>
 <h2 id="add-a-migration-for-the-view">
   Add a migration for the view
-  <a class="heading-link" href="#add-a-migration-for-the-view">
+  <a class="heading-link" href="#add-a-migration-for-the-view" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Let&rsquo;s create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
@@ -407,9 +402,8 @@ that we see what we expect:</p>
 us as one table.</p>
 <h2 id="activerecord-associations-for-views">
   ActiveRecord associations for views
-  <a class="heading-link" href="#activerecord-associations-for-views">
+  <a class="heading-link" href="#activerecord-associations-for-views" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Now that our view exists, we can integrate it into our application:</p>
@@ -470,9 +464,8 @@ necessary parts:</p>
 from the user model into our SQL view, but we don&rsquo;t need to stop there.</p>
 <h2 id="push-it-down">
   Push it down!
-  <a class="heading-link" href="#push-it-down">
+  <a class="heading-link" href="#push-it-down" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Let&rsquo;s update our view migration to include more aggregated information
@@ -600,9 +593,8 @@ eager-load the conversation summary:</p>
 instead with the eager-loading of the the Conversation::Summary model.</p>
 <h2 id="real-world-benefits">
   Real World Benefits
-  <a class="heading-link" href="#real-world-benefits">
+  <a class="heading-link" href="#real-world-benefits" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I used this technique in a real-world application. It helped abstract
@@ -621,9 +613,8 @@ changing the scope from <code>user.conversations.include(:summary)</code> to
 <code>user.conversations.include(:summary).order(&quot;conversation_summaries.most _recent_message_sent_at DESC&quot;)</code>.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Any time that we push stuff into the database, we make a tradeoff.
@@ -646,9 +637,8 @@ how we can use SQL views in our Rails applications adds another tool to
 our toolbelt.</p>
 <h2 id="example-app">
   Example app
-  <a class="heading-link" href="#example-app">
+  <a class="heading-link" href="#example-app" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
@@ -722,7 +712,20 @@ dels/category.rb), which mirrors the code above.</p>
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -737,6 +740,15 @@ dels/category.rb), which mirrors the code above.</p>
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 

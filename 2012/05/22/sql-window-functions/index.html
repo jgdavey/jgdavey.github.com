@@ -168,9 +168,8 @@ displaying a list of cat pictures that are the cheapest for their
 respective category.</p>
 <h2 id="approach-1-ruby">
   Approach 1: Ruby
-  <a class="heading-link" href="#approach-1-ruby">
+  <a class="heading-link" href="#approach-1-ruby" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Implementing the solution in Ruby is fairly straightforward.
@@ -215,9 +214,8 @@ filtering has to be done in Ruby.</p>
 </ul>
 <h2 id="approach-2-sql-subselects">
   Approach 2: SQL subselects
-  <a class="heading-link" href="#approach-2-sql-subselects">
+  <a class="heading-link" href="#approach-2-sql-subselects" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>We can improve performance by doing the filtering at the database level,
@@ -289,9 +287,8 @@ reduced to calls to <code>where</code>, <code>select</code> and <code>order</cod
 </ul>
 <h2 id="approach-3-window-functions">
   Approach 3: Window functions
-  <a class="heading-link" href="#approach-3-window-functions">
+  <a class="heading-link" href="#approach-3-window-functions" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>But there is still another option. The SQL standard defines a concept
@@ -438,9 +435,8 @@ out of luck.</p>
 </ul>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>While they may not be appropriate for every situation, window functions
@@ -452,9 +448,8 @@ is an excellent resource, both for its <a href="https://www.postgresql.org/docs/
 and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.html" title="List of PostgreSQL window functions"  class="external-link" target="_blank" rel="noopener">list of window functions</a>.</p>
 <h2 id="example-app">
   Example app
-  <a class="heading-link" href="#example-app">
+  <a class="heading-link" href="#example-app" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/windowing-example/" title="Window functions example application"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
@@ -527,7 +522,20 @@ model</a>, which mirrors the code above.</p>
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -542,6 +550,15 @@ model</a>, which mirrors the code above.</p>
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 

@@ -156,9 +156,8 @@ the how and why of deferring database constraints, using a sortable list
 domain as an example.</p>
 <h1 id="modeling-lists-of-sortable-items">
   Modeling lists of sortable items
-  <a class="heading-link" href="#modeling-lists-of-sortable-items">
+  <a class="heading-link" href="#modeling-lists-of-sortable-items" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Imagine that you have an application with multiple lists. Each list has
@@ -244,9 +243,8 @@ fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
 <h1 id="adding-constraints">
   Adding constraints
-  <a class="heading-link" href="#adding-constraints">
+  <a class="heading-link" href="#adding-constraints" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
@@ -312,9 +310,8 @@ smashed. If only there were a way to enforce uniqueness constraints at
 the end of the transaction, rather than the end of each statement&hellip;</p>
 <h1 id="deferrable-constraints">
   Deferrable Constraints
-  <a class="heading-link" href="#deferrable-constraints">
+  <a class="heading-link" href="#deferrable-constraints" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>As mentioned before, constraints are immediately enforced. This
@@ -375,9 +372,8 @@ end of the transaction to do that check. We can have our data integrity
 cake and eat it too.</p>
 <h1 id="bonus-deferrable-introspection">
   Bonus: deferrable introspection
-  <a class="heading-link" href="#bonus-deferrable-introspection">
+  <a class="heading-link" href="#bonus-deferrable-introspection" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Having to name the constraint in two places is a bit of a bummer, and
@@ -425,9 +421,8 @@ to query the constraint names instead.</p>
 <p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
 <h1 id="example-application">
   Example application
-  <a class="heading-link" href="#example-application">
+  <a class="heading-link" href="#example-application" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
@@ -500,7 +495,20 @@ sections above.</p>
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -515,6 +523,15 @@ sections above.</p>
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 

@@ -54,9 +54,8 @@ paperwork and other formalized processes necessary when one leaves a
 company.</p>
 <h2 id="how-does-this-get-set-up">
   How does this get set up?
-  <a class="heading-link" href="#how-does-this-get-set-up">
+  <a class="heading-link" href="#how-does-this-get-set-up" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Depending on the circumstances that a person is leaving, it might just
@@ -68,9 +67,8 @@ ensuring that you have personal contact information makes this a
 possibility.</p>
 <h2 id="who-should-come">
   Who should come?
-  <a class="heading-link" href="#who-should-come">
+  <a class="heading-link" href="#who-should-come" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>This has usually involved anyone that I worked with every day. If you
@@ -82,9 +80,8 @@ who the team and employee would feel comfortable with.</p>
 to have on the call.</p>
 <h2 id="what-do-we-say">
   What do we say?
-  <a class="heading-link" href="#what-do-we-say">
+  <a class="heading-link" href="#what-do-we-say" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Given that this is usually an informal conversation, the folks on the
@@ -186,9 +183,8 @@ methods. The primary API of clj-pgcopy is
 most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
 <h2 id="example-usage">
   Example usage
-  <a class="heading-link" href="#example-usage">
+  <a class="heading-link" href="#example-usage" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>For example, let&rsquo;s say that we have a table of product listings,
@@ -229,9 +225,8 @@ looking like this:</p>
 Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 <h2 id="performance">
   Performance
-  <a class="heading-link" href="#performance">
+  <a class="heading-link" href="#performance" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Using the same table as our above example, I did some non-definitive benchmarking. For most typical use-cases, <code>clj-pgcopy</code> should be a little more than twice as fast as <code>insert-multi</code>:</p>
@@ -282,18 +277,16 @@ Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 namespace of the <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> repository.</p>
 <h2 id="type-mappings">
   Type Mappings
-  <a class="heading-link" href="#type-mappings">
+  <a class="heading-link" href="#type-mappings" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Out of the box, clj-pgcopy supports many data types, with what I
 consider reasonable default mappings.</p>
 <h3 id="basic-type-mapping">
   Basic type mapping
-  <a class="heading-link" href="#basic-type-mapping">
+  <a class="heading-link" href="#basic-type-mapping" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -344,9 +337,8 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="date-related-mappings">
   Date-related mappings
-  <a class="heading-link" href="#date-related-mappings">
+  <a class="heading-link" href="#date-related-mappings" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -393,9 +385,8 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="geometric-mappings">
   Geometric mappings
-  <a class="heading-link" href="#geometric-mappings">
+  <a class="heading-link" href="#geometric-mappings" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -434,9 +425,8 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="arrays">
   Arrays
-  <a class="heading-link" href="#arrays">
+  <a class="heading-link" href="#arrays" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Impemented for the following JVM-typed arrays for:</p>
@@ -481,9 +471,8 @@ consider reasonable default mappings.</p>
 <p>Currently, only 1-dimensional Postgres arrays are supported.</p>
 <h3 id="jsonb">
   jsonb
-  <a class="heading-link" href="#jsonb">
+  <a class="heading-link" href="#jsonb" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Things that are String-like, or serialized in string form, should work
@@ -494,9 +483,8 @@ a JSON string in a <code>clj-pgcopy.core/JsonB</code> handles that.</p>
 valid JSON string such that it can actually be used.</p>
 <h2 id="what-about-my-weird-type">
   What about my weird type?
-  <a class="heading-link" href="#what-about-my-weird-type">
+  <a class="heading-link" href="#what-about-my-weird-type" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>These type mappings are implented using a clojure protocol, namely
@@ -506,9 +494,8 @@ should use the implementation of other types in the library for
 guidance on doing so.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Go forth and import!</p>
@@ -535,9 +522,8 @@ finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML
 <p>But how can we accomplish some like this in Datomic?</p>
 <h2 id="the-worlds-worst-singles-network">
   The World&rsquo;s Worst Singles Network
-  <a class="heading-link" href="#the-worlds-worst-singles-network">
+  <a class="heading-link" href="#the-worlds-worst-singles-network" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <blockquote>
@@ -577,9 +563,8 @@ password reset token and persist it:</p>
 </span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">(</span><span style="color:#75af00">generate-secure-random</span><span style="color:#111">)}])</span>
 </span></span></code></pre></div><h2 id="an-initial-approach">
   An initial approach
-  <a class="heading-link" href="#an-initial-approach">
+  <a class="heading-link" href="#an-initial-approach" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>After receiving an email, they follow the link that includes the
@@ -606,9 +591,8 @@ a problem. <code>(d/db conn)</code> will return the most recent version of the
 database that the peer can get.</p>
 <h2 id="croutons-are-just-stale-bread">
   Croutons are just stale bread
-  <a class="heading-link" href="#croutons-are-just-stale-bread">
+  <a class="heading-link" href="#croutons-are-just-stale-bread" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
@@ -642,9 +626,8 @@ retractions work just like assertions with regard to <em>redundancy
 elimination</em>.</p>
 <h2 id="the-department-of-redundancy-department">
   The Department of Redundancy Department
-  <a class="heading-link" href="#the-department-of-redundancy-department">
+  <a class="heading-link" href="#the-department-of-redundancy-department" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination"  class="external-link" target="_blank" rel="noopener">documentation on transactions</a>:</p>
@@ -663,9 +646,8 @@ use case, retractions cannot be used to safeguard us from using a token
 more than once.</p>
 <h2 id="transaction-functions-to-the-rescue">
   Transaction functions to the rescue
-  <a class="heading-link" href="#transaction-functions-to-the-rescue">
+  <a class="heading-link" href="#transaction-functions-to-the-rescue" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
@@ -711,9 +693,8 @@ portion serializable with the rest of the operations.</p>
 <p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
 <h2 id="in-summary">
   In Summary
-  <a class="heading-link" href="#in-summary">
+  <a class="heading-link" href="#in-summary" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
@@ -757,9 +738,8 @@ wasn&rsquo;t as familiar as SQL dump/restore. Here are some things that I&rsquo;
 learned from doing several imports.</p>
 <h2 id="use-coreasync">
   Use core.async
-  <a class="heading-link" href="#use-coreasync">
+  <a class="heading-link" href="#use-coreasync" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The Datomic transactor handles concurrency by transacting datoms
@@ -772,9 +752,8 @@ import jobs can be found in my <a href="https://github.com/jgdavey/kevin/blob/ma
 repository</a>.</p>
 <h2 id="run-the-import-locally">
   Run the import locally
-  <a class="heading-link" href="#run-the-import-locally">
+  <a class="heading-link" href="#run-the-import-locally" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I use DynamoDB as my storage backend in production. I used to try to
@@ -787,9 +766,8 @@ in the case of DynamoDB, I save some money, as I don&rsquo;t have to have my
 &ldquo;write throughput&rdquo; cranked way up for as long.</p>
 <h2 id="clean-up-the-local-database">
   Clean up the local database
-  <a class="heading-link" href="#clean-up-the-local-database">
+  <a class="heading-link" href="#clean-up-the-local-database" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Bulk imports create some garbage, so manually reindexing before backing
@@ -804,9 +782,8 @@ is important, see <a href="https://docs.datomic.com/capacity.html#sec-2-4"  clas
 documentation</a>.</p>
 <h2 id="use-backuprestore">
   Use backup/restore
-  <a class="heading-link" href="#use-backuprestore">
+  <a class="heading-link" href="#use-backuprestore" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Once everything looks good on the local production database, I use
@@ -866,9 +843,8 @@ generation should be a part of our build process.</p>
 <p>Enter <a href="https://boot-clj.com"  class="external-link" target="_blank" rel="noopener">boot</a>.</p>
 <h3 id="using-boot-for-clojurescript-development">
   Using Boot for ClojureScript development
-  <a class="heading-link" href="#using-boot-for-clojurescript-development">
+  <a class="heading-link" href="#using-boot-for-clojurescript-development" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>If you&rsquo;re new to the Clojure world, you may have heard of <a href="https://leiningen.org"  class="external-link" target="_blank" rel="noopener">Leiningen</a>,
@@ -888,9 +864,8 @@ of awesome is the ability to compile HAML and SASS as a part of the
 pipeline.</p>
 <h3 id="boot-middleman-gluing-everything-together">
   boot-middleman: Gluing Everything Together
-  <a class="heading-link" href="#boot-middleman-gluing-everything-together">
+  <a class="heading-link" href="#boot-middleman-gluing-everything-together" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>I had an epiphany one night after working on this problem for a while: I
@@ -908,9 +883,8 @@ source</a> of which is on GitHub.
 Just clone and run <code>boot dev</code>.</p>
 <h3 id="the-workflow-in-action">
   The Workflow in Action
-  <a class="heading-link" href="#the-workflow-in-action">
+  <a class="heading-link" href="#the-workflow-in-action" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>To see the workflow in action, check out the following video. It
@@ -938,9 +912,8 @@ the toolchain has improved greatly over the past year. Today we&rsquo;re going
 to see how we can integrate vim with our Clojure REPL environment.</p>
 <h1 id="life-without-integration">
   Life without integration
-  <a class="heading-link" href="#life-without-integration">
+  <a class="heading-link" href="#life-without-integration" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>In a shell session, let&rsquo;s fire up a Clojure REPL. I&rsquo;m going to use <code>lein repl</code> to do this. In another shell session, let&rsquo;s start vim and edit a
@@ -951,9 +924,8 @@ awkward, slow process. REPLs are supposed to be all about fast feedback.
 We can do better than copy and paste.</p>
 <h1 id="plugins">
   Plugins
-  <a class="heading-link" href="#plugins">
+  <a class="heading-link" href="#plugins" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Before we get started, we should get the some basic plugins for clojure
@@ -963,9 +935,8 @@ tpope/fireplace.vim
 </code></pre>
 <h1 id="setup">
   Setup
-  <a class="heading-link" href="#setup">
+  <a class="heading-link" href="#setup" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>After you&rsquo;ve installed the necessary Vim plugins, enter a project
@@ -979,9 +950,8 @@ process is transparent, but should be obvious once we attempt to to send
 a command to the connected REPL.</p>
 <h1 id="evaluation">
   Evaluation
-  <a class="heading-link" href="#evaluation">
+  <a class="heading-link" href="#evaluation" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>The most basic fireplace command is <code>:Eval</code>. <code>:Eval</code> takes an arbitrary
@@ -1047,9 +1017,8 @@ thread-through macro, and typing <code>cqq</code>.</p>
 to edit the line or lines before sending it off to the REPL.</p>
 <h1 id="documentation">
   Documentation
-  <a class="heading-link" href="#documentation">
+  <a class="heading-link" href="#documentation" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>One of the great things about Clojure is that documentation is a
@@ -1095,9 +1064,8 @@ technique ended up being fast as well.</p>
 the basics, but the <a href="https://docs.datomic.com/tutorial.html"  class="external-link" target="_blank" rel="noopener">official tutorial</a> will help you get started.</p>
 <h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">
   6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold
-  <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold">
+  <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon"  class="external-link" target="_blank" rel="noopener">the 6 degrees of Kevin
@@ -1147,9 +1115,8 @@ The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I&rsquo;v
 <code>:actor/movies</code> attribute as having a cardinality of many.</p>
 <h2 id="using-datalog-queries">
   Using datalog queries
-  <a class="heading-link" href="#using-datalog-queries">
+  <a class="heading-link" href="#using-datalog-queries" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Using datalog and <code>datomic.api/q</code>, we can make graph-like queries fairly easily.
@@ -1225,9 +1192,8 @@ depth. For an example of doing just that, see the <a href="https://github.com/Da
 sample</a>.</p>
 <h2 id="low-level-traversal-for-better-performance">
   Low-level traversal for better performance
-  <a class="heading-link" href="#low-level-traversal-for-better-performance">
+  <a class="heading-link" href="#low-level-traversal-for-better-performance" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Having to know the depth at which to traverse the graph is cumbersome. Datomic
@@ -1353,9 +1319,8 @@ effectively local to the peer machine.</p>
 <a href="https://github.com/aysylu/loom"  class="external-link" target="_blank" rel="noopener">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj"  class="external-link" target="_blank" rel="noopener">alg_generic</a> namespace is a great starting point.</p>
 <h2 id="performance">
   Performance
-  <a class="heading-link" href="#performance">
+  <a class="heading-link" href="#performance" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
@@ -1365,9 +1330,8 @@ in under a second, and in many cases, under 100 ms. I never got results that
 good with Neo4j&rsquo;s cypher query language.</p>
 <h2 id="source">
   Source
-  <a class="heading-link" href="#source">
+  <a class="heading-link" href="#source" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin"  class="external-link" target="_blank" rel="noopener">source</a>.</p>
@@ -1392,9 +1356,8 @@ the how and why of deferring database constraints, using a sortable list
 domain as an example.</p>
 <h1 id="modeling-lists-of-sortable-items">
   Modeling lists of sortable items
-  <a class="heading-link" href="#modeling-lists-of-sortable-items">
+  <a class="heading-link" href="#modeling-lists-of-sortable-items" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Imagine that you have an application with multiple lists. Each list has
@@ -1480,9 +1443,8 @@ fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
 <h1 id="adding-constraints">
   Adding constraints
-  <a class="heading-link" href="#adding-constraints">
+  <a class="heading-link" href="#adding-constraints" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
@@ -1548,9 +1510,8 @@ smashed. If only there were a way to enforce uniqueness constraints at
 the end of the transaction, rather than the end of each statement&hellip;</p>
 <h1 id="deferrable-constraints">
   Deferrable Constraints
-  <a class="heading-link" href="#deferrable-constraints">
+  <a class="heading-link" href="#deferrable-constraints" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>As mentioned before, constraints are immediately enforced. This
@@ -1611,9 +1572,8 @@ end of the transaction to do that check. We can have our data integrity
 cake and eat it too.</p>
 <h1 id="bonus-deferrable-introspection">
   Bonus: deferrable introspection
-  <a class="heading-link" href="#bonus-deferrable-introspection">
+  <a class="heading-link" href="#bonus-deferrable-introspection" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Having to name the constraint in two places is a bit of a bummer, and
@@ -1661,9 +1621,8 @@ to query the constraint names instead.</p>
 <p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
 <h1 id="example-application">
   Example application
-  <a class="heading-link" href="#example-application">
+  <a class="heading-link" href="#example-application" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
@@ -1690,9 +1649,8 @@ create associations to SQL views that aggregate data for us, simplifying
 our models and potentially speeding up queries.</p>
 <h2 id="modeling-an-inbox">
   Modeling an inbox
-  <a class="heading-link" href="#modeling-an-inbox">
+  <a class="heading-link" href="#modeling-an-inbox" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I&rsquo;ve got an inbox. A cat inbox. For real.</p>
@@ -1759,9 +1717,8 @@ expected interface each conversation object should have:</p>
 </span></span></code></pre></div><p>Let&rsquo;s explore a typical way to model this in our model directly.</p>
 <h2 id="a-typical-ruby-implementation">
   A typical Ruby implementation
-  <a class="heading-link" href="#a-typical-ruby-implementation">
+  <a class="heading-link" href="#a-typical-ruby-implementation" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#75715e"># app/models/conversation.rb</span>
@@ -1841,9 +1798,8 @@ outputs a log like this:</p>
 </span></span><span style="display:flex;"><span>Completed 200 OK in 691ms (Views: 272.5ms | ActiveRecord: 418.1ms)
 </span></span></code></pre></div><h2 id="eager-loading">
   Eager-loading
-  <a class="heading-link" href="#eager-loading">
+  <a class="heading-link" href="#eager-loading" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>We can definitely cut down on the N+1 query problem by introducing eager
@@ -1875,9 +1831,8 @@ We can use a native feature of SQL to aggregate information for us:
 views.</p>
 <h2 id="sql-views">
   SQL views
-  <a class="heading-link" href="#sql-views">
+  <a class="heading-link" href="#sql-views" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>A SQL view is essentially a virtual table. It can be queried just like a
@@ -1893,9 +1848,8 @@ like they would with a normal table, with one exception: the records are
 read-only.</p>
 <h2 id="add-a-migration-for-the-view">
   Add a migration for the view
-  <a class="heading-link" href="#add-a-migration-for-the-view">
+  <a class="heading-link" href="#add-a-migration-for-the-view" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Let&rsquo;s create a view to handle the <code>to_name</code> and <code>from_name</code> methods on
@@ -1937,9 +1891,8 @@ that we see what we expect:</p>
 us as one table.</p>
 <h2 id="activerecord-associations-for-views">
   ActiveRecord associations for views
-  <a class="heading-link" href="#activerecord-associations-for-views">
+  <a class="heading-link" href="#activerecord-associations-for-views" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Now that our view exists, we can integrate it into our application:</p>
@@ -2000,9 +1953,8 @@ necessary parts:</p>
 from the user model into our SQL view, but we don&rsquo;t need to stop there.</p>
 <h2 id="push-it-down">
   Push it down!
-  <a class="heading-link" href="#push-it-down">
+  <a class="heading-link" href="#push-it-down" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Let&rsquo;s update our view migration to include more aggregated information
@@ -2130,9 +2082,8 @@ eager-load the conversation summary:</p>
 instead with the eager-loading of the the Conversation::Summary model.</p>
 <h2 id="real-world-benefits">
   Real World Benefits
-  <a class="heading-link" href="#real-world-benefits">
+  <a class="heading-link" href="#real-world-benefits" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I used this technique in a real-world application. It helped abstract
@@ -2151,9 +2102,8 @@ changing the scope from <code>user.conversations.include(:summary)</code> to
 <code>user.conversations.include(:summary).order(&quot;conversation_summaries.most _recent_message_sent_at DESC&quot;)</code>.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Any time that we push stuff into the database, we make a tradeoff.
@@ -2176,9 +2126,8 @@ how we can use SQL views in our Rails applications adds another tool to
 our toolbelt.</p>
 <h2 id="example-app">
   Example app
-  <a class="heading-link" href="#example-app">
+  <a class="heading-link" href="#example-app" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/sql_views"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
@@ -2239,9 +2188,8 @@ with the <code>acts_as_tree</code> plugin. Let&rsquo;s see how we can implement 
 <code>descendents</code> method to get all descendent categories.</p>
 <h2 id="a-simple-ruby-approach">
   A Simple Ruby Approach
-  <a class="heading-link" href="#a-simple-ruby-approach">
+  <a class="heading-link" href="#a-simple-ruby-approach" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As you&rsquo;ve probably already guessed, we need to recursively collect
@@ -2293,9 +2241,8 @@ the <code>descendents</code> method.</p>
 <p>Surely we can do better.</p>
 <h2 id="sql-with-queries">
   SQL WITH queries
-  <a class="heading-link" href="#sql-with-queries">
+  <a class="heading-link" href="#sql-with-queries" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Since we&rsquo;re using PostgreSQL, we can take advantage of its special
@@ -2362,9 +2309,8 @@ our category tree.</p>
 </span></span></code></pre></div><p>Whoa! That&rsquo;s a lot of SQL. Let&rsquo;s break it down a bit.</p>
 <h3 id="declare-the-table-expression">
   Declare the Table Expression
-  <a class="heading-link" href="#declare-the-table-expression">
+  <a class="heading-link" href="#declare-the-table-expression" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>First, we declare our &ldquo;temporary table&rdquo; using the WITH syntax. We&rsquo;re
@@ -2374,9 +2320,8 @@ refer to corresponding columns on the categories table. The <code>path</code> is
 array of ids that each row will have. More on this in a bit.</p>
 <h3 id="define-the-non-recursive-term">
   Define the Non-recursive Term
-  <a class="heading-link" href="#define-the-non-recursive-term">
+  <a class="heading-link" href="#define-the-non-recursive-term" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>The non-recursive term is next:</p>
@@ -2389,9 +2334,8 @@ its <code>id</code>. On its own, this isn&rsquo;t very interesting, but this arr
 become helpful during the recursive step of the query.</p>
 <h3 id="define-the-recursive-term">
   Define the Recursive Term
-  <a class="heading-link" href="#define-the-recursive-term">
+  <a class="heading-link" href="#define-the-recursive-term" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>The recursive term is the juiciest bit of the query:</p>
@@ -2414,9 +2358,8 @@ other as parents, the query would never return. Including this check
 prevents such a mistake from killing our server.</p>
 <h3 id="query-the-common-table-expression">
   Query the Common Table Expression
-  <a class="heading-link" href="#query-the-common-table-expression">
+  <a class="heading-link" href="#query-the-common-table-expression" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Finally, a WITH query is only useful if you select from it outside of
@@ -2433,9 +2376,8 @@ groups the categories just like we&rsquo;d expect, with parents listed before
 their children.</p>
 <h2 id="using-with-queries-in-activerecord">
   Using WITH queries in ActiveRecord
-  <a class="heading-link" href="#using-with-queries-in-activerecord">
+  <a class="heading-link" href="#using-with-queries-in-activerecord" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -2498,9 +2440,8 @@ for each category in the tree (one to grab children, one to get its
 pictures) will now only take 1 for the entire set.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Taking advantage of PostgreSQL&rsquo;s advanced features can provide large
@@ -2511,9 +2452,8 @@ structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antip
 breakdown of other tree solutions that would require schema changes.</p>
 <h2 id="example-app">
   Example app
-  <a class="heading-link" href="#example-app">
+  <a class="heading-link" href="#example-app" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
@@ -2555,9 +2495,8 @@ displaying a list of cat pictures that are the cheapest for their
 respective category.</p>
 <h2 id="approach-1-ruby">
   Approach 1: Ruby
-  <a class="heading-link" href="#approach-1-ruby">
+  <a class="heading-link" href="#approach-1-ruby" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Implementing the solution in Ruby is fairly straightforward.
@@ -2602,9 +2541,8 @@ filtering has to be done in Ruby.</p>
 </ul>
 <h2 id="approach-2-sql-subselects">
   Approach 2: SQL subselects
-  <a class="heading-link" href="#approach-2-sql-subselects">
+  <a class="heading-link" href="#approach-2-sql-subselects" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>We can improve performance by doing the filtering at the database level,
@@ -2676,9 +2614,8 @@ reduced to calls to <code>where</code>, <code>select</code> and <code>order</cod
 </ul>
 <h2 id="approach-3-window-functions">
   Approach 3: Window functions
-  <a class="heading-link" href="#approach-3-window-functions">
+  <a class="heading-link" href="#approach-3-window-functions" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>But there is still another option. The SQL standard defines a concept
@@ -2825,9 +2762,8 @@ out of luck.</p>
 </ul>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>While they may not be appropriate for every situation, window functions
@@ -2839,9 +2775,8 @@ is an excellent resource, both for its <a href="https://www.postgresql.org/docs/
 and its <a href="https://www.postgresql.org/docs/9.1/static/functions-window.html" title="List of PostgreSQL window functions"  class="external-link" target="_blank" rel="noopener">list of window functions</a>.</p>
 <h2 id="example-app">
   Example app
-  <a class="heading-link" href="#example-app">
+  <a class="heading-link" href="#example-app" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/windowing-example/" title="Window functions example application"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
@@ -2865,9 +2800,8 @@ model</a>, which mirrors the code above.</p>
 <p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
 <h2 id="problem">
   Problem
-  <a class="heading-link" href="#problem">
+  <a class="heading-link" href="#problem" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As a practitioner of good source control, you and your team have decided
@@ -2887,9 +2821,8 @@ every commit is atomic? What a pain! I don&rsquo;t want to check out every
 commit by hand.</p>
 <h2 id="solution">
   Solution
-  <a class="heading-link" href="#solution">
+  <a class="heading-link" href="#solution" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Enter <code>atomically</code>, a simple shell script designed to take the pain out
@@ -3001,9 +2934,8 @@ how tmux and a vim plugin have changed my testing feedback loop for the
 better.</p>
 <h2 id="other-test-running-solutions">
   Other test-running solutions
-  <a class="heading-link" href="#other-test-running-solutions">
+  <a class="heading-link" href="#other-test-running-solutions" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Autotesting gives you immediate feedback, but runs everytime you save a
@@ -3020,9 +2952,8 @@ for the command to finish before I can type, or even navigate again. And
 I can&rsquo;t look at a failure message and my code at the same time.</p>
 <h2 id="a-faster-feedback-loop">
   A faster feedback loop
-  <a class="heading-link" href="#a-faster-feedback-loop">
+  <a class="heading-link" href="#a-faster-feedback-loop" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>A practice that is quickly gaining popularity in the Ruby community is
@@ -3040,9 +2971,8 @@ the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-tslimevim">
   Using tslime.vim
-  <a class="heading-link" href="#using-tslimevim">
+  <a class="heading-link" href="#using-tslimevim" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>My typical workflow now involves setting up a tmux session for my
@@ -3061,9 +2991,8 @@ open is so common that I&rsquo;ve packaged up some useful defaults in
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-turbuxvim">
   Using turbux.vim
-  <a class="heading-link" href="#using-turbuxvim">
+  <a class="heading-link" href="#using-turbuxvim" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Turbux.vim tries to intelligently choose the right spec, test or feature
@@ -3082,9 +3011,8 @@ cucumber scenario. It works by adding the vim cursor&rsquo;s line number to
 the rspec or cucumber command.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>This setup has been really rewarding so far. There&rsquo;s far less context
@@ -3095,9 +3023,8 @@ repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 <h2 id="bonus">
   Bonus
-  <a class="heading-link" href="#bonus">
+  <a class="heading-link" href="#bonus" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>See the plugin in action. If the video is hard to see, visit vimeo. There is a link to download at full size.</p>
@@ -3141,9 +3068,8 @@ are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
 <h2 id="qr-code-generation-in-ruby">
   QR Code Generation in Ruby
-  <a class="heading-link" href="#qr-code-generation-in-ruby">
+  <a class="heading-link" href="#qr-code-generation-in-ruby" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>From my experience, there are two solid options for QR code generation in Ruby:</p>
@@ -3153,9 +3079,8 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </ul>
 <h3 id="rqrcode">
   rQRCode
-  <a class="heading-link" href="#rqrcode">
+  <a class="heading-link" href="#rqrcode" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -3166,9 +3091,8 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </ul>
 <h3 id="qrencoder">
   QREncoder
-  <a class="heading-link" href="#qrencoder">
+  <a class="heading-link" href="#qrencoder" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -3178,9 +3102,8 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </ul>
 <h2 id="qr-code-decoding-in-ruby">
   QR Code Decoding in Ruby
-  <a class="heading-link" href="#qr-code-decoding-in-ruby">
+  <a class="heading-link" href="#qr-code-decoding-in-ruby" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The QR Decoding landscape varies even more than its QR encoding
@@ -3194,9 +3117,8 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h3 id="qrio">
   Qrio
-  <a class="heading-link" href="#qrio">
+  <a class="heading-link" href="#qrio" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -3208,9 +3130,8 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h3 id="zxingrb">
   Zxing.rb
-  <a class="heading-link" href="#zxingrb">
+  <a class="heading-link" href="#zxingrb" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -3220,9 +3141,8 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h3 id="qrdecoder">
   QRDecoder
-  <a class="heading-link" href="#qrdecoder">
+  <a class="heading-link" href="#qrdecoder" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -3233,9 +3153,8 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h2 id="the-bottom-line">
   The Bottom Line
-  <a class="heading-link" href="#the-bottom-line">
+  <a class="heading-link" href="#the-bottom-line" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you&rsquo;re on a stack that can install

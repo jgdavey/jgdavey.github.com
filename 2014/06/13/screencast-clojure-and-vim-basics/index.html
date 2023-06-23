@@ -156,9 +156,8 @@ the toolchain has improved greatly over the past year. Today we&rsquo;re going
 to see how we can integrate vim with our Clojure REPL environment.</p>
 <h1 id="life-without-integration">
   Life without integration
-  <a class="heading-link" href="#life-without-integration">
+  <a class="heading-link" href="#life-without-integration" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>In a shell session, let&rsquo;s fire up a Clojure REPL. I&rsquo;m going to use <code>lein repl</code> to do this. In another shell session, let&rsquo;s start vim and edit a
@@ -169,9 +168,8 @@ awkward, slow process. REPLs are supposed to be all about fast feedback.
 We can do better than copy and paste.</p>
 <h1 id="plugins">
   Plugins
-  <a class="heading-link" href="#plugins">
+  <a class="heading-link" href="#plugins" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Before we get started, we should get the some basic plugins for clojure
@@ -181,9 +179,8 @@ tpope/fireplace.vim
 </code></pre>
 <h1 id="setup">
   Setup
-  <a class="heading-link" href="#setup">
+  <a class="heading-link" href="#setup" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>After you&rsquo;ve installed the necessary Vim plugins, enter a project
@@ -197,9 +194,8 @@ process is transparent, but should be obvious once we attempt to to send
 a command to the connected REPL.</p>
 <h1 id="evaluation">
   Evaluation
-  <a class="heading-link" href="#evaluation">
+  <a class="heading-link" href="#evaluation" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>The most basic fireplace command is <code>:Eval</code>. <code>:Eval</code> takes an arbitrary
@@ -265,9 +261,8 @@ thread-through macro, and typing <code>cqq</code>.</p>
 to edit the line or lines before sending it off to the REPL.</p>
 <h1 id="documentation">
   Documentation
-  <a class="heading-link" href="#documentation">
+  <a class="heading-link" href="#documentation" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>One of the great things about Clojure is that documentation is a
@@ -348,7 +343,20 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -363,6 +371,15 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 

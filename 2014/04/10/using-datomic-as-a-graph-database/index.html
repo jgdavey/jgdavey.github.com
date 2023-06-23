@@ -168,9 +168,8 @@ technique ended up being fast as well.</p>
 the basics, but the <a href="https://docs.datomic.com/tutorial.html"  class="external-link" target="_blank" rel="noopener">official tutorial</a> will help you get started.</p>
 <h2 id="6-degrees-kevin--cool-6-degrees-kelvin--cold">
   6 Degrees Kevin == Cool; 6 Degrees Kelvin == Cold
-  <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold">
+  <a class="heading-link" href="#6-degrees-kevin--cool-6-degrees-kelvin--cold" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The problem domain should be fairly familiar: <a href="https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon"  class="external-link" target="_blank" rel="noopener">the 6 degrees of Kevin
@@ -220,9 +219,8 @@ The &ldquo;relationship&rdquo; of actors to movies is many-to-many, so I&rsquo;v
 <code>:actor/movies</code> attribute as having a cardinality of many.</p>
 <h2 id="using-datalog-queries">
   Using datalog queries
-  <a class="heading-link" href="#using-datalog-queries">
+  <a class="heading-link" href="#using-datalog-queries" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Using datalog and <code>datomic.api/q</code>, we can make graph-like queries fairly easily.
@@ -298,9 +296,8 @@ depth. For an example of doing just that, see the <a href="https://github.com/Da
 sample</a>.</p>
 <h2 id="low-level-traversal-for-better-performance">
   Low-level traversal for better performance
-  <a class="heading-link" href="#low-level-traversal-for-better-performance">
+  <a class="heading-link" href="#low-level-traversal-for-better-performance" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Having to know the depth at which to traverse the graph is cumbersome. Datomic
@@ -426,9 +423,8 @@ effectively local to the peer machine.</p>
 <a href="https://github.com/aysylu/loom"  class="external-link" target="_blank" rel="noopener">loom&rsquo;s</a> <a href="https://github.com/aysylu/loom/blob/master/src/loom/alg_generic.clj"  class="external-link" target="_blank" rel="noopener">alg_generic</a> namespace is a great starting point.</p>
 <h2 id="performance">
   Performance
-  <a class="heading-link" href="#performance">
+  <a class="heading-link" href="#performance" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>I&rsquo;m using the above ideas and functions on IMDB&rsquo;s dataset to power
@@ -438,9 +434,8 @@ in under a second, and in many cases, under 100 ms. I never got results that
 good with Neo4j&rsquo;s cypher query language.</p>
 <h2 id="source">
   Source
-  <a class="heading-link" href="#source">
+  <a class="heading-link" href="#source" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The code in this post is based on the <a href="https://github.com/jgdavey/kevin"  class="external-link" target="_blank" rel="noopener">source</a>.</p>
@@ -509,7 +504,20 @@ good with Neo4j&rsquo;s cypher query language.</p>
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -524,6 +532,15 @@ good with Neo4j&rsquo;s cypher query language.</p>
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 

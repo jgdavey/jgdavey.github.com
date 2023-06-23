@@ -197,9 +197,8 @@ methods. The primary API of clj-pgcopy is
 most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
 <h2 id="example-usage">
   Example usage
-  <a class="heading-link" href="#example-usage">
+  <a class="heading-link" href="#example-usage" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>For example, let&rsquo;s say that we have a table of product listings,
@@ -240,9 +239,8 @@ looking like this:</p>
 Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 <h2 id="performance">
   Performance
-  <a class="heading-link" href="#performance">
+  <a class="heading-link" href="#performance" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Using the same table as our above example, I did some non-definitive benchmarking. For most typical use-cases, <code>clj-pgcopy</code> should be a little more than twice as fast as <code>insert-multi</code>:</p>
@@ -293,18 +291,16 @@ Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 namespace of the <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> repository.</p>
 <h2 id="type-mappings">
   Type Mappings
-  <a class="heading-link" href="#type-mappings">
+  <a class="heading-link" href="#type-mappings" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Out of the box, clj-pgcopy supports many data types, with what I
 consider reasonable default mappings.</p>
 <h3 id="basic-type-mapping">
   Basic type mapping
-  <a class="heading-link" href="#basic-type-mapping">
+  <a class="heading-link" href="#basic-type-mapping" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -355,9 +351,8 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="date-related-mappings">
   Date-related mappings
-  <a class="heading-link" href="#date-related-mappings">
+  <a class="heading-link" href="#date-related-mappings" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -404,9 +399,8 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="geometric-mappings">
   Geometric mappings
-  <a class="heading-link" href="#geometric-mappings">
+  <a class="heading-link" href="#geometric-mappings" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -445,9 +439,8 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="arrays">
   Arrays
-  <a class="heading-link" href="#arrays">
+  <a class="heading-link" href="#arrays" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Impemented for the following JVM-typed arrays for:</p>
@@ -492,9 +485,8 @@ consider reasonable default mappings.</p>
 <p>Currently, only 1-dimensional Postgres arrays are supported.</p>
 <h3 id="jsonb">
   jsonb
-  <a class="heading-link" href="#jsonb">
+  <a class="heading-link" href="#jsonb" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Things that are String-like, or serialized in string form, should work
@@ -505,9 +497,8 @@ a JSON string in a <code>clj-pgcopy.core/JsonB</code> handles that.</p>
 valid JSON string such that it can actually be used.</p>
 <h2 id="what-about-my-weird-type">
   What about my weird type?
-  <a class="heading-link" href="#what-about-my-weird-type">
+  <a class="heading-link" href="#what-about-my-weird-type" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>These type mappings are implented using a clojure protocol, namely
@@ -517,9 +508,8 @@ should use the implementation of other types in the library for
 guidance on doing so.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion">
+  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Go forth and import!</p>
@@ -588,7 +578,20 @@ guidance on doing so.</p>
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -603,6 +606,15 @@ guidance on doing so.</p>
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 

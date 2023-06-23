@@ -158,9 +158,8 @@ finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML
 <p>But how can we accomplish some like this in Datomic?</p>
 <h2 id="the-worlds-worst-singles-network">
   The World&rsquo;s Worst Singles Network
-  <a class="heading-link" href="#the-worlds-worst-singles-network">
+  <a class="heading-link" href="#the-worlds-worst-singles-network" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <blockquote>
@@ -200,9 +199,8 @@ password reset token and persist it:</p>
 </span></span><span style="display:flex;"><span>                   <span style="color:#d88200">:user/single-use-token</span> <span style="color:#111">(</span><span style="color:#75af00">generate-secure-random</span><span style="color:#111">)}])</span>
 </span></span></code></pre></div><h2 id="an-initial-approach">
   An initial approach
-  <a class="heading-link" href="#an-initial-approach">
+  <a class="heading-link" href="#an-initial-approach" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>After receiving an email, they follow the link that includes the
@@ -229,9 +227,8 @@ a problem. <code>(d/db conn)</code> will return the most recent version of the
 database that the peer can get.</p>
 <h2 id="croutons-are-just-stale-bread">
   Croutons are just stale bread
-  <a class="heading-link" href="#croutons-are-just-stale-bread">
+  <a class="heading-link" href="#croutons-are-just-stale-bread" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Let&rsquo;s illustrate this possibility of a stale database introducing a bug:</p>
@@ -265,9 +262,8 @@ retractions work just like assertions with regard to <em>redundancy
 elimination</em>.</p>
 <h2 id="the-department-of-redundancy-department">
   The Department of Redundancy Department
-  <a class="heading-link" href="#the-department-of-redundancy-department">
+  <a class="heading-link" href="#the-department-of-redundancy-department" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>From the Datomic <a href="https://docs.datomic.com/transactions.html#redundancy-elimination"  class="external-link" target="_blank" rel="noopener">documentation on transactions</a>:</p>
@@ -286,9 +282,8 @@ use case, retractions cannot be used to safeguard us from using a token
 more than once.</p>
 <h2 id="transaction-functions-to-the-rescue">
   Transaction functions to the rescue
-  <a class="heading-link" href="#transaction-functions-to-the-rescue">
+  <a class="heading-link" href="#transaction-functions-to-the-rescue" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Datomic&rsquo;s got us covered. I mentioned before that all writes are
@@ -334,9 +329,8 @@ portion serializable with the rest of the operations.</p>
 <p>If we run this transaction a second time, we&rsquo;ll get the error message.</p>
 <h2 id="in-summary">
   In Summary
-  <a class="heading-link" href="#in-summary">
+  <a class="heading-link" href="#in-summary" aria-label="Link to heading">
     <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
-    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>This kind of transaction atomicity is made possible by Datomic&rsquo;s
@@ -427,7 +421,20 @@ serializable isolation level.</p>
 
   
 
-  
+  <script>
+(function(f, a, t, h, o, m){
+	a[h]=a[h]||function(){
+		(a[h].q=a[h].q||[]).push(arguments)
+	};
+	o=f.createElement('script'),
+	m=f.getElementsByTagName('script')[0];
+	o.async=1; o.src=t; o.id='fathom-script';
+	m.parentNode.insertBefore(o,m)
+})(document, window, '//analytics.joshuadavey.com/tracker.js', 'fathom');
+fathom('set', 'siteId', 'HEAYO');
+fathom('trackPageview');
+</script>
+
 
   
 
@@ -442,6 +449,15 @@ serializable isolation level.</p>
   
 
   
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-2EVVMYZMGM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-2EVVMYZMGM');
+</script>
+
 
   
 
