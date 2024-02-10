@@ -152,7 +152,7 @@ You can drop that somewhere in your $PATH and chmod &#43;x to make it executable
         
         <p>Sometimes it&rsquo;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
 <p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/"  class="external-link" target="_blank" rel="noopener">Joe Miller&rsquo;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
-<!-- raw HTML omitted -->
+<script src="https://gist.github.com/jgdavey/2696974.js"></script>
 <p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &ldquo;hinder&rdquo;. After that, it&rsquo;s simply a matter of using it:</p>
 <pre><code>$ hinder www.google.com
 </code></pre>

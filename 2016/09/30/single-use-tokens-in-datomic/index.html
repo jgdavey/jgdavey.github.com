@@ -154,7 +154,7 @@ token is used, it is invalidated.</p>
 <p>Doing things exactly once, atomically, is relatively straightforward in
 traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
-finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1" >1</a><!-- raw HTML omitted --></p>
+finally invalidate the token (often by deleting or nullifying it). <sup id="a1"><a href="#f1" >1</a></sup></p>
 <p>But how can we accomplish some like this in Datomic?</p>
 <h2 id="the-worlds-worst-singles-network">
   The World&rsquo;s Worst Singles Network
@@ -349,7 +349,7 @@ or see [the Day of Datomic
 examples](<a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial"  class="external-link" target="_blank" rel="noopener">https://github.com/Datomic/day-of-datomic/blob/master/tutorial</a>
 /data_functions.clj). You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932"  class="external-link" target="_blank" rel="noopener">scratch.clj</a> file that I
 used to build up the code examples here.</p>
-<p><!-- raw HTML omitted -->1<!-- raw HTML omitted --> However, even in SQL setups there are potential
+<p><sup id="f1">1</sup> However, even in SQL setups there are potential
 pitfalls. Because of the potential for multiple writers, care must be
 taken to satisfy the &ldquo;exactly once&rdquo; requirement. Where possible, a SQL
 client should use a single statement to find, update, and nullify a

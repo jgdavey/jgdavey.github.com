@@ -173,7 +173,7 @@ respective category.</p>
   </a>
 </h2>
 <p>Implementing the solution in Ruby is fairly straightforward.
-<!-- raw HTML omitted -->ActiveSupport<!-- raw HTML omitted --> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
+<del>ActiveSupport</del> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
 collections, and we can use those to help us cut down on some typing.</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>

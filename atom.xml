@@ -518,7 +518,7 @@ token is used, it is invalidated.</p>
 <p>Doing things exactly once, atomically, is relatively straightforward in
 traditional ACID transactional databases: within a transaction, you find
 an entity (row) by the token, perform any updates to that entity, and
-finally invalidate the token (often by deleting or nullifying it). <!-- raw HTML omitted --><a href="#f1" >1</a><!-- raw HTML omitted --></p>
+finally invalidate the token (often by deleting or nullifying it). <sup id="a1"><a href="#f1" >1</a></sup></p>
 <p>But how can we accomplish some like this in Datomic?</p>
 <h2 id="the-worlds-worst-singles-network">
   The World&rsquo;s Worst Singles Network
@@ -713,7 +713,7 @@ or see [the Day of Datomic
 examples](<a href="https://github.com/Datomic/day-of-datomic/blob/master/tutorial"  class="external-link" target="_blank" rel="noopener">https://github.com/Datomic/day-of-datomic/blob/master/tutorial</a>
 /data_functions.clj). You can also view my <a href="https://gist.github.com/jgdavey/f40731172553724fc86ce270776c7932"  class="external-link" target="_blank" rel="noopener">scratch.clj</a> file that I
 used to build up the code examples here.</p>
-<p><!-- raw HTML omitted -->1<!-- raw HTML omitted --> However, even in SQL setups there are potential
+<p><sup id="f1">1</sup> However, even in SQL setups there are potential
 pitfalls. Because of the potential for multiple writers, care must be
 taken to satisfy the &ldquo;exactly once&rdquo; requirement. Where possible, a SQL
 client should use a single statement to find, update, and nullify a
@@ -890,7 +890,7 @@ Just clone and run <code>boot dev</code>.</p>
 <p>To see the workflow in action, check out the following video. It
 demonstrates how editing front-end files do not require a manual browser
 refresh to see the effects.</p>
-<!-- raw HTML omitted -->
+<iframe src="https://player.vimeo.com/video/128494099" width="600" height="380" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 ]]></content>
   </entry>
   <entry>
@@ -905,7 +905,7 @@ refresh to see the effects.</p>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/"><![CDATA[<p>In this screencast I cover how to do basic evaluation and get Clojure
 documentation from within vim. I&rsquo;m also including the transcript below.</p>
-<!-- raw HTML omitted -->
+<iframe src="//player.vimeo.com/video/98052766" width="100%" height="280" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 <p>Vim is a powerful text editor. Clojure is a powerful programming
 language. While its been possible to edit Clojure code in vim for years,
 the toolchain has improved greatly over the past year. Today we&rsquo;re going
@@ -2262,8 +2262,14 @@ convenience into a feature that accomplishes things not otherwise
 possible in standard SQL. Using RECURSIVE, a WITH query can refer to
 its own output. A very simple example is this query to sum the integers
 from 1 through 100:</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<pre><code>
+ WITH RECURSIVE t(n) AS (
+     VALUES (1)
+   UNION ALL
+     SELECT n+1 FROM t WHERE n < 100
+ )
+ SELECT sum(n) FROM t;
+</code></pre>
 <p>The general form of a recursive WITH query is always a non-recursive
 term, then UNION (or UNION ALL), then a recursive term, where only the
 recursive term can contain a reference to the query&rsquo;s own output.</p>
@@ -2500,7 +2506,7 @@ respective category.</p>
   </a>
 </h2>
 <p>Implementing the solution in Ruby is fairly straightforward.
-<!-- raw HTML omitted -->ActiveSupport<!-- raw HTML omitted --> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
+<del>ActiveSupport</del> Enumerable provides the <code>group_by</code> and <code>sort_by</code> methods on
 collections, and we can use those to help us cut down on some typing.</p>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">CatPicture</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
 </span></span><span style="display:flex;"><span>  <span style="color:#111">attr_accessible</span> <span style="color:#d88200">:category_id</span><span style="color:#111">,</span> <span style="color:#d88200">:description</span><span style="color:#111">,</span> <span style="color:#d88200">:name</span><span style="color:#111">,</span> <span style="color:#d88200">:price</span>
@@ -2885,7 +2891,7 @@ dotfiles</a>.</p>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"><![CDATA[<p>Sometimes it&rsquo;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
 <p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/"  class="external-link" target="_blank" rel="noopener">Joe Miller&rsquo;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
-<!-- raw HTML omitted -->
+<script src="https://gist.github.com/jgdavey/2696974.js"></script>
 <p>You can drop that somewhere in your <code>$PATH</code> and <code>chmod +x</code> to make it executable. You can call it whatever you want, but I called mine &ldquo;hinder&rdquo;. After that, it&rsquo;s simply a matter of using it:</p>
 <pre><code>$ hinder www.google.com
 </code></pre>
@@ -2907,7 +2913,7 @@ dotfiles</a>.</p>
       <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/03/30/add-untracked-files-in-git/"><![CDATA[<p>I&rsquo;ve often been annoyed that there&rsquo;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
-<!-- raw HTML omitted -->
+<script src="https://gist.github.com/2256047.js?file=.gitconfig"></script>
 <p>Just add it to your global git config file at <code>~/.gitconfig</code> and enjoy.</p>
 ]]></content>
   </entry>
@@ -3028,7 +3034,7 @@ merged in.</p>
   </a>
 </h2>
 <p>See the plugin in action. If the video is hard to see, visit vimeo. There is a link to download at full size.</p>
-<!-- raw HTML omitted -->
+<iframe src="https://player.vimeo.com/video/34879707?title=0&amp;byline=0&amp;portrait=0" width="600" height="400" frameborder="0"  allow="autoplay; fullscreen" allowfullscreen></iframe>
 ]]></content>
   </entry>
   <entry>
@@ -3046,7 +3052,7 @@ merged in.</p>
 <p>Recently, I was annoyed that I had to always remember the github username of the person I was pairing with. I was at the command line typing and found myself hitting <code>&lt;tab&gt;</code> repeatedly, hoping it would complete with the authors I pair with most often.</p>
 <p>So I quickly whipped up a zsh completion script, and <em>boom</em>, pairing nirvana.</p>
 <p>To use the completion script, save the following script as <code>_hitch</code> and add it to your <code>fpath</code>:</p>
-<!-- raw HTML omitted -->
+<script src="https://gist.github.com/jgdavey/1257698.js"></script>
 <p>If you see any way to improve the function, please fork the <a href="https://gist.github.com/1257698"  class="external-link" target="_blank" rel="noopener">gist</a> on github.</p>
 ]]></content>
   </entry>
@@ -3183,7 +3189,7 @@ fits your needs best will largely depend on your stack.</p>
       <name>Joshua Davey</name>
       <email>josh@joshuadavey.com</email>
     </author>
-    <content type="html" xml:base="https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"><![CDATA[<p><!-- raw HTML omitted -->This is still rough, but I&rsquo;m finding it quite useful:<!-- raw HTML omitted --></p>
+    <content type="html" xml:base="https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"><![CDATA[<p><strike>This is still rough, but I&rsquo;m finding it quite useful:</strike></p>
 <p>I&rsquo;ve converted this to a full-blown VIM plugin: <a href="https://github.com/jgdavey/vim-blockle"  class="external-link" target="_blank" rel="noopener">https://github.com/jgdavey/vim-blockle</a></p>
 ]]></content>
   </entry>

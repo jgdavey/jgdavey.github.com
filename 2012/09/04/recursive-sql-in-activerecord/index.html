@@ -264,8 +264,14 @@ convenience into a feature that accomplishes things not otherwise
 possible in standard SQL. Using RECURSIVE, a WITH query can refer to
 its own output. A very simple example is this query to sum the integers
 from 1 through 100:</p>
-<!-- raw HTML omitted -->
-<!-- raw HTML omitted -->
+<pre><code>
+ WITH RECURSIVE t(n) AS (
+     VALUES (1)
+   UNION ALL
+     SELECT n+1 FROM t WHERE n < 100
+ )
+ SELECT sum(n) FROM t;
+</code></pre>
 <p>The general form of a recursive WITH query is always a non-recursive
 term, then UNION (or UNION ALL), then a recursive term, where only the
 recursive term can contain a reference to the query&rsquo;s own output.</p>
