@@ -17,8 +17,7 @@
 Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it).">
 <meta name="keywords" content="blog,software,engineer,personal">
 
-<meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Single-Use Tokens in Datomic"/>
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Single-Use Tokens in Datomic"/>
 <meta name="twitter:description" content="Single-use tokens have a variety of security applications. Whether it&rsquo;s a password-reset token, or capturing a financial transaction, there are times when something should happen exactly once, atomically. Once a token is used, it is invalidated.
 Doing things exactly once, atomically, is relatively straightforward in traditional ACID transactional databases: within a transaction, you find an entity (row) by the token, perform any updates to that entity, and finally invalidate the token (often by deleting or nullifying it)."/>
 
@@ -29,6 +28,7 @@ Doing things exactly once, atomically, is relatively straightforward in traditio
 <meta property="og:url" content="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2016-09-30T00:00:00+00:00" />
 <meta property="article:modified_time" content="2016-09-30T00:00:00+00:00" />
+
 
 
 
@@ -396,7 +396,7 @@ serializable isolation level.</p>
   <section class="container">
     ©
     
-    2023
+    2024
      Joshua Davey 
     ·
     
