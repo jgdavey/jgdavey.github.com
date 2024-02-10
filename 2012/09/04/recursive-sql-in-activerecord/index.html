@@ -39,12 +39,14 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
 <link rel="canonical" href="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/">
 
 
-<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.577e3c5ead537873430da16f0964b754a120fd87c4e2203a00686e7c75b51378.css" integrity="sha256-V348Xq1TeHNDDaFvCWS3VKEg/YfE4iA6AGhufHW1E3g=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -58,6 +60,7 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
 
 
 
+<link rel="icon" type="image/svg+xml" href="https://joshuadavey.com/images/favicon.svg" sizes="any">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
 
@@ -92,21 +95,21 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
     
       <input type="checkbox" id="menu-toggle" />
       <label class="menu-button float-right" for="menu-toggle">
-        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
       </label>
       <ul class="navigation-list">
         
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+              <a class="navigation-link " href="https://joshuadavey.com/posts/">Blog</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+              <a class="navigation-link " href="https://joshuadavey.com/about/">About</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+              <a class="navigation-link " href="https://joshuadavey.com/resume/">Resume</a>
             </li>
           
         
@@ -132,13 +135,13 @@ In a previous post, I outlined a Cat Picture store application. As our store gro
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
               <time datetime="2012-09-04T00:00:00Z">
                 September 4, 2012
               </time>
             </span>
             <span class="reading-time">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
               9-minute read
             </span>
           </div>
@@ -190,8 +193,9 @@ with the <code>acts_as_tree</code> plugin. Let&rsquo;s see how we can implement 
 <code>descendents</code> method to get all descendent categories.</p>
 <h2 id="a-simple-ruby-approach">
   A Simple Ruby Approach
-  <a class="heading-link" href="#a-simple-ruby-approach" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#a-simple-ruby-approach">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As you&rsquo;ve probably already guessed, we need to recursively collect
@@ -243,8 +247,9 @@ the <code>descendents</code> method.</p>
 <p>Surely we can do better.</p>
 <h2 id="sql-with-queries">
   SQL WITH queries
-  <a class="heading-link" href="#sql-with-queries" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#sql-with-queries">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Since we&rsquo;re using PostgreSQL, we can take advantage of its special
@@ -317,8 +322,9 @@ our category tree.</p>
 </span></span></code></pre></div><p>Whoa! That&rsquo;s a lot of SQL. Let&rsquo;s break it down a bit.</p>
 <h3 id="declare-the-table-expression">
   Declare the Table Expression
-  <a class="heading-link" href="#declare-the-table-expression" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#declare-the-table-expression">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>First, we declare our &ldquo;temporary table&rdquo; using the WITH syntax. We&rsquo;re
@@ -328,8 +334,9 @@ refer to corresponding columns on the categories table. The <code>path</code> is
 array of ids that each row will have. More on this in a bit.</p>
 <h3 id="define-the-non-recursive-term">
   Define the Non-recursive Term
-  <a class="heading-link" href="#define-the-non-recursive-term" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#define-the-non-recursive-term">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>The non-recursive term is next:</p>
@@ -342,8 +349,9 @@ its <code>id</code>. On its own, this isn&rsquo;t very interesting, but this arr
 become helpful during the recursive step of the query.</p>
 <h3 id="define-the-recursive-term">
   Define the Recursive Term
-  <a class="heading-link" href="#define-the-recursive-term" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#define-the-recursive-term">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>The recursive term is the juiciest bit of the query:</p>
@@ -366,8 +374,9 @@ other as parents, the query would never return. Including this check
 prevents such a mistake from killing our server.</p>
 <h3 id="query-the-common-table-expression">
   Query the Common Table Expression
-  <a class="heading-link" href="#query-the-common-table-expression" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#query-the-common-table-expression">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Finally, a WITH query is only useful if you select from it outside of
@@ -384,8 +393,9 @@ groups the categories just like we&rsquo;d expect, with parents listed before
 their children.</p>
 <h2 id="using-with-queries-in-activerecord">
   Using WITH queries in ActiveRecord
-  <a class="heading-link" href="#using-with-queries-in-activerecord" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#using-with-queries-in-activerecord">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <div class="highlight"><pre tabindex="0" style="color:#272822;background-color:#fafafa;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ruby" data-lang="ruby"><span style="display:flex;"><span><span style="color:#00a8c8">class</span> <span style="color:#75af00">Category</span> <span style="color:#f92672">&lt;</span> <span style="color:#00a8c8">ActiveRecord</span><span style="color:#f92672">::</span><span style="color:#00a8c8">Base</span>
@@ -448,8 +458,9 @@ for each category in the tree (one to grab children, one to get its
 pictures) will now only take 1 for the entire set.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#conclusion">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Taking advantage of PostgreSQL&rsquo;s advanced features can provide large
@@ -460,8 +471,9 @@ structures in SQL exist. The <a href="https://pragprog.com/book/bksqla/sql-antip
 breakdown of other tree solutions that would require schema changes.</p>
 <h2 id="example-app">
   Example app
-  <a class="heading-link" href="#example-app" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#example-app">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>As before, while writing this post, I created a <a href="https://github.com/jgdavey/tree-sql-example" title="Example application with recursive tree SQL"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to
@@ -481,6 +493,9 @@ dels/category.rb), which mirrors the code above.</p>
         
         
         
+        
+        
+
         
       </footer>
     </article>
@@ -572,6 +587,8 @@ fathom('trackPageview');
   gtag('config', 'G-2EVVMYZMGM');
 </script>
 
+
+  
 
   
 

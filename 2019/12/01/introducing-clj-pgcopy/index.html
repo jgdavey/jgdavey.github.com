@@ -36,12 +36,14 @@ Although the overhead from org." />
 <link rel="canonical" href="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/">
 
 
-<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.577e3c5ead537873430da16f0964b754a120fd87c4e2203a00686e7c75b51378.css" integrity="sha256-V348Xq1TeHNDDaFvCWS3VKEg/YfE4iA6AGhufHW1E3g=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -55,6 +57,7 @@ Although the overhead from org." />
 
 
 
+<link rel="icon" type="image/svg+xml" href="https://joshuadavey.com/images/favicon.svg" sizes="any">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
 
@@ -89,21 +92,21 @@ Although the overhead from org." />
     
       <input type="checkbox" id="menu-toggle" />
       <label class="menu-button float-right" for="menu-toggle">
-        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
       </label>
       <ul class="navigation-list">
         
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+              <a class="navigation-link " href="https://joshuadavey.com/posts/">Blog</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+              <a class="navigation-link " href="https://joshuadavey.com/about/">About</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+              <a class="navigation-link " href="https://joshuadavey.com/resume/">Resume</a>
             </li>
           
         
@@ -129,13 +132,13 @@ Although the overhead from org." />
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
               <time datetime="2019-12-01T00:00:00Z">
                 December 1, 2019
               </time>
             </span>
             <span class="reading-time">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
               5-minute read
             </span>
           </div>
@@ -197,8 +200,9 @@ methods. The primary API of clj-pgcopy is
 most places where <code>clojure.java.jdbc/insert-multi!</code> is being used.</p>
 <h2 id="example-usage">
   Example usage
-  <a class="heading-link" href="#example-usage" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#example-usage">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>For example, let&rsquo;s say that we have a table of product listings,
@@ -239,8 +243,9 @@ looking like this:</p>
 Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 <h2 id="performance">
   Performance
-  <a class="heading-link" href="#performance" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#performance">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Using the same table as our above example, I did some non-definitive benchmarking. For most typical use-cases, <code>clj-pgcopy</code> should be a little more than twice as fast as <code>insert-multi</code>:</p>
@@ -291,16 +296,18 @@ Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 namespace of the <a href="https://github.com/jgdavey/clj-pgcopy"  class="external-link" target="_blank" rel="noopener">clj-pgcopy</a> repository.</p>
 <h2 id="type-mappings">
   Type Mappings
-  <a class="heading-link" href="#type-mappings" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#type-mappings">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Out of the box, clj-pgcopy supports many data types, with what I
 consider reasonable default mappings.</p>
 <h3 id="basic-type-mapping">
   Basic type mapping
-  <a class="heading-link" href="#basic-type-mapping" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#basic-type-mapping">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -351,8 +358,9 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="date-related-mappings">
   Date-related mappings
-  <a class="heading-link" href="#date-related-mappings" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#date-related-mappings">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -399,8 +407,9 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="geometric-mappings">
   Geometric mappings
-  <a class="heading-link" href="#geometric-mappings" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#geometric-mappings">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <table>
@@ -439,8 +448,9 @@ consider reasonable default mappings.</p>
 </table>
 <h3 id="arrays">
   Arrays
-  <a class="heading-link" href="#arrays" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#arrays">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Impemented for the following JVM-typed arrays for:</p>
@@ -485,8 +495,9 @@ consider reasonable default mappings.</p>
 <p>Currently, only 1-dimensional Postgres arrays are supported.</p>
 <h3 id="jsonb">
   jsonb
-  <a class="heading-link" href="#jsonb" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#jsonb">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <p>Things that are String-like, or serialized in string form, should work
@@ -497,8 +508,9 @@ a JSON string in a <code>clj-pgcopy.core/JsonB</code> handles that.</p>
 valid JSON string such that it can actually be used.</p>
 <h2 id="what-about-my-weird-type">
   What about my weird type?
-  <a class="heading-link" href="#what-about-my-weird-type" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#what-about-my-weird-type">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>These type mappings are implented using a clojure protocol, namely
@@ -508,8 +520,9 @@ should use the implementation of other types in the library for
 guidance on doing so.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#conclusion">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Go forth and import!</p>
@@ -524,6 +537,9 @@ guidance on doing so.</p>
         
         
         
+        
+        
+
         
       </footer>
     </article>
@@ -615,6 +631,8 @@ fathom('trackPageview');
   gtag('config', 'G-2EVVMYZMGM');
 </script>
 
+
+  
 
   
 

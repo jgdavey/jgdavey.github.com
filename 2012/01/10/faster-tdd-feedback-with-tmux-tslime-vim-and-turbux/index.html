@@ -36,12 +36,14 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
 <link rel="canonical" href="https://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/">
 
 
-<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.577e3c5ead537873430da16f0964b754a120fd87c4e2203a00686e7c75b51378.css" integrity="sha256-V348Xq1TeHNDDaFvCWS3VKEg/YfE4iA6AGhufHW1E3g=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -55,6 +57,7 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
 
 
 
+<link rel="icon" type="image/svg+xml" href="https://joshuadavey.com/images/favicon.svg" sizes="any">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
 
@@ -89,21 +92,21 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
     
       <input type="checkbox" id="menu-toggle" />
       <label class="menu-button float-right" for="menu-toggle">
-        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
       </label>
       <ul class="navigation-list">
         
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+              <a class="navigation-link " href="https://joshuadavey.com/posts/">Blog</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+              <a class="navigation-link " href="https://joshuadavey.com/about/">About</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+              <a class="navigation-link " href="https://joshuadavey.com/resume/">Resume</a>
             </li>
           
         
@@ -129,13 +132,13 @@ Taking a cue from Xavier Shay&rsquo;s excellent intro to tmux, I&rsquo;ve been u
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
               <time datetime="2012-01-10T00:00:00Z">
                 January 10, 2012
               </time>
             </span>
             <span class="reading-time">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
               4-minute read
             </span>
           </div>
@@ -160,8 +163,9 @@ how tmux and a vim plugin have changed my testing feedback loop for the
 better.</p>
 <h2 id="other-test-running-solutions">
   Other test-running solutions
-  <a class="heading-link" href="#other-test-running-solutions" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#other-test-running-solutions">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Autotesting gives you immediate feedback, but runs everytime you save a
@@ -178,8 +182,9 @@ for the command to finish before I can type, or even navigate again. And
 I can&rsquo;t look at a failure message and my code at the same time.</p>
 <h2 id="a-faster-feedback-loop">
   A faster feedback loop
-  <a class="heading-link" href="#a-faster-feedback-loop" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#a-faster-feedback-loop">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>A practice that is quickly gaining popularity in the Ruby community is
@@ -197,8 +202,9 @@ the feedback loop when practicing TDD in a tmux session. It&rsquo;s called
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-tslimevim">
   Using tslime.vim
-  <a class="heading-link" href="#using-tslimevim" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#using-tslimevim">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>My typical workflow now involves setting up a tmux session for my
@@ -217,8 +223,9 @@ open is so common that I&rsquo;ve packaged up some useful defaults in
 <a href="https://github.com/jgdavey/vim-turbux" title="Turbux: turbo Ruby testing with tmux"  class="external-link" target="_blank" rel="noopener">turbux.vim</a>.</p>
 <h2 id="using-turbuxvim">
   Using turbux.vim
-  <a class="heading-link" href="#using-turbuxvim" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#using-turbuxvim">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Turbux.vim tries to intelligently choose the right spec, test or feature
@@ -237,8 +244,9 @@ cucumber scenario. It works by adding the vim cursor&rsquo;s line number to
 the rspec or cucumber command.</p>
 <h2 id="conclusion">
   Conclusion
-  <a class="heading-link" href="#conclusion" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#conclusion">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>This setup has been really rewarding so far. There&rsquo;s far less context
@@ -249,8 +257,9 @@ repository has some outstanding bugs, and the fixes have yet to been
 merged in.</p>
 <h2 id="bonus">
   Bonus
-  <a class="heading-link" href="#bonus" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#bonus">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>See the plugin in action. If the video is hard to see, visit vimeo. There is a link to download at full size.</p>
@@ -266,6 +275,9 @@ merged in.</p>
         
         
         
+        
+        
+
         
       </footer>
     </article>
@@ -357,6 +369,8 @@ fathom('trackPageview');
   gtag('config', 'G-2EVVMYZMGM');
 </script>
 
+
+  
 
   
 

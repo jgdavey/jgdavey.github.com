@@ -36,12 +36,14 @@ Database constraints are essential to ensuring data integrity, and you should us
 <link rel="canonical" href="https://joshuadavey.com/2013/08/22/deferring-database-constraints/">
 
 
-<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.577e3c5ead537873430da16f0964b754a120fd87c4e2203a00686e7c75b51378.css" integrity="sha256-V348Xq1TeHNDDaFvCWS3VKEg/YfE4iA6AGhufHW1E3g=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -55,6 +57,7 @@ Database constraints are essential to ensuring data integrity, and you should us
 
 
 
+<link rel="icon" type="image/svg+xml" href="https://joshuadavey.com/images/favicon.svg" sizes="any">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
 
@@ -89,21 +92,21 @@ Database constraints are essential to ensuring data integrity, and you should us
     
       <input type="checkbox" id="menu-toggle" />
       <label class="menu-button float-right" for="menu-toggle">
-        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
       </label>
       <ul class="navigation-list">
         
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+              <a class="navigation-link " href="https://joshuadavey.com/posts/">Blog</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+              <a class="navigation-link " href="https://joshuadavey.com/about/">About</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+              <a class="navigation-link " href="https://joshuadavey.com/resume/">Resume</a>
             </li>
           
         
@@ -129,13 +132,13 @@ Database constraints are essential to ensuring data integrity, and you should us
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
               <time datetime="2013-08-22T00:00:00Z">
                 August 22, 2013
               </time>
             </span>
             <span class="reading-time">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
               7-minute read
             </span>
           </div>
@@ -156,8 +159,9 @@ the how and why of deferring database constraints, using a sortable list
 domain as an example.</p>
 <h1 id="modeling-lists-of-sortable-items">
   Modeling lists of sortable items
-  <a class="heading-link" href="#modeling-lists-of-sortable-items" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#modeling-lists-of-sortable-items">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Imagine that you have an application with multiple lists. Each list has
@@ -243,8 +247,9 @@ fail completely in concurrent environments.</p>
 <p>The <code>position</code> column needs a database-level constraint.</p>
 <h1 id="adding-constraints">
   Adding constraints
-  <a class="heading-link" href="#adding-constraints" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#adding-constraints">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Adding the uniqueness constraint to <code>position</code> is fairly straightforward
@@ -310,8 +315,9 @@ smashed. If only there were a way to enforce uniqueness constraints at
 the end of the transaction, rather than the end of each statement&hellip;</p>
 <h1 id="deferrable-constraints">
   Deferrable Constraints
-  <a class="heading-link" href="#deferrable-constraints" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#deferrable-constraints">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>As mentioned before, constraints are immediately enforced. This
@@ -372,8 +378,9 @@ end of the transaction to do that check. We can have our data integrity
 cake and eat it too.</p>
 <h1 id="bonus-deferrable-introspection">
   Bonus: deferrable introspection
-  <a class="heading-link" href="#bonus-deferrable-introspection" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#bonus-deferrable-introspection">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>Having to name the constraint in two places is a bit of a bummer, and
@@ -421,8 +428,9 @@ to query the constraint names instead.</p>
 <p><strong>NOTE</strong> That&rsquo;s a lot of Arel! Use at your own risk. ;-)</p>
 <h1 id="example-application">
   Example application
-  <a class="heading-link" href="#example-application" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#example-application">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h1>
 <p>While writing this post, I created a <a href="https://github.com/jgdavey/uniqueness_constraints_example"  class="external-link" target="_blank" rel="noopener">sample Rails app</a> to iterate
@@ -441,6 +449,9 @@ sections above.</p>
         
         
         
+        
+        
+
         
       </footer>
     </article>
@@ -532,6 +543,8 @@ fathom('trackPageview');
   gtag('config', 'G-2EVVMYZMGM');
 </script>
 
+
+  
 
   
 

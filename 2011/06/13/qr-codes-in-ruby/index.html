@@ -33,12 +33,14 @@
 <link rel="canonical" href="https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/">
 
 
-<link rel="preload" href="https://joshuadavey.com/fonts/forkawesome-webfont.woff2?v=1.2.0" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-brands-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-regular-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="https://joshuadavey.com/fonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin>
 
 
   
   
-  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.5adbe72fc41dcfb852215b84695288939b6b606db73238bd3ee936469572fc9c.css" integrity="sha256-WtvnL8Qdz7hSIVuEaVKIk5trYG23Mji9Puk2RpVy/Jw=" crossorigin="anonymous" media="screen" />
+  <link rel="stylesheet" href="https://joshuadavey.com/css/coder.min.577e3c5ead537873430da16f0964b754a120fd87c4e2203a00686e7c75b51378.css" integrity="sha256-V348Xq1TeHNDDaFvCWS3VKEg/YfE4iA6AGhufHW1E3g=" crossorigin="anonymous" media="screen" />
 
 
 
@@ -52,6 +54,7 @@
 
 
 
+<link rel="icon" type="image/svg+xml" href="https://joshuadavey.com/images/favicon.svg" sizes="any">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="https://joshuadavey.com/images/favicon-16x16.png" sizes="16x16">
 
@@ -86,21 +89,21 @@
     
       <input type="checkbox" id="menu-toggle" />
       <label class="menu-button float-right" for="menu-toggle">
-        <i class="fa fa-bars fa-fw" aria-hidden="true"></i>
+        <i class="fa-solid fa-bars fa-fw" aria-hidden="true"></i>
       </label>
       <ul class="navigation-list">
         
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/posts/">Blog</a>
+              <a class="navigation-link " href="https://joshuadavey.com/posts/">Blog</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/about/">About</a>
+              <a class="navigation-link " href="https://joshuadavey.com/about/">About</a>
             </li>
           
             <li class="navigation-item">
-              <a class="navigation-link" href="https://joshuadavey.com/resume/">Resume</a>
+              <a class="navigation-link " href="https://joshuadavey.com/resume/">Resume</a>
             </li>
           
         
@@ -126,13 +129,13 @@
         <div class="post-meta">
           <div class="date">
             <span class="posted-on">
-              <i class="fa fa-calendar" aria-hidden="true"></i>
+              <i class="fa-solid fa-calendar" aria-hidden="true"></i>
               <time datetime="2011-06-13T00:00:00Z">
                 June 13, 2011
               </time>
             </span>
             <span class="reading-time">
-              <i class="fa fa-clock-o" aria-hidden="true"></i>
+              <i class="fa-solid fa-clock" aria-hidden="true"></i>
               3-minute read
             </span>
           </div>
@@ -152,8 +155,9 @@ are good for. We recently had a client that needed to authorize paper
 tickets, and a QR-encoded token turned out to be a great solution.</p>
 <h2 id="qr-code-generation-in-ruby">
   QR Code Generation in Ruby
-  <a class="heading-link" href="#qr-code-generation-in-ruby" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#qr-code-generation-in-ruby">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>From my experience, there are two solid options for QR code generation in Ruby:</p>
@@ -163,8 +167,9 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </ul>
 <h3 id="rqrcode">
   rQRCode
-  <a class="heading-link" href="#rqrcode" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#rqrcode">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -175,8 +180,9 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </ul>
 <h3 id="qrencoder">
   QREncoder
-  <a class="heading-link" href="#qrencoder" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#qrencoder">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -186,8 +192,9 @@ tickets, and a QR-encoded token turned out to be a great solution.</p>
 </ul>
 <h2 id="qr-code-decoding-in-ruby">
   QR Code Decoding in Ruby
-  <a class="heading-link" href="#qr-code-decoding-in-ruby" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#qr-code-decoding-in-ruby">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>The QR Decoding landscape varies even more than its QR encoding
@@ -201,8 +208,9 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h3 id="qrio">
   Qrio
-  <a class="heading-link" href="#qrio" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#qrio">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -214,8 +222,9 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h3 id="zxingrb">
   Zxing.rb
-  <a class="heading-link" href="#zxingrb" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#zxingrb">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -225,8 +234,9 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h3 id="qrdecoder">
   QRDecoder
-  <a class="heading-link" href="#qrdecoder" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#qrdecoder">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h3>
 <ul>
@@ -237,8 +247,9 @@ libraries that I&rsquo;ve found are:</p>
 </ul>
 <h2 id="the-bottom-line">
   The Bottom Line
-  <a class="heading-link" href="#the-bottom-line" aria-label="Link to heading">
-    <i class="fa fa-link" aria-hidden="true" title="Link to heading"></i>
+  <a class="heading-link" href="#the-bottom-line">
+    <i class="fa-solid fa-link" aria-hidden="true" title="Link to heading"></i>
+    <span class="sr-only">Link to heading</span>
   </a>
 </h2>
 <p>Wherein I offer &ldquo;My Two Cents&rdquo;. If you&rsquo;re on a stack that can install
@@ -266,6 +277,9 @@ fits your needs best will largely depend on your stack.</p>
         
         
         
+        
+        
+
         
       </footer>
     </article>
@@ -357,6 +371,8 @@ fathom('trackPageview');
   gtag('config', 'G-2EVVMYZMGM');
 </script>
 
+
+  
 
   
 
