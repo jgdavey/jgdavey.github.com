@@ -8,7 +8,6 @@
   <title type="html">Joshua Davey</title>
   <author>
     <name>Joshua Davey</name>
-    <email>josh@joshuadavey.com</email>
   </author>
   <entry>
     <title type="html">Social Offboarding</title>
@@ -18,7 +17,6 @@
     <id>https://joshuadavey.com/2023/06/22/social-offboarding/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2023/06/22/social-offboarding/"><![CDATA[<p>Few people would dispute the importance of onboarding new members of a
 team. Getting to know the other people you&rsquo;ll be working with is vital
@@ -134,7 +132,6 @@ closure, and we leave the call with positive vibes.</p>
     <id>https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2019/12/01/introducing-clj-pgcopy/"><![CDATA[<p>On a recent project, I was working on an ETL process, where
 the transform step happened in Clojure. After all of the data
@@ -236,46 +233,46 @@ Clojure map wrapping one, like <code>clojure.java.jdbc</code> uses.</p>
 </h2>
 <p>Using the same table as our above example, I did some non-definitive benchmarking. For most typical use-cases, <code>clj-pgcopy</code> should be a little more than twice as fast as <code>insert-multi</code>:</p>
 <table>
-<thead>
-<tr>
-<th>tuples</th>
-<th>batch size</th>
-<th>insert-multi</th>
-<th>clj-pgcopy</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>10000</td>
-<td>100</td>
-<td>218.4 ms</td>
-<td>107.2 ms</td>
-</tr>
-<tr>
-<td>10000</td>
-<td>500</td>
-<td>205.2 ms</td>
-<td>90.35 ms</td>
-</tr>
-<tr>
-<td>50000</td>
-<td>100</td>
-<td>1.030 sec</td>
-<td>422.3 ms</td>
-</tr>
-<tr>
-<td>50000</td>
-<td>500</td>
-<td>1.272 sec</td>
-<td>382.3 ms</td>
-</tr>
-<tr>
-<td>100000</td>
-<td>100</td>
-<td>2.051 sec</td>
-<td>1.005 sec</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>tuples</th>
+          <th>batch size</th>
+          <th>insert-multi</th>
+          <th>clj-pgcopy</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>10000</td>
+          <td>100</td>
+          <td>218.4 ms</td>
+          <td>107.2 ms</td>
+      </tr>
+      <tr>
+          <td>10000</td>
+          <td>500</td>
+          <td>205.2 ms</td>
+          <td>90.35 ms</td>
+      </tr>
+      <tr>
+          <td>50000</td>
+          <td>100</td>
+          <td>1.030 sec</td>
+          <td>422.3 ms</td>
+      </tr>
+      <tr>
+          <td>50000</td>
+          <td>500</td>
+          <td>1.272 sec</td>
+          <td>382.3 ms</td>
+      </tr>
+      <tr>
+          <td>100000</td>
+          <td>100</td>
+          <td>2.051 sec</td>
+          <td>1.005 sec</td>
+      </tr>
+  </tbody>
 </table>
 <p>For measurement methodology, or to run your own benchmarks, see the
 <a href="https://github.com/jgdavey/clj-pgcopy/blob/master/bench/clj_pgcopy/benchmark.clj"  class="external-link" target="_blank" rel="noopener">benchmark</a>
@@ -297,50 +294,50 @@ consider reasonable default mappings.</p>
   </a>
 </h3>
 <table>
-<thead>
-<tr>
-<th>JVM type</th>
-<th>Postgres type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Short</td>
-<td>int2 (aka smallint)</td>
-</tr>
-<tr>
-<td>Integer</td>
-<td>int4 (aka integer)</td>
-</tr>
-<tr>
-<td>Long</td>
-<td>int8 (aka bigint)</td>
-</tr>
-<tr>
-<td>Float</td>
-<td>float4 (aka real)</td>
-</tr>
-<tr>
-<td>Double</td>
-<td>float8 (aka double presicion)</td>
-</tr>
-<tr>
-<td>BigDecimal</td>
-<td>numeric/decimal</td>
-</tr>
-<tr>
-<td>Boolean</td>
-<td>boolean</td>
-</tr>
-<tr>
-<td>String</td>
-<td>text/varchar/char</td>
-</tr>
-<tr>
-<td>java.util.UUID</td>
-<td>uuid</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>JVM type</th>
+          <th>Postgres type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Short</td>
+          <td>int2 (aka smallint)</td>
+      </tr>
+      <tr>
+          <td>Integer</td>
+          <td>int4 (aka integer)</td>
+      </tr>
+      <tr>
+          <td>Long</td>
+          <td>int8 (aka bigint)</td>
+      </tr>
+      <tr>
+          <td>Float</td>
+          <td>float4 (aka real)</td>
+      </tr>
+      <tr>
+          <td>Double</td>
+          <td>float8 (aka double presicion)</td>
+      </tr>
+      <tr>
+          <td>BigDecimal</td>
+          <td>numeric/decimal</td>
+      </tr>
+      <tr>
+          <td>Boolean</td>
+          <td>boolean</td>
+      </tr>
+      <tr>
+          <td>String</td>
+          <td>text/varchar/char</td>
+      </tr>
+      <tr>
+          <td>java.util.UUID</td>
+          <td>uuid</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="date-related-mappings">
   Date-related mappings
@@ -350,46 +347,46 @@ consider reasonable default mappings.</p>
   </a>
 </h3>
 <table>
-<thead>
-<tr>
-<th>JVM type</th>
-<th>Postgres type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>java.sql.Date</td>
-<td>date</td>
-</tr>
-<tr>
-<td>java.time.LocalDate</td>
-<td>date</td>
-</tr>
-<tr>
-<td>java.util.Date</td>
-<td>timestamp[tz]</td>
-</tr>
-<tr>
-<td>java.sql.Timestamp</td>
-<td>timestamp[tz]</td>
-</tr>
-<tr>
-<td>java.time.Instant</td>
-<td>timestamp[tz]</td>
-</tr>
-<tr>
-<td>java.time.ZonedDateTime</td>
-<td>timestamp[tz]</td>
-</tr>
-<tr>
-<td>java.time.OffsetDatetime</td>
-<td>timestamp[tz]</td>
-</tr>
-<tr>
-<td>org.postgres.util.PGInterval</td>
-<td>interval</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>JVM type</th>
+          <th>Postgres type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>java.sql.Date</td>
+          <td>date</td>
+      </tr>
+      <tr>
+          <td>java.time.LocalDate</td>
+          <td>date</td>
+      </tr>
+      <tr>
+          <td>java.util.Date</td>
+          <td>timestamp[tz]</td>
+      </tr>
+      <tr>
+          <td>java.sql.Timestamp</td>
+          <td>timestamp[tz]</td>
+      </tr>
+      <tr>
+          <td>java.time.Instant</td>
+          <td>timestamp[tz]</td>
+      </tr>
+      <tr>
+          <td>java.time.ZonedDateTime</td>
+          <td>timestamp[tz]</td>
+      </tr>
+      <tr>
+          <td>java.time.OffsetDatetime</td>
+          <td>timestamp[tz]</td>
+      </tr>
+      <tr>
+          <td>org.postgres.util.PGInterval</td>
+          <td>interval</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="geometric-mappings">
   Geometric mappings
@@ -399,38 +396,38 @@ consider reasonable default mappings.</p>
   </a>
 </h3>
 <table>
-<thead>
-<tr>
-<th>JVM type</th>
-<th>Postgres type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>org.postgres.geometric.PGpoint</td>
-<td>point</td>
-</tr>
-<tr>
-<td>org.postgres.geometric.PGline</td>
-<td>line</td>
-</tr>
-<tr>
-<td>org.postgres.geometric.PGpath</td>
-<td>path</td>
-</tr>
-<tr>
-<td>org.postgres.geometric.PGbox</td>
-<td>box</td>
-</tr>
-<tr>
-<td>org.postgres.geometric.PGcircle</td>
-<td>circle</td>
-</tr>
-<tr>
-<td>org.postgres.geometric.PGpolygon</td>
-<td>polygon</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>JVM type</th>
+          <th>Postgres type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>org.postgres.geometric.PGpoint</td>
+          <td>point</td>
+      </tr>
+      <tr>
+          <td>org.postgres.geometric.PGline</td>
+          <td>line</td>
+      </tr>
+      <tr>
+          <td>org.postgres.geometric.PGpath</td>
+          <td>path</td>
+      </tr>
+      <tr>
+          <td>org.postgres.geometric.PGbox</td>
+          <td>box</td>
+      </tr>
+      <tr>
+          <td>org.postgres.geometric.PGcircle</td>
+          <td>circle</td>
+      </tr>
+      <tr>
+          <td>org.postgres.geometric.PGpolygon</td>
+          <td>polygon</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="arrays">
   Arrays
@@ -441,42 +438,42 @@ consider reasonable default mappings.</p>
 </h3>
 <p>Impemented for the following JVM-typed arrays for:</p>
 <table>
-<thead>
-<tr>
-<th>JVM type</th>
-<th>Postgres type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>int[]</td>
-<td>int4[] (aka integer[])</td>
-</tr>
-<tr>
-<td>long[]</td>
-<td>int8[] (aka bigint[])</td>
-</tr>
-<tr>
-<td>float[]</td>
-<td>float4[] (aka real[])</td>
-</tr>
-<tr>
-<td>double[]</td>
-<td>float8[] (aka double precision[])</td>
-</tr>
-<tr>
-<td>byte[]</td>
-<td>bytea</td>
-</tr>
-<tr>
-<td>String[]</td>
-<td>text[] (or varchar)</td>
-</tr>
-<tr>
-<td>java.util.UUID[]</td>
-<td>uuid[]</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th>JVM type</th>
+          <th>Postgres type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>int[]</td>
+          <td>int4[] (aka integer[])</td>
+      </tr>
+      <tr>
+          <td>long[]</td>
+          <td>int8[] (aka bigint[])</td>
+      </tr>
+      <tr>
+          <td>float[]</td>
+          <td>float4[] (aka real[])</td>
+      </tr>
+      <tr>
+          <td>double[]</td>
+          <td>float8[] (aka double precision[])</td>
+      </tr>
+      <tr>
+          <td>byte[]</td>
+          <td>bytea</td>
+      </tr>
+      <tr>
+          <td>String[]</td>
+          <td>text[] (or varchar)</td>
+      </tr>
+      <tr>
+          <td>java.util.UUID[]</td>
+          <td>uuid[]</td>
+      </tr>
+  </tbody>
 </table>
 <p>Currently, only 1-dimensional Postgres arrays are supported.</p>
 <h3 id="jsonb">
@@ -522,7 +519,6 @@ guidance on doing so.</p>
     <id>https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2016/09/30/single-use-tokens-in-datomic/"><![CDATA[<p>Single-use tokens have a variety of security applications. Whether it&rsquo;s
 a password-reset token, or capturing a financial transaction, there are
@@ -749,7 +745,6 @@ serializable isolation level.</p>
     <id>https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2015/09/17/bulk-imports-with-datomic/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/bulk-imports-with-datomic" title="Bulk imports with Datomic"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>I&rsquo;ve been really happy with Datomic, but doing an initial bulk import
@@ -838,7 +833,6 @@ is half the battle.</p>
     <id>https://joshuadavey.com/2015/06/04/boot-middleman/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2015/06/04/boot-middleman/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/the-front-end-development-environment-of-my-dreams" title="Boot &#43; Middleman: The ClojureScript development environment of my dreams"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>I&rsquo;m getting closer to the frontend development environment of my dreams. The
@@ -927,7 +921,6 @@ refresh to see the effects.</p>
     <id>https://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2014/06/13/screencast-clojure-and-vim-basics/"><![CDATA[<p>In this screencast I cover how to do basic evaluation and get Clojure
 documentation from within vim. I&rsquo;m also including the transcript below.</p>
@@ -1075,7 +1068,6 @@ When we do this with <code>map</code>, we see the source code for <code>map</cod
     <id>https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2014/04/10/using-datomic-as-a-graph-database/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/using-datomic-as-a-graph-database" title="Using Datomic as a Graph Database"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Datomic is a database that changes the way that you think about databases. It
@@ -1381,7 +1373,6 @@ good with Neo4j&rsquo;s cypher query language.</p>
     <id>https://joshuadavey.com/2013/08/22/deferring-database-constraints/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2013/08/22/deferring-database-constraints/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/deferring-database-constraints" title="Deferring constraints in PostgreSQL"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Database constraints are essential to ensuring data integrity, and you
@@ -1681,7 +1672,6 @@ sections above.</p>
     <id>https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2013/02/12/sql-views-and-activerecord/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-views-and-activerecord" title="has_one view"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Sometimes, aggregating data can become overly complex in a normal
@@ -2197,7 +2187,6 @@ dels/category.rb), which mirrors the code above.</p>
     <id>https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/09/04/recursive-sql-in-activerecord/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/recursive-sql-in-activerecord" title="Using Recursive SQL with ActiveRecord trees"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p><strong>tl;dr</strong> When you have an ActiveRecord tree structure, using the WITH syntax for recursive SQL can provide large performance boons, especially when a tree get several levels deep.</p>
@@ -2538,7 +2527,6 @@ dels/category.rb), which mirrors the code above.</p>
     <id>https://joshuadavey.com/2012/05/22/sql-window-functions/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/05/22/sql-window-functions/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/sql-window-functions" title="SQL Window Functions and You"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>Suppose you have a storefront application that sells pictures of cats.
@@ -2865,7 +2853,6 @@ model</a>, which mirrors the code above.</p>
     <id>https://joshuadavey.com/2012/05/16/easier-atomic-commits/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/05/16/easier-atomic-commits/"><![CDATA[<p><em>This is a repost. You can find the original <a href="https://hashrocket.com/blog/posts/easier-atomic-commits" title="Easier Atomic Commits"  class="external-link" target="_blank" rel="noopener">here</a></em></p>
 <p>How do you keep your commits atomic easily? Let&rsquo;s explore one possible approach.</p>
@@ -2954,7 +2941,6 @@ dotfiles</a>.</p>
     <id>https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/05/14/simulate-network-latency-for-application-testing/"><![CDATA[<p>Sometimes it&rsquo;s useful to test your web application for situations where internet connections are less than stellar. It turns out that Mac OS X has a builtin utility called <code>ipfw</code> than, among other things, can do just this.</p>
 <p>I first saw this technique from <a href="http://joemiller.me/2010/08/31/simulate-network-latency-packet-loss-and-bandwidth-on-mac-osx/"  class="external-link" target="_blank" rel="noopener">Joe Miller&rsquo;s post</a> on the subject. I packaged up the settings he mentioned into a little shell script:</p>
@@ -2977,7 +2963,6 @@ dotfiles</a>.</p>
     <id>https://joshuadavey.com/2012/03/30/add-untracked-files-in-git/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/03/30/add-untracked-files-in-git/"><![CDATA[<p>I&rsquo;ve often been annoyed that there&rsquo;s no way to non-interactively add untracked files in git. Well, I finally whipped an alias to speed that process up:</p>
 <script src="https://gist.github.com/2256047.js?file=.gitconfig"></script>
@@ -2992,7 +2977,6 @@ dotfiles</a>.</p>
     <id>https://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2012/01/10/faster-tdd-feedback-with-tmux-tslime-vim-and-turbux/"><![CDATA[<p><strong>tl;dr</strong> Developing in a tmux session has sped up my TDD cycle
 considerably, especially with the help of tslime.vim and turbux.vim. I
@@ -3118,7 +3102,6 @@ merged in.</p>
     <id>https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2011/10/11/zsh-completion-for-hitch/"><![CDATA[<p>At <a href="https://www.hashrocket.com"  class="external-link" target="_blank" rel="noopener">hashrocket</a>, we use <a href="https://github.com/therubymug/hitch"  class="external-link" target="_blank" rel="noopener">hitch</a> to manage our paired git authors, written by our own Rogelio Samour.</p>
 <p>Hitch works by setting the <code>GIT_AUTHOR_NAME</code> and <code>GIT_AUTHOR_EMAIL</code> environment variables. For the email itself, it joins the hitched author&rsquo;s github usernames and a prefix with a &ldquo;+&rdquo;, creating email addresses of the form &ldquo;<a href="mailto:dev&#43;jgdavey&#43;therubymug@hashrocket.com" >dev+jgdavey+therubymug@hashrocket.com</a>&rdquo;. Using it is as simple as <code>hitch &lt;github_username&gt; &lt;github_username&gt;</code>.</p>
@@ -3137,7 +3120,6 @@ merged in.</p>
     <id>https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2011/06/13/qr-codes-in-ruby/"><![CDATA[<p>QR codes seem to be everywhere these days. I&rsquo;ve seen them in
 advertisements on the train, on the back of magazines, and, most
@@ -3268,7 +3250,6 @@ fits your needs best will largely depend on your stack.</p>
     <id>https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/</id>
     <author>
       <name>Joshua Davey</name>
-      <email>josh@joshuadavey.com</email>
     </author>
     <content type="html" xml:base="https://joshuadavey.com/2010/11/16/vim-script-to-toggle-do-end-and-brackets/"><![CDATA[<p><strike>This is still rough, but I&rsquo;m finding it quite useful:</strike></p>
 <p>I&rsquo;ve converted this to a full-blown VIM plugin: <a href="https://github.com/jgdavey/vim-blockle"  class="external-link" target="_blank" rel="noopener">https://github.com/jgdavey/vim-blockle</a></p>
